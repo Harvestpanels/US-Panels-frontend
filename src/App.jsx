@@ -417,14 +417,6 @@ function App() {
           </div>
         </div>
 
-        <a
-          href="#why"
-          className="hp-hero__scroll-cue"
-          aria-label="Scroll to next section"
-          onClick={(e) => navClick(e, "why")}
-        >
-          <span aria-hidden="true" />
-        </a>
       </header>
 
       {/* ===== WHO WE ARE ===== */}

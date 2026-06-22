@@ -1,13 +1,4 @@
-﻿:root {
-  --charcoal: #1b1d1f;
-  --wheat: #e8dcc4;
-  --rust: #c2542d;
-  --off-white: #f3f1ec;
-  --line: rgba(243, 241, 236, 0.14);
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-* {
+﻿* {
   box-sizing: border-box;
 }
 
@@ -31,8 +22,8 @@ html {
 
 body {
   margin: 0;
-  background: var(--charcoal);
-  color: var(--off-white);
+  background: #1b1d1f;
+  color: #f3f1ec;
   font-family: "Inter", sans-serif;
   overflow-x: hidden;
 }
@@ -85,7 +76,7 @@ h3 {
   -webkit-backdrop-filter: blur(24px) saturate(160%);
   /* Use transform only â€” no box-shadow transition (causes repaint) */
   transform: translateY(0) scale(1);
-  transition: transform 0.4s var(--ease-out);
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
   /* Static shadow via pseudo-element so it never repaints */
   position: relative;
 }
@@ -101,7 +92,7 @@ h3 {
     0 -1px 1px rgba(0, 0, 0, 0.3) inset,
     0 12px 30px rgba(0, 0, 0, 0.35);
   opacity: 1;
-  transition: opacity 0.4s var(--ease-out);
+  transition: opacity 0.4s cubic-bezier(0.16,1,0.3,1);
   pointer-events: none;
 }
 
@@ -116,7 +107,7 @@ h3 {
     0 -1px 1px rgba(0, 0, 0, 0.2) inset,
     0 16px 36px rgba(0, 0, 0, 0.5);
   opacity: 0;
-  transition: opacity 0.4s var(--ease-out);
+  transition: opacity 0.4s cubic-bezier(0.16,1,0.3,1);
   pointer-events: none;
 }
 
@@ -144,7 +135,7 @@ h3 {
 .hp-logo:hover { opacity: 0.8; }
 
 .hp-logo span {
-  color: var(--rust);
+  color: #c2542d;
 }
 
 .hp-nav__links {
@@ -160,7 +151,7 @@ h3 {
 }
 
 .hp-nav__links a:hover {
-  color: var(--off-white);
+  color: #f3f1ec;
 }
 
 /* ===================== BUTTONS ===================== */
@@ -177,13 +168,13 @@ h3 {
   cursor: pointer;
   font-family: "Inter", sans-serif;
   /* Only transform â€” stays on GPU compositor thread */
-  transition: transform 0.22s var(--ease-out), opacity 0.22s ease;
+  transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), opacity 0.22s ease;
   will-change: transform;
 }
 
 .hp-btn--primary {
-  background: var(--rust);
-  color: var(--off-white);
+  background: #c2542d;
+  color: #f3f1ec;
 }
 
 .hp-btn--primary.hp-btn--nav {
@@ -199,8 +190,8 @@ h3 {
 }
 
 .hp-btn--ghost {
-  border: 1px solid var(--line);
-  color: var(--off-white);
+  border: 1px solid rgba(243,241,236,0.14);
+  color: #f3f1ec;
   background: transparent;
 }
 
@@ -280,7 +271,7 @@ h3 {
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--wheat);
+  color: #d4a96a;
   margin: 0 0 18px;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
 }
@@ -304,40 +295,6 @@ h3 {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
-}
-
-.hp-hero__scroll-cue {
-  position: absolute;
-  bottom: 36px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  width: 24px;
-  height: 40px;
-  border: 1px solid rgba(243, 241, 236, 0.5);
-  border-radius: 14px;
-  transition: opacity 0.2s ease;
-}
-
-.hp-hero__scroll-cue:hover { opacity: 0.6; }
-
-.hp-hero__scroll-cue span {
-  position: absolute;
-  top: 7px;
-  left: 50%;
-  width: 4px;
-  height: 8px;
-  margin-left: -2px;
-  background: var(--off-white);
-  border-radius: 2px;
-  animation: hp-scroll-cue 1.6s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-
-@keyframes hp-scroll-cue {
-  0%   { opacity: 1; transform: translateY(0); }
-  70%  { opacity: 0; transform: translateY(14px); }
-  100% { opacity: 0; transform: translateY(0); }
 }
 
 /* ===================== SECTIONS / REVEAL ===================== */
@@ -388,7 +345,7 @@ h3 {
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--rust);
+  color: #c2542d;
   margin: 0 0 14px;
 }
 
@@ -405,8 +362,8 @@ h3 {
   opacity: 0;
   transform: translateY(32px);
   transition:
-    opacity 0.65s var(--ease-out),
-    transform 0.65s var(--ease-out);
+    opacity 0.65s cubic-bezier(0.16,1,0.3,1),
+    transform 0.65s cubic-bezier(0.16,1,0.3,1);
   will-change: opacity, transform;
 }
 
@@ -423,7 +380,7 @@ h3 {
 }
 
 .hp-card {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(243,241,236,0.14);
   padding: 32px 28px;
   transition-delay: 0.05s;
   /* border-color on hover via opacity on pseudo â€” avoids repaint */
@@ -470,12 +427,12 @@ h3 {
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(243,241,236,0.14);
   cursor: pointer;
   will-change: transform, opacity;
   transition:
-    transform 0.45s var(--ease-out),
-    opacity 0.45s var(--ease-out);
+    transform 0.45s cubic-bezier(0.16,1,0.3,1),
+    opacity 0.45s cubic-bezier(0.16,1,0.3,1);
 }
 
 .hp-panel-card:nth-child(2) { transition-delay: 0.05s; }
@@ -502,7 +459,7 @@ h3 {
   background-size: cover;
   background-position: center;
   will-change: transform, filter;
-  transition: transform 0.55s var(--ease-out), filter 0.45s ease;
+  transition: transform 0.55s cubic-bezier(0.16,1,0.3,1), filter 0.45s ease;
   filter: grayscale(0.15) brightness(0.85);
 }
 
@@ -527,7 +484,7 @@ h3 {
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--wheat);
+  color: #d4a96a;
   margin-bottom: 4px;
 }
 
@@ -547,7 +504,7 @@ h3 {
   grid-template-rows: 0fr;
   opacity: 0;
   transition:
-    grid-template-rows 0.38s var(--ease-out),
+    grid-template-rows 0.38s cubic-bezier(0.16,1,0.3,1),
     opacity 0.28s ease;
 }
 
@@ -582,7 +539,7 @@ h3 {
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 6px;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(243,241,236,0.14);
 }
 
 .hp-gallery-item img {
@@ -591,7 +548,7 @@ h3 {
   object-fit: cover;
   display: block;
   will-change: transform, filter;
-  transition: transform 0.5s var(--ease-out), filter 0.4s ease;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1), filter 0.4s ease;
   filter: grayscale(0.1) brightness(0.92);
 }
 
@@ -609,16 +566,16 @@ h3 {
 }
 
 .hp-faq__intro a {
-  color: var(--rust);
+  color: #c2542d;
   text-decoration: underline;
 }
 
 .hp-faq-list {
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(243,241,236,0.14);
 }
 
 .hp-faq-item {
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid rgba(243,241,236,0.14);
 }
 
 .hp-faq-item__q {
@@ -631,7 +588,7 @@ h3 {
   gap: 16px;
   background: none;
   border: none;
-  color: var(--off-white);
+  color: #f3f1ec;
   font-family: "Inter", sans-serif;
   font-size: 16px;
   font-weight: 600;
@@ -648,11 +605,11 @@ h3 {
   top: 50%;
   transform: translateY(-50%);
   font-family: "JetBrains Mono", monospace;
-  color: var(--rust);
+  color: #c2542d;
   font-size: 18px;
   flex-shrink: 0;
   will-change: transform;
-  transition: transform 0.3s var(--ease-out);
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
 }
 
 .hp-faq-item__q[aria-expanded="true"] .hp-faq-item__icon {
@@ -665,7 +622,7 @@ h3 {
   grid-template-rows: 0fr;
   opacity: 0;
   transition:
-    grid-template-rows 0.38s var(--ease-out),
+    grid-template-rows 0.38s cubic-bezier(0.16,1,0.3,1),
     opacity 0.28s ease;
 }
 
@@ -712,7 +669,7 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  border-left: 2px solid var(--rust);
+  border-left: 2px solid #c2542d;
   padding-left: 14px;
 }
 
@@ -721,14 +678,14 @@ h3 {
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--wheat);
+  color: #d4a96a;
 }
 
 .hp-contact__details a {
   transition: color 0.2s ease;
 }
 
-.hp-contact__details a:hover { color: var(--rust); }
+.hp-contact__details a:hover { color: #c2542d; }
 
 .hp-contact__form {
   display: flex;
@@ -754,9 +711,9 @@ h3 {
   width: 100%;
   font-family: "Inter", sans-serif;
   font-size: 15px;
-  color: var(--off-white);
+  color: #f3f1ec;
   background: rgba(255, 255, 255, 0.06);
-  border: 1px solid var(--line);
+  border: 1px solid rgba(243,241,236,0.14);
   border-radius: 6px;
   padding: 11px 14px;
   resize: vertical;
@@ -767,7 +724,7 @@ h3 {
 .hp-contact__form input:focus,
 .hp-contact__form textarea:focus {
   outline: none;
-  border-color: var(--rust);
+  border-color: #c2542d;
   box-shadow: 0 0 0 3px rgba(194, 84, 45, 0.2);
 }
 
@@ -821,7 +778,7 @@ h3 {
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.01em;
-  color: var(--off-white);
+  color: #f3f1ec;
   margin: 0;
 }
 
@@ -868,7 +825,7 @@ h3 {
   transition: color 0.2s ease;
 }
 
-.hp-footer__inner a:hover { color: var(--rust); }
+.hp-footer__inner a:hover { color: #c2542d; }
 
 .hp-logo--footer { font-size: 18px; }
 
@@ -880,12 +837,12 @@ h3 {
 
 .hp-footer__social a {
   display: inline-flex;
-  transition: color 0.2s ease, transform 0.2s var(--ease-out);
+  transition: color 0.2s ease, transform 0.2s cubic-bezier(0.16,1,0.3,1);
   will-change: transform;
 }
 
 .hp-footer__social a:hover {
-  color: var(--rust);
+  color: #c2542d;
   transform: translateY(-2px);
 }
 
@@ -893,7 +850,7 @@ h3 {
   max-width: 1180px;
   margin: 24px auto 0;
   padding: 20px 32px 0;
-  border-top: 1px solid var(--line);
+  border-top: 1px solid rgba(243,241,236,0.14);
   font-size: 12px;
   line-height: 1.7;
   color: rgba(243, 241, 236, 0.4);
@@ -944,3 +901,4 @@ h3 {
     transform: none !important;
   }
 }
+
