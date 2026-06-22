@@ -154,10 +154,22 @@ function scrollToTop() {
 function scrollCenter(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  const rect = el.getBoundingClientRect();
-  const target =
-    window.scrollY + rect.top + rect.height / 2 - window.innerHeight / 2;
-  window.scrollTo({ top: Math.max(0, target), behavior: "smooth" });
+  const glass = el.querySelector(".hp-glass") || el;
+  const rect = glass.getBoundingClientRect();
+  const vh = window.innerHeight;
+  const navH = document.querySelector(".hp-nav")?.offsetHeight ?? 70;
+
+  if (rect.height >= vh * 0.75) {
+    // Taller than 75% of viewport — pin top just below nav
+    window.scrollTo({
+      top: Math.max(0, window.scrollY + rect.top - navH - 16),
+      left: 0,
+      behavior: "smooth",
+    });
+  } else {
+    // Fits in viewport — browser centers it natively on any screen size
+    glass.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
+  }
 }
 
 function navClick(e, id) {
