@@ -955,7 +955,7 @@ h3 {
   .hp-footer__legal { padding: 20px 24px 0; }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1024px) {
   /* Position nav to the right */
   .hp-nav { justify-content: flex-end; padding: 0 20px; }
 
