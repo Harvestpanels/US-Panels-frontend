@@ -245,27 +245,20 @@ function App() {
     let lastVideoTime = -1;
     let videoSeeking = false;
     let pendingTarget = null;
+    let videoUnlocked = false;
     const video = videoRef.current;
 
-    // Detect touch/low-power devices — skip expensive video seeking on them
     const isTouch = window.matchMedia("(hover: none)").matches;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    // Hide video on touch devices (autoplay unreliable, battery drain)
-    if (isTouch && videoRef.current) {
-      videoRef.current.closest(".hp-bgvideo-layer").style.display = "none";
-    }
+    // Seek threshold: coarser on mobile to reduce CPU/battery cost
+    const SEEK_THRESHOLD = isTouch ? 0.08 : 0.03;
 
     function seekVideo(target) {
-      if (!video || isTouch || reducedMotion) return;
+      if (!video || reducedMotion) return;
       if (videoSeeking) { pendingTarget = target; return; }
       lastVideoTime = target;
       videoSeeking = true;
-      if (typeof video.fastSeek === "function") {
-        video.fastSeek(target);
-      } else {
-        video.currentTime = target;
-      }
+      video.currentTime = target;
     }
 
     function onSeeked() {
@@ -277,9 +270,29 @@ function App() {
       }
     }
 
-    if (video && !isTouch) {
+    // iOS / mobile: video must be played at least once before seeking is allowed.
+    // We play it silently then pause immediately to "unlock" it.
+    function unlockVideo() {
+      if (videoUnlocked || !video) return;
+      videoUnlocked = true;
+      video.muted = true;
+      const p = video.play();
+      if (p && typeof p.then === "function") {
+        p.then(() => {
+          video.pause();
+          video.currentTime = 0;
+        }).catch(() => {});
+      } else {
+        video.pause();
+        video.currentTime = 0;
+      }
+    }
+
+    if (video) {
       video.addEventListener("seeked", onSeeked);
-      video.pause();
+      // Trigger load so the browser buffers the video
+      video.load();
+      video.addEventListener("canplay", unlockVideo, { once: true });
     }
 
     function onScroll() {
@@ -301,7 +314,6 @@ function App() {
               curtainProgress >= 1 ? "none" : "auto";
           }
 
-          // Parallax hero text — lighter movement on touch to stay crisp
           if (heroTextRef.current) {
             const fade = Math.max(0, 1 - y / (vh * 0.5));
             const shift = isTouch ? (y / vh) * -20 : (y / vh) * -40;
@@ -309,10 +321,10 @@ function App() {
             heroTextRef.current.style.transform = `translate3d(0, ${shift}px, 0)`;
           }
 
-          if (!isTouch && video?.duration && isFinite(video.duration) && scrollable > 0) {
+          if (videoUnlocked && video?.duration && isFinite(video.duration) && scrollable > 0) {
             const progress = Math.max(0, Math.min(1, y / scrollable));
             const target = progress * video.duration;
-            if (Math.abs(target - lastVideoTime) > 0.03) seekVideo(target);
+            if (Math.abs(target - lastVideoTime) > SEEK_THRESHOLD) seekVideo(target);
           }
         }
 
@@ -320,12 +332,18 @@ function App() {
       });
     }
 
+    // Also unlock on first touch/scroll interaction as fallback
+    function onFirstInteraction() {
+      unlockVideo();
+      window.removeEventListener("touchstart", onFirstInteraction);
+      window.removeEventListener("scroll", onFirstInteraction);
+    }
+    window.addEventListener("touchstart", onFirstInteraction, { passive: true, once: true });
+
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("touchmove", onScroll, { passive: true });
     onScroll();
 
-    // Lower threshold on mobile so reveals trigger earlier (less content visible)
-    const observerMargin = isTouch ? "0px 0px -5% 0px" : "0px 0px -10% 0px";
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -334,16 +352,18 @@ function App() {
           }
         });
       },
-      { threshold: 0.12, rootMargin: observerMargin }
+      { threshold: 0.12, rootMargin: isTouch ? "0px 0px -5% 0px" : "0px 0px -10% 0px" }
     );
     revealRefs.current.forEach((el) => observer.observe(el));
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("touchmove", onScroll);
+      window.removeEventListener("touchstart", onFirstInteraction);
       if (raf) cancelAnimationFrame(raf);
       observer.disconnect();
       video?.removeEventListener("seeked", onSeeked);
+      video?.removeEventListener("canplay", unlockVideo);
     };
   }, []);
 
@@ -426,7 +446,10 @@ function App() {
           src={VIDEO_URL}
           muted
           playsInline
+          webkit-playsinline="true"
           preload="auto"
+          disablePictureInPicture
+          disableRemotePlayback
         />
       </div>
 
