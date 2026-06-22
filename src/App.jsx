@@ -198,6 +198,7 @@ function App() {
   const [openFaq, setOpenFaq] = useState(null);
   const [formStatus, setFormStatus] = useState("idle");
   const [formErrors, setFormErrors] = useState({});
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useLayoutEffect(() => {
     const y = window.scrollY;
@@ -294,6 +295,7 @@ function App() {
     }
 
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchmove", onScroll, { passive: true });
     onScroll();
 
     const observer = new IntersectionObserver(
@@ -310,6 +312,7 @@ function App() {
 
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchmove", onScroll);
       if (raf) cancelAnimationFrame(raf);
       observer.disconnect();
       video?.removeEventListener("seeked", onSeeked);
@@ -340,29 +343,50 @@ function App() {
   return (
     <div className="hp-app">
       {/* ===== NAV ===== */}
-      <nav className="hp-nav" ref={navRef} aria-label="Main navigation">
-        <div className="hp-nav__inner">
-          <button
-            className="hp-logo"
-            onClick={scrollToTop}
-            aria-label="Harvest Panel Systems — scroll to top"
-          >
-            Harvest<span>Panels</span>
-          </button>
-          <div className="hp-nav__links">
-            <a href="#why"     onClick={(e) => navClick(e, "why")}>Who We Are</a>
-            <a href="#panels"  onClick={(e) => navClick(e, "panels")}>Panels &amp; Doors</a>
-            <a href="#gallery" onClick={(e) => navClick(e, "gallery")}>Gallery</a>
-            <a href="#faq"     onClick={(e) => navClick(e, "faq")}>FAQ</a>
-            <a href="#contact" onClick={(e) => navClick(e, "contact")}>Contact</a>
+      <nav className={`hp-nav${menuOpen ? " hp-nav--open" : ""}`} ref={navRef} aria-label="Main navigation">
+        <div className="hp-nav__pill">
+          <div className="hp-nav__inner">
+            <button
+              className="hp-logo"
+              onClick={scrollToTop}
+              aria-label="Harvest Panel Systems — scroll to top"
+            >
+              Harvest<span>Panels</span>
+            </button>
+            <div className="hp-nav__links">
+              <a href="#why"     onClick={(e) => { navClick(e, "why");     setMenuOpen(false); }}>Who We Are</a>
+              <a href="#panels"  onClick={(e) => { navClick(e, "panels");  setMenuOpen(false); }}>Panels &amp; Doors</a>
+              <a href="#gallery" onClick={(e) => { navClick(e, "gallery"); setMenuOpen(false); }}>Gallery</a>
+              <a href="#faq"     onClick={(e) => { navClick(e, "faq");     setMenuOpen(false); }}>FAQ</a>
+              <a href="#contact" onClick={(e) => { navClick(e, "contact"); setMenuOpen(false); }}>Contact</a>
+            </div>
+            <a
+              href="#contact"
+              className="hp-btn hp-btn--primary hp-btn--nav"
+              onClick={(e) => { navClick(e, "contact"); setMenuOpen(false); }}
+            >
+              Get a quote
+            </a>
+            <button
+              className="hp-nav__hamburger"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((o) => !o)}
+            >
+              <span />
+              <span />
+              <span />
+            </button>
           </div>
-          <a
-            href="#contact"
-            className="hp-btn hp-btn--primary hp-btn--nav"
-            onClick={(e) => navClick(e, "contact")}
-          >
-            Get a quote
-          </a>
+          {/* Mobile dropdown */}
+          <div className={`hp-nav__mobile${menuOpen ? " is-open" : ""}`} aria-hidden={!menuOpen}>
+            <a href="#why"     onClick={(e) => { navClick(e, "why");     setMenuOpen(false); }}>Who We Are</a>
+            <a href="#panels"  onClick={(e) => { navClick(e, "panels");  setMenuOpen(false); }}>Panels &amp; Doors</a>
+            <a href="#gallery" onClick={(e) => { navClick(e, "gallery"); setMenuOpen(false); }}>Gallery</a>
+            <a href="#faq"     onClick={(e) => { navClick(e, "faq");     setMenuOpen(false); }}>FAQ</a>
+            <a href="#contact" onClick={(e) => { navClick(e, "contact"); setMenuOpen(false); }}>Contact</a>
+            <a href="#contact" className="hp-btn hp-btn--primary hp-nav__mobile-cta" onClick={(e) => { navClick(e, "contact"); setMenuOpen(false); }}>Get a quote</a>
+          </div>
         </div>
       </nav>
 
