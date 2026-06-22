@@ -235,8 +235,17 @@ function App() {
     let pendingTarget = null;
     const video = videoRef.current;
 
+    // Detect touch/low-power devices — skip expensive video seeking on them
+    const isTouch = window.matchMedia("(hover: none)").matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Hide video on touch devices (autoplay unreliable, battery drain)
+    if (isTouch && videoRef.current) {
+      videoRef.current.closest(".hp-bgvideo-layer").style.display = "none";
+    }
+
     function seekVideo(target) {
-      if (!video) return;
+      if (!video || isTouch || reducedMotion) return;
       if (videoSeeking) { pendingTarget = target; return; }
       lastVideoTime = target;
       videoSeeking = true;
@@ -256,7 +265,7 @@ function App() {
       }
     }
 
-    if (video) {
+    if (video && !isTouch) {
       video.addEventListener("seeked", onSeeked);
       video.pause();
     }
@@ -270,24 +279,29 @@ function App() {
 
         navRef.current?.classList.toggle("hp-nav--solid", y > vh * 0.4);
 
-        const curtainProgress = Math.max(0, Math.min(1, y / (vh * 0.8)));
-        if (curtainRef.current) {
-          curtainRef.current.style.transform = `translate3d(0, ${curtainProgress * 100}%, 0)`;
-        }
-        if (curtainLayerRef.current) {
-          curtainLayerRef.current.style.pointerEvents =
-            curtainProgress >= 1 ? "none" : "auto";
-        }
-        if (heroTextRef.current) {
-          const fade = Math.max(0, 1 - y / (vh * 0.5));
-          heroTextRef.current.style.opacity = fade;
-          heroTextRef.current.style.transform = `translate3d(0, ${(y / vh) * -40}px, 0)`;
-        }
+        if (!reducedMotion) {
+          const curtainProgress = Math.max(0, Math.min(1, y / (vh * 0.8)));
+          if (curtainRef.current) {
+            curtainRef.current.style.transform = `translate3d(0, ${curtainProgress * 100}%, 0)`;
+          }
+          if (curtainLayerRef.current) {
+            curtainLayerRef.current.style.pointerEvents =
+              curtainProgress >= 1 ? "none" : "auto";
+          }
 
-        if (video?.duration && isFinite(video.duration) && scrollable > 0) {
-          const progress = Math.max(0, Math.min(1, y / scrollable));
-          const target = progress * video.duration;
-          if (Math.abs(target - lastVideoTime) > 0.03) seekVideo(target);
+          // Parallax hero text — lighter movement on touch to stay crisp
+          if (heroTextRef.current) {
+            const fade = Math.max(0, 1 - y / (vh * 0.5));
+            const shift = isTouch ? (y / vh) * -20 : (y / vh) * -40;
+            heroTextRef.current.style.opacity = fade;
+            heroTextRef.current.style.transform = `translate3d(0, ${shift}px, 0)`;
+          }
+
+          if (!isTouch && video?.duration && isFinite(video.duration) && scrollable > 0) {
+            const progress = Math.max(0, Math.min(1, y / scrollable));
+            const target = progress * video.duration;
+            if (Math.abs(target - lastVideoTime) > 0.03) seekVideo(target);
+          }
         }
 
         raf = null;
@@ -298,6 +312,8 @@ function App() {
     window.addEventListener("touchmove", onScroll, { passive: true });
     onScroll();
 
+    // Lower threshold on mobile so reveals trigger earlier (less content visible)
+    const observerMargin = isTouch ? "0px 0px -5% 0px" : "0px 0px -10% 0px";
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -306,7 +322,7 @@ function App() {
           }
         });
       },
-      { threshold: 0.18, rootMargin: "0px 0px -10% 0px" }
+      { threshold: 0.12, rootMargin: observerMargin }
     );
     revealRefs.current.forEach((el) => observer.observe(el));
 

@@ -180,7 +180,8 @@ h3 {
   color: #f3f1ec;
 }
 
-.hp-btn--primary.hp-btn--nav {
+.hp-btn--primary.hp-btn--nav,
+.hp-btn--primary.hp-nav__mobile-cta {
   background: transparent;
 }
 
@@ -1029,6 +1030,42 @@ h3 {
   .hp-panel-grid { grid-template-columns: 1fr; }
 }
 
+/* ===================== TOUCH DEVICES ===================== */
+/* Disable mouse-only hover effects on touch screens */
+@media (hover: none) {
+  /* Panel cards — no scale/dim sibling effect, desc always visible */
+  .hp-panel-grid:hover .hp-panel-card:not(:hover) { opacity: 1; transform: none; }
+  .hp-panel-card:hover { transform: none; }
+  .hp-panel-card:hover .hp-panel-card__img { transform: none; filter: grayscale(0.15) brightness(0.85); }
+  .hp-panel-card__label p { grid-template-rows: 1fr; opacity: 1; }
+
+  /* Gallery — no zoom on touch */
+  .hp-gallery-item:hover img { transform: none; filter: grayscale(0.1) brightness(0.92); }
+
+  /* Cards — no border highlight */
+  .hp-card:hover::after { opacity: 0; }
+  .hp-panel-card:hover::after { opacity: 0; }
+
+  /* Nav/footer links — no translateY */
+  .hp-btn--primary:hover,
+  .hp-btn--ghost:hover { transform: none; }
+  .hp-footer__social a:hover { transform: none; }
+
+  /* Reduce backdrop-filter cost on mobile GPU */
+  .hp-glass {
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+  }
+  .hp-nav__pill {
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+  }
+  .hp-footer {
+    backdrop-filter: blur(12px) saturate(130%);
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+  }
+}
+
 /* ===================== REDUCED MOTION ===================== */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -1045,5 +1082,8 @@ h3 {
     opacity: 1 !important;
     transform: none !important;
   }
+  /* Freeze curtain and hero parallax — JS skips these too */
+  .hp-curtain { transform: none !important; }
+  .hp-hero__content { transform: none !important; opacity: 1 !important; }
 }
 
