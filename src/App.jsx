@@ -6,10 +6,10 @@ import "./App.css";
 // ---------------------------------------------------------------------------
 
 const VIDEO_URL = "/skies.mp4";
-const CURTAIN_URL =
-  "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=1920&q=80";
+const PARALLAX_BG_URL =
+  "CurtainBG.png";
 
-const CURRENT_YEAR = new Date().getFullYear();
+const CURRENT_YEAR = 2022;
 
 const GALLERY_IMAGES = [
   "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_0380.jpeg/:/rs=w:1300,h:800",
@@ -29,19 +29,19 @@ const GALLERY_IMAGES = [
 const INTERIOR_PANELS = [
   {
     name: "Indoor Cultivation",
-    use: "Interior",
+    category: "Interior",
     desc: "An exact environment of controlled temperature, humidity, light reflection, and cleanliness — installed nationwide.",
     img: "https://images.unsplash.com/photo-1466692476655-ba23cdc1c742?auto=format&fit=crop&w=800&q=80",
   },
   {
     name: "Cold Storage",
-    use: "Interior",
+    category: "Interior",
     desc: "Built using a wide variety of insulated metal panel materials, in almost any size, height, width, or condition.",
     img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=800&q=80",
   },
   {
     name: "Freezers",
-    use: "Interior",
+    category: "Interior",
     desc: "Walk-in freezers and coolers built inside an existing facility or as a standalone structure, to your exact spec.",
     img: "https://images.unsplash.com/photo-1581093458791-9d09e1afe9d2?auto=format&fit=crop&w=800&q=80",
   },
@@ -50,19 +50,19 @@ const INTERIOR_PANELS = [
 const EXTERIOR_PANELS = [
   {
     name: "Industrial",
-    use: "Exterior",
+    category: "Exterior",
     desc: "From a 2,000 sqft shop to a 200,000 sqft factory, insulated metal panels save time and money on every build.",
     img: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=800&q=80",
   },
   {
     name: "Commercial",
-    use: "Exterior",
+    category: "Exterior",
     desc: "Commercial facilities need to look good and perform well. Insulated metal panels deliver both.",
     img: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=800&q=80",
   },
   {
     name: "Residential",
-    use: "Exterior",
+    category: "Exterior",
     desc: "Single-family, multi-family, stand-alone, or connected — a great option for your next residential project.",
     img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
   },
@@ -70,76 +70,76 @@ const EXTERIOR_PANELS = [
 
 const FAQS = [
   {
-    q: "Tell me about Harvest Panel Systems?",
-    a: "Harvest Panel Systems is a global distributor of Insulated Metal Panels and Doors, serving the Indoor Cultivation, Industrial, Commercial, and Residential markets with a modern, energy-efficient alternative to traditional construction.",
+    question: "Tell me about Harvest Panel Systems?",
+    answer: "Harvest Panel Systems is a global distributor of Insulated Metal Panels and Doors, serving the Indoor Cultivation, Industrial, Commercial, and Residential markets with a modern, energy-efficient alternative to traditional construction.",
   },
   {
-    q: "What kind of services does Harvest Panels offer?",
-    a: "We offer budgeting, design assistance, continuous communication, and quality workmanship on every Insulated Metal Panel and Door project, working alongside architects, engineers, and designers.",
+    question: "What kind of services does Harvest Panels offer?",
+    answer: "We offer budgeting, design assistance, continuous communication, and quality workmanship on every Insulated Metal Panel and Door project, working alongside architects, engineers, and designers.",
   },
   {
-    q: "Does Harvest Panels provide free estimates?",
-    a: "Yes. Reach out through our contact form or by phone and our team will put together a no-cost estimate for your project.",
+    question: "Does Harvest Panels provide free estimates?",
+    answer: "Yes. Reach out through our contact form or by phone and our team will put together a no-cost estimate for your project.",
   },
   {
-    q: "Is Harvest Panel Systems licensed and insured?",
-    a: "Yes, Harvest Panel Systems is fully licensed and insured for panel and door installation projects nationwide.",
+    question: "Is Harvest Panel Systems licensed and insured?",
+    answer: "Yes, Harvest Panel Systems is fully licensed and insured for panel and door installation projects nationwide.",
   },
   {
-    q: "Who uses Insulated Metal Panels?",
-    a: "Indoor cultivation facilities, cold storage and freezer operators, industrial and commercial builders, and residential developers all rely on insulated metal panels.",
+    question: "Who uses Insulated Metal Panels?",
+    answer: "Indoor cultivation facilities, cold storage and freezer operators, industrial and commercial builders, and residential developers all rely on insulated metal panels.",
   },
   {
-    q: "How are Panels constructed?",
-    a: "Panels are constructed from rigid foam insulation (such as PIR, PUR, or EPS) sandwiched between two metal facings, providing strength, insulation, and a clean finish in one system.",
+    question: "How are Panels constructed?",
+    answer: "Panels are constructed from rigid foam insulation (such as PIR, PUR, or EPS) sandwiched between two metal facings, providing strength, insulation, and a clean finish in one system.",
   },
   {
-    q: "What are your lead times?",
-    a: "We maintain consistent supply in pre-cut lengths and can typically fulfill custom orders within 30 days.",
+    question: "What are your lead times?",
+    answer: "We maintain consistent supply in pre-cut lengths and can typically fulfill custom orders within 30 days.",
   },
   {
-    q: "What are the benefits of using Panels?",
-    a: "Energy efficiency, fast installation, durability, and design flexibility — all in a single system that reduces labor and long-term maintenance costs.",
+    question: "What are the benefits of using Panels?",
+    answer: "Energy efficiency, fast installation, durability, and design flexibility — all in a single system that reduces labor and long-term maintenance costs.",
   },
   {
-    q: "Are Panels safe and easy to maintain?",
-    a: "Yes. Insulated metal panels are low-maintenance, moisture-resistant, and built to hold up over decades of use.",
+    question: "Are Panels safe and easy to maintain?",
+    answer: "Yes. Insulated metal panels are low-maintenance, moisture-resistant, and built to hold up over decades of use.",
   },
   {
-    q: "What products, other than Panels do you provide?",
-    a: "Alongside Insulated Metal Panels, we supply and install Insulated Metal Doors for the same range of applications.",
+    question: "What products, other than Panels do you provide?",
+    answer: "Alongside Insulated Metal Panels, we supply and install Insulated Metal Doors for the same range of applications.",
   },
   {
-    q: "How much do Panels Cost?",
-    a: "Cost varies by panel type, thickness, finish, and project size. Contact us with your specs for an accurate, free estimate.",
+    question: "How much do Panels Cost?",
+    answer: "Cost varies by panel type, thickness, finish, and project size. Contact us with your specs for an accurate, free estimate.",
   },
   {
-    q: "What sizes do Panels come in?",
-    a: "We stock common pre-cut lengths and can manufacture custom sizes to fit your exact project dimensions.",
+    question: "What sizes do Panels come in?",
+    answer: "We stock common pre-cut lengths and can manufacture custom sizes to fit your exact project dimensions.",
   },
   {
-    q: "Do you offer installation services?",
-    a: "Yes, we offer full installation services in addition to supply-only orders.",
+    question: "Do you offer installation services?",
+    answer: "Yes, we offer full installation services in addition to supply-only orders.",
   },
   {
-    q: "How long does it take to install Panels?",
-    a: "Installation time depends on project size and scope, but panels are designed to go up quickly compared to traditional construction methods.",
+    question: "How long does it take to install Panels?",
+    answer: "Installation time depends on project size and scope, but panels are designed to go up quickly compared to traditional construction methods.",
   },
   {
-    q: "Insulation Value?",
-    a: "Insulation values (R-values) vary by panel thickness and core material — our team can recommend the right spec for your climate and use case.",
+    question: "Insulation Value?",
+    answer: "Insulation values (R-values) vary by panel thickness and core material — our team can recommend the right spec for your climate and use case.",
   },
   {
-    q: "Can Panels support hanging of equipment?",
-    a: "Yes, with the appropriate panel type and mounting hardware, panels can support hanging equipment and fixtures.",
+    question: "Can Panels support hanging of equipment?",
+    answer: "Yes, with the appropriate panel type and mounting hardware, panels can support hanging equipment and fixtures.",
   },
   {
-    q: "Do you offer financing on Panels?",
-    a: "Reach out to our sales team to discuss financing options available for your project.",
+    question: "Do you offer financing on Panels?",
+    answer: "Reach out to our sales team to discuss financing options available for your project.",
   },
   {
-    q: "How are Panels delivered?",
-    a: "Our centrally located Oklahoma-based distribution center ensures delivery anywhere in the U.S. within 48 hours after departure.",
+    question: "How are Panels delivered?",
+    answer: "Our centrally located Oklahoma-based distribution center ensures delivery anywhere in the U.S. within 48 hours after departure.",
   },
 ];
 
@@ -152,6 +152,8 @@ function scrollToTop() {
 }
 
 function scrollCenter(id) {
+  // Keep nav visible during programmatic scrolls triggered by nav clicks
+  document.querySelector(".hp-nav")?.classList.remove("hp-nav--hidden");
   const el = document.getElementById(id);
   if (!el) return;
   const glass = el.querySelector(".hp-glass") || el;
@@ -172,12 +174,18 @@ function scrollCenter(id) {
   }
 }
 
-function navClick(e, id) {
+function navClick(e, id, closeMenu) {
   e.preventDefault();
-  scrollCenter(id);
+  if (closeMenu) {
+    closeMenu();
+    // Wait for the mobile nav collapse animation (350ms) before measuring layout
+    setTimeout(() => scrollCenter(id), 380);
+  } else {
+    scrollCenter(id);
+  }
 }
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 function validateForm(data) {
   const errors = {};
@@ -187,7 +195,7 @@ function validateForm(data) {
 
   if (!name) errors.name = "Name is required.";
   if (!email) errors.email = "Email is required.";
-  else if (!EMAIL_RE.test(email)) errors.email = "Enter a valid email address.";
+  else if (!EMAIL_REGEX.test(email)) errors.email = "Enter a valid email address.";
   if (!phone) errors.phone = "Phone number is required.";
 
   return errors;
@@ -199,15 +207,15 @@ function validateForm(data) {
 
 function App() {
   const navRef = useRef(null);
-  const curtainLayerRef = useRef(null);
+  const parallaxLayerRef = useRef(null);
   const videoRef = useRef(null);
-  const curtainRef = useRef(null);
-  const heroTextRef = useRef(null);
+  const parallaxRef = useRef(null);
+  const heroContentRef = useRef(null);
 
-  const revealSet = useRef(new Set());
-  const revealRefs = useRef([]);
+  const revealRegistry = useRef(new Set());
+  const revealTargets = useRef([]);
 
-  const [openFaq, setOpenFaq] = useState(null);
+  const [activeFaqIndex, setActiveFaqIndex] = useState(null);
   const [formStatus, setFormStatus] = useState("idle");
   const [formErrors, setFormErrors] = useState({});
   const [menuOpen, setMenuOpen] = useState(false);
@@ -218,21 +226,21 @@ function App() {
 
     navRef.current?.classList.toggle("hp-nav--solid", y > vh * 0.4);
 
-    const curtainProgress = Math.max(0, Math.min(1, y / (vh * 0.8)));
-    if (curtainRef.current) {
-      curtainRef.current.style.transform = `translate3d(0, ${curtainProgress * 100}%, 0)`;
+    const parallaxProgress = Math.max(0, Math.min(1, y / (vh * 0.8)));
+    if (parallaxRef.current) {
+      parallaxRef.current.style.transform = `translate3d(0, ${parallaxProgress * 100}%, 0)`;
     }
-    if (curtainLayerRef.current) {
-      curtainLayerRef.current.style.pointerEvents =
-        curtainProgress >= 1 ? "none" : "auto";
+    if (parallaxLayerRef.current) {
+      parallaxLayerRef.current.style.pointerEvents =
+        parallaxProgress >= 1 ? "none" : "auto";
     }
-    if (heroTextRef.current) {
+    if (heroContentRef.current) {
       const fade = Math.max(0, 1 - y / (vh * 0.5));
-      heroTextRef.current.style.opacity = fade;
-      heroTextRef.current.style.transform = `translate3d(0, ${(y / vh) * -40}px, 0)`;
+      heroContentRef.current.style.opacity = fade;
+      heroContentRef.current.style.transform = `translate3d(0, ${(y / vh) * -40}px, 0)`;
     }
 
-    revealRefs.current.forEach((el) => {
+    revealTargets.current.forEach((el) => {
       const rect = el.getBoundingClientRect();
       if (rect.top < vh && rect.bottom > 0) {
         el.classList.add("is-visible");
@@ -246,11 +254,12 @@ function App() {
     let videoSeeking = false;
     let pendingTarget = null;
     let videoUnlocked = false;
+    let prevScrollY = window.scrollY;
+    let scrollStopTimer = null;
     const video = videoRef.current;
 
     const isTouch = window.matchMedia("(hover: none)").matches;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // Seek threshold: coarser on mobile to reduce CPU/battery cost
     const SEEK_THRESHOLD = isTouch ? 0.08 : 0.03;
 
     function seekVideo(target) {
@@ -304,21 +313,39 @@ function App() {
 
         navRef.current?.classList.toggle("hp-nav--solid", y > vh * 0.4);
 
-        if (!reducedMotion) {
-          const curtainProgress = Math.max(0, Math.min(1, y / (vh * 0.8)));
-          if (curtainRef.current) {
-            curtainRef.current.style.transform = `translate3d(0, ${curtainProgress * 100}%, 0)`;
+        // Hide nav when scrolling down, reveal when scrolling up or stopped
+        const menuIsOpen = navRef.current?.classList.contains("hp-nav--open");
+        if (!menuIsOpen) {
+          if (y < 80) {
+            navRef.current?.classList.remove("hp-nav--hidden");
+          } else if (y > prevScrollY) {
+            navRef.current?.classList.add("hp-nav--hidden");
+          } else {
+            navRef.current?.classList.remove("hp-nav--hidden");
           }
-          if (curtainLayerRef.current) {
-            curtainLayerRef.current.style.pointerEvents =
-              curtainProgress >= 1 ? "none" : "auto";
+          // Reveal nav 1s after scrolling stops
+          clearTimeout(scrollStopTimer);
+          scrollStopTimer = setTimeout(() => {
+            navRef.current?.classList.remove("hp-nav--hidden");
+          }, 1000);
+        }
+        prevScrollY = y;
+
+        if (!reducedMotion) {
+          const parallaxProgress = Math.max(0, Math.min(1, y / (vh * 0.8)));
+          if (parallaxRef.current) {
+            parallaxRef.current.style.transform = `translate3d(0, ${parallaxProgress * 100}%, 0)`;
+          }
+          if (parallaxLayerRef.current) {
+            parallaxLayerRef.current.style.pointerEvents =
+              parallaxProgress >= 1 ? "none" : "auto";
           }
 
-          if (heroTextRef.current) {
+          if (heroContentRef.current) {
             const fade = Math.max(0, 1 - y / (vh * 0.5));
             const shift = isTouch ? (y / vh) * -20 : (y / vh) * -40;
-            heroTextRef.current.style.opacity = fade;
-            heroTextRef.current.style.transform = `translate3d(0, ${shift}px, 0)`;
+            heroContentRef.current.style.opacity = fade;
+            heroContentRef.current.style.transform = `translate3d(0, ${shift}px, 0)`;
           }
 
           if (videoUnlocked && video?.duration && isFinite(video.duration) && scrollable > 0) {
@@ -332,12 +359,8 @@ function App() {
       });
     }
 
-    // Also unlock on first touch/scroll interaction as fallback
-    function onFirstInteraction() {
-      unlockVideo();
-      window.removeEventListener("touchstart", onFirstInteraction);
-      window.removeEventListener("scroll", onFirstInteraction);
-    }
+    // Fallback unlock on first touch
+    function onFirstInteraction() { unlockVideo(); }
     window.addEventListener("touchstart", onFirstInteraction, { passive: true, once: true });
 
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -354,23 +377,24 @@ function App() {
       },
       { threshold: 0.12, rootMargin: isTouch ? "0px 0px -5% 0px" : "0px 0px -10% 0px" }
     );
-    revealRefs.current.forEach((el) => observer.observe(el));
+    revealTargets.current.forEach((el) => observer.observe(el));
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("touchmove", onScroll);
       window.removeEventListener("touchstart", onFirstInteraction);
       if (raf) cancelAnimationFrame(raf);
+      clearTimeout(scrollStopTimer);
       observer.disconnect();
       video?.removeEventListener("seeked", onSeeked);
       video?.removeEventListener("canplay", unlockVideo);
     };
   }, []);
 
-  function addReveal(el) {
-    if (!el || revealSet.current.has(el)) return;
-    revealSet.current.add(el);
-    revealRefs.current.push(el);
+  function registerReveal(el) {
+    if (!el || revealRegistry.current.has(el)) return;
+    revealRegistry.current.add(el);
+    revealTargets.current.push(el);
   }
 
   function handleSubmit(e) {
@@ -402,16 +426,16 @@ function App() {
               Harvest<span>Panels</span>
             </button>
             <div className="hp-nav__links">
-              <a href="#why"     onClick={(e) => { navClick(e, "why");     setMenuOpen(false); }}>Who We Are</a>
-              <a href="#panels"  onClick={(e) => { navClick(e, "panels");  setMenuOpen(false); }}>Panels &amp; Doors</a>
-              <a href="#gallery" onClick={(e) => { navClick(e, "gallery"); setMenuOpen(false); }}>Gallery</a>
-              <a href="#faq"     onClick={(e) => { navClick(e, "faq");     setMenuOpen(false); }}>FAQ</a>
-              <a href="#contact" onClick={(e) => { navClick(e, "contact"); setMenuOpen(false); }}>Contact</a>
+              <a href="#why"     onClick={(e) => navClick(e, "why")}>Who We Are</a>
+              <a href="#panels"  onClick={(e) => navClick(e, "panels")}>Panels &amp; Doors</a>
+              <a href="#gallery" onClick={(e) => navClick(e, "gallery")}>Gallery</a>
+              <a href="#faq"     onClick={(e) => navClick(e, "faq")}>FAQ</a>
+              <a href="#contact" onClick={(e) => navClick(e, "contact")}>Contact</a>
             </div>
             <a
               href="#contact"
               className="hp-btn hp-btn--primary hp-btn--nav"
-              onClick={(e) => { navClick(e, "contact"); setMenuOpen(false); }}
+              onClick={(e) => navClick(e, "contact")}
             >
               Get a quote
             </a>
@@ -428,12 +452,12 @@ function App() {
           </div>
           {/* Mobile dropdown */}
           <div className={`hp-nav__mobile${menuOpen ? " is-open" : ""}`} aria-hidden={!menuOpen}>
-            <a href="#why"     onClick={(e) => { navClick(e, "why");     setMenuOpen(false); }}>Who We Are</a>
-            <a href="#panels"  onClick={(e) => { navClick(e, "panels");  setMenuOpen(false); }}>Panels &amp; Doors</a>
-            <a href="#gallery" onClick={(e) => { navClick(e, "gallery"); setMenuOpen(false); }}>Gallery</a>
-            <a href="#faq"     onClick={(e) => { navClick(e, "faq");     setMenuOpen(false); }}>FAQ</a>
-            <a href="#contact" onClick={(e) => { navClick(e, "contact"); setMenuOpen(false); }}>Contact</a>
-            <a href="#contact" className="hp-btn hp-btn--primary hp-nav__mobile-cta" onClick={(e) => { navClick(e, "contact"); setMenuOpen(false); }}>Get a quote</a>
+            <a href="#why"     onClick={(e) => navClick(e, "why",     () => setMenuOpen(false))}>Who We Are</a>
+            <a href="#panels"  onClick={(e) => navClick(e, "panels",  () => setMenuOpen(false))}>Panels &amp; Doors</a>
+            <a href="#gallery" onClick={(e) => navClick(e, "gallery", () => setMenuOpen(false))}>Gallery</a>
+            <a href="#faq"     onClick={(e) => navClick(e, "faq",     () => setMenuOpen(false))}>FAQ</a>
+            <a href="#contact" onClick={(e) => navClick(e, "contact", () => setMenuOpen(false))}>Contact</a>
+            <a href="#contact" className="hp-btn hp-btn--primary hp-nav__mobile-cta" onClick={(e) => navClick(e, "contact", () => setMenuOpen(false))}>Get a quote</a>
           </div>
         </div>
       </nav>
@@ -454,17 +478,17 @@ function App() {
       </div>
 
       {/* ===== CURTAIN ===== */}
-      <div className="hp-curtain-layer" ref={curtainLayerRef} aria-hidden="true">
+      <div className="hp-parallax-layer" ref={parallaxLayerRef} aria-hidden="true">
         <div
-          className="hp-curtain"
-          ref={curtainRef}
-          style={{ backgroundImage: `url(${CURTAIN_URL})` }}
+          className="hp-parallax"
+          ref={parallaxRef}
+          style={{ backgroundImage: `url(${PARALLAX_BG_URL})` }}
         />
       </div>
 
       {/* ===== HERO ===== */}
       <header className="hp-hero">
-        <div className="hp-hero__content" ref={heroTextRef}>
+        <div className="hp-hero__content" ref={heroContentRef}>
           <p className="hp-eyebrow">
             Insulated metal panels &amp; doors &middot; immediate availability
           </p>
@@ -498,18 +522,18 @@ function App() {
       <section className="hp-section" id="why">
         <div className="hp-section__inner">
           <div className="hp-glass">
-            <p className="hp-section__eyebrow hp-reveal" ref={addReveal}>Welcome</p>
-            <h2 className="hp-reveal" ref={addReveal}>Built for the way you build</h2>
+            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Welcome</p>
+            <h2 className="hp-reveal" ref={registerReveal}>Built for the way you build</h2>
             <div className="hp-cards">
-              <article className="hp-card" ref={addReveal}>
+              <article className="hp-card" ref={registerReveal}>
                 <h3>Who we are</h3>
                 <p>A global distributor of Insulated Metal Panels and Doors, offering products and installation services to the Indoor Cultivation, Industrial, Commercial, and Residential markets &mdash; a modern, energy-efficient alternative to traditional construction.</p>
               </article>
-              <article className="hp-card" ref={addReveal}>
+              <article className="hp-card" ref={registerReveal}>
                 <h3>How we work</h3>
                 <p>Budgeting, design assistance, continuous communication, and quality workmanship on every project &mdash; working alongside architects, engineers, and designers to produce beautiful, multi-functional structures.</p>
               </article>
-              <article className="hp-card" ref={addReveal}>
+              <article className="hp-card" ref={registerReveal}>
                 <h3>Product availability</h3>
                 <p>Consistent supply of pre-cut panels and doors, with custom orders typically fulfilled within 30 days. Our Oklahoma-based distribution center delivers anywhere in the U.S. within 48 hours of departure.</p>
               </article>
@@ -522,14 +546,14 @@ function App() {
       <section className="hp-section" id="panels">
         <div className="hp-section__inner">
           <div className="hp-glass">
-            <p className="hp-section__eyebrow hp-reveal" ref={addReveal}>Interior panels</p>
-            <h2 className="hp-reveal" ref={addReveal}>Indoor cultivation &amp; cold storage</h2>
+            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Interior panels</p>
+            <h2 className="hp-reveal" ref={registerReveal}>Indoor cultivation &amp; cold storage</h2>
             <div className="hp-panel-grid">
               {INTERIOR_PANELS.map((panel) => (
-                <article className="hp-panel-card hp-reveal" key={panel.name} ref={addReveal}>
+                <article className="hp-panel-card hp-reveal" key={panel.name} ref={registerReveal}>
                   <div className="hp-panel-card__img" style={{ backgroundImage: `url(${panel.img})` }} role="img" aria-label={panel.name} />
                   <div className="hp-panel-card__label">
-                    <span className="hp-panel-card__use">{panel.use}</span>
+                    <span className="hp-panel-card__use">{panel.category}</span>
                     <h3>{panel.name}</h3>
                     <p><span>{panel.desc}</span></p>
                   </div>
@@ -544,14 +568,14 @@ function App() {
       <section className="hp-section" id="exterior">
         <div className="hp-section__inner">
           <div className="hp-glass">
-            <p className="hp-section__eyebrow hp-reveal" ref={addReveal}>Exterior panels</p>
-            <h2 className="hp-reveal" ref={addReveal}>Industrial, commercial &amp; residential</h2>
+            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Exterior panels</p>
+            <h2 className="hp-reveal" ref={registerReveal}>Industrial, commercial &amp; residential</h2>
             <div className="hp-panel-grid">
               {EXTERIOR_PANELS.map((panel) => (
-                <article className="hp-panel-card hp-reveal" key={panel.name} ref={addReveal}>
+                <article className="hp-panel-card hp-reveal" key={panel.name} ref={registerReveal}>
                   <div className="hp-panel-card__img" style={{ backgroundImage: `url(${panel.img})` }} role="img" aria-label={panel.name} />
                   <div className="hp-panel-card__label">
-                    <span className="hp-panel-card__use">{panel.use}</span>
+                    <span className="hp-panel-card__use">{panel.category}</span>
                     <h3>{panel.name}</h3>
                     <p><span>{panel.desc}</span></p>
                   </div>
@@ -566,11 +590,11 @@ function App() {
       <section className="hp-section" id="gallery">
         <div className="hp-section__inner">
           <div className="hp-glass">
-            <p className="hp-section__eyebrow hp-reveal" ref={addReveal}>Photo gallery</p>
-            <h2 className="hp-reveal" ref={addReveal}>Projects from the field</h2>
+            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Photo gallery</p>
+            <h2 className="hp-reveal" ref={registerReveal}>Projects from the field</h2>
             <div className="hp-gallery-grid">
               {GALLERY_IMAGES.map((src, i) => (
-                <div className="hp-gallery-item hp-reveal" key={src} ref={addReveal}>
+                <div className="hp-gallery-item hp-reveal" key={src} ref={registerReveal}>
                   <img src={`https:${src}`} alt={`Harvest Panel Systems project ${i + 1}`} loading="lazy" decoding="async" />
                 </div>
               ))}
@@ -583,29 +607,29 @@ function App() {
       <section className="hp-section" id="faq">
         <div className="hp-section__inner">
           <div className="hp-glass">
-            <p className="hp-section__eyebrow hp-reveal" ref={addReveal}>FAQ</p>
-            <h2 className="hp-reveal" ref={addReveal}>Frequently asked questions</h2>
-            <p className="hp-faq__intro hp-reveal" ref={addReveal}>
+            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>FAQ</p>
+            <h2 className="hp-reveal" ref={registerReveal}>Frequently asked questions</h2>
+            <p className="hp-faq__intro hp-reveal" ref={registerReveal}>
               Please reach us at <a href="mailto:sales@harvestpanels.com">sales@harvestpanels.com</a> if you cannot find an answer to your question.
             </p>
             <div className="hp-faq-list">
               {FAQS.map((item, i) => {
-                const isOpen = openFaq === i;
+                const isOpen = activeFaqIndex === i;
                 const answerId = `faq-answer-${i}`;
                 return (
-                  <div className="hp-faq-item" key={item.q}>
+                  <div className="hp-faq-item" key={item.question}>
                     <button
                       type="button"
                       className="hp-faq-item__q"
-                      onClick={() => setOpenFaq(isOpen ? null : i)}
+                      onClick={() => setActiveFaqIndex(isOpen ? null : i)}
                       aria-expanded={isOpen}
                       aria-controls={answerId}
                     >
-                      {item.q}
+                      {item.question}
                       <span className="hp-faq-item__icon" aria-hidden="true">+</span>
                     </button>
                     <div id={answerId} className={`hp-faq-item__a${isOpen ? " is-open" : ""}`} aria-hidden={!isOpen}>
-                      <p>{item.a}</p>
+                      <p>{item.answer}</p>
                     </div>
                   </div>
                 );
@@ -620,10 +644,10 @@ function App() {
         <div className="hp-section__inner">
           <div className="hp-glass hp-contact__grid">
             <div className="hp-contact__info">
-              <p className="hp-section__eyebrow hp-reveal" ref={addReveal}>Contact us</p>
-              <h2 className="hp-reveal" ref={addReveal}>Email now for more information</h2>
-              <p className="hp-reveal" ref={addReveal}>Better yet, see us in person! We love our customers, so feel free to visit during normal business hours.</p>
-              <ul className="hp-contact__details hp-reveal" ref={addReveal}>
+              <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Contact us</p>
+              <h2 className="hp-reveal" ref={registerReveal}>Email now for more information</h2>
+              <p className="hp-reveal" ref={registerReveal}>Better yet, see us in person! We love our customers, so feel free to visit during normal business hours.</p>
+              <ul className="hp-contact__details hp-reveal" ref={registerReveal}>
                 <li>
                   <strong>Address</strong>
                   <span>5920 Campbell Ln, Piedmont, Oklahoma 73078, United States</span>
@@ -640,7 +664,7 @@ function App() {
             </div>
 
             {formStatus === "sent" ? (
-              <div className="hp-form-success hp-reveal" ref={addReveal} role="status" aria-live="polite">
+              <div className="hp-form-success hp-reveal" ref={registerReveal} role="status" aria-live="polite">
                 <p className="hp-form-success__title">Message sent!</p>
                 <p>Thanks for reaching out. Our team will get back to you within one business day.</p>
                 <button type="button" className="hp-btn hp-btn--ghost" onClick={() => { setFormStatus("idle"); setFormErrors({}); }}>
@@ -648,7 +672,7 @@ function App() {
                 </button>
               </div>
             ) : (
-              <form className="hp-contact__form hp-reveal" ref={addReveal} onSubmit={handleSubmit} noValidate>
+              <form className="hp-contact__form hp-reveal" ref={registerReveal} onSubmit={handleSubmit} noValidate>
                 {formStatus === "error" && (
                   <p className="hp-form-error-banner" role="alert" aria-live="assertive">
                     Please fix the errors below before submitting.
@@ -712,7 +736,7 @@ function App() {
         <p className="hp-footer__legal">
           Insulated metal panel, insulation panel, insulated panel door, pir panel, pur panel, eps panel, cannabis cultivation panel, grow room, grow house panel, Harvest Park OK, panel manufacturer.
           <br />
-          &copy; {CURRENT_YEAR} Harvest Panel Systems &mdash; All Rights Reserved. A Globus Ventures Company.
+          &copy; {CURRENT_YEAR} Harvest Panel Systems - All Rights Reserved. A Globus Ventures Company.
         </p>
       </footer>
     </div>
