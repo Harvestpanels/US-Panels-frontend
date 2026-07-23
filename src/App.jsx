@@ -93,7 +93,9 @@ const INTERIOR_PANELS = [
     name: "Indoor Cultivation",
     category: "Interior",
     desc: "An exact environment of controlled temperature, humidity, light reflection, and cleanliness — installed nationwide.",
-    img: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80",
+    // Photo: Ilnar A. Salakhiev, Wikimedia Commons, CC BY 3.0
+    // https://commons.wikimedia.org/wiki/File:Ifarm_inside_interior_New.jpg
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Ifarm_inside_interior_New.jpg/960px-Ifarm_inside_interior_New.jpg",
   },
   {
     name: "Cold Storage",
@@ -105,7 +107,8 @@ const INTERIOR_PANELS = [
     name: "Freezers",
     category: "Interior",
     desc: "Walk-in freezers and coolers built inside an existing facility or as a standalone structure, to your exact spec.",
-    img: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?auto=format&fit=crop&w=800&q=80",
+    // Photo: USDA (Lance Cheung), Wikimedia Commons, public domain
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/20170922-OSEC-LSC-0294_%2836665189353%29.jpg/960px-20170922-OSEC-LSC-0294_%2836665189353%29.jpg",
   },
 ];
 
