@@ -1,5 +1,6 @@
 ﻿import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import "./App.css";
+import logo from "./assets/us-panels-logo.png";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -10,20 +11,81 @@ const PARALLAX_BG_URL =
   "CurtainBG.png";
 
 const CURRENT_YEAR = 2022;
+const GALLERY_GAP_PX = 16;
 
 const GALLERY_IMAGES = [
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_0380.jpeg/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_4979.jpeg/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse.jpg/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/b206acf5-13ee-475b-a65d-00398f243975.JPG/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/pvc%20wall.jpg/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/37253940_l-5b6bb8e.webp/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse%202.jpg/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/74a5a362-e5c8-4ceb-a326-5fd0cd86305f%202.JPG/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/HR%20Rack1.jpg/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20ceiling.jpg/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/12863561-52d0-466e-a0fb-8253e955b2f6.JPG/:/rs=w:1300,h:800",
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/0249337c-ae22-4276-8571-5a3e234cc0fd.JPG/:/rs=w:1300,h:800",
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_0380.jpeg/:/rs=w:1300,h:800",
+    category: "Interior",
+    title: "Insulated Panel Corridor",
+    desc: "A finished interior hallway built entirely from insulated metal panels, ready for climate-controlled use.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_4979.jpeg/:/rs=w:1300,h:800",
+    category: "Production",
+    title: "Panel Fabrication Facility",
+    desc: "Inside one of our fabrication spaces where panels are prepped and staged before delivery.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse.jpg/:/rs=w:1300,h:800",
+    category: "Exterior",
+    title: "Steel Frame Under Construction",
+    desc: "The structural steel frame going up ahead of panel installation on an industrial build.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/b206acf5-13ee-475b-a65d-00398f243975.JPG/:/rs=w:1300,h:800",
+    category: "Cold Storage",
+    title: "High-Speed Roll-Up Door",
+    desc: "An insulated high-speed door installed for fast, efficient access in a cold storage environment.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/pvc%20wall.jpg/:/rs=w:1300,h:800",
+    category: "Exterior",
+    title: "Corrugated Wall Panel",
+    desc: "A durable, corrugated metal wall panel finish suited for industrial and warehouse interiors.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/37253940_l-5b6bb8e.webp/:/rs=w:1300,h:800",
+    category: "Cold Storage",
+    title: "Cold Storage Sliding Door",
+    desc: "A heavy-duty sliding door built for consistent temperature control in a cold storage facility.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse%202.jpg/:/rs=w:1300,h:800",
+    category: "Exterior",
+    title: "Structural Steel Framing",
+    desc: "A wide-span steel frame under construction, engineered to carry insulated panel cladding.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/74a5a362-e5c8-4ceb-a326-5fd0cd86305f%202.JPG/:/rs=w:1300,h:800",
+    category: "Interior",
+    title: "Modular Insulated Enclosure",
+    desc: "A compact, standalone insulated enclosure built for a specialized on-site application.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/HR%20Rack1.jpg/:/rs=w:1300,h:800",
+    category: "Interior",
+    title: "Warehouse Racking System",
+    desc: "High-density racking installed inside a panel-built warehouse for efficient storage.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20ceiling.jpg/:/rs=w:1300,h:800",
+    category: "Interior",
+    title: "Panel Ceiling Installation",
+    desc: "Insulated ceiling panels installed for full thermal envelope coverage.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/12863561-52d0-466e-a0fb-8253e955b2f6.JPG/:/rs=w:1300,h:800",
+    category: "Production",
+    title: "Panel Production Line",
+    desc: "Panels moving through production, ready for cutting, finishing, and shipment.",
+  },
+  {
+    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/0249337c-ae22-4276-8571-5a3e234cc0fd.JPG/:/rs=w:1300,h:800",
+    category: "Production",
+    title: "Finished Panel Stock",
+    desc: "Finished insulated panels staged and ready for delivery to the job site.",
+  },
 ];
 
 const INTERIOR_PANELS = [
@@ -31,19 +93,19 @@ const INTERIOR_PANELS = [
     name: "Indoor Cultivation",
     category: "Interior",
     desc: "An exact environment of controlled temperature, humidity, light reflection, and cleanliness — installed nationwide.",
-    img: "https://images.unsplash.com/photo-1466692476655-ba23cdc1c742?auto=format&fit=crop&w=800&q=80",
+    img: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80",
   },
   {
     name: "Cold Storage",
     category: "Interior",
     desc: "Built using a wide variety of insulated metal panel materials, in almost any size, height, width, or condition.",
-    img: "https://images.unsplash.com/photo-1486325212027-8081e485255e?auto=format&fit=crop&w=800&q=80",
+    img: "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80",
   },
   {
     name: "Freezers",
     category: "Interior",
     desc: "Walk-in freezers and coolers built inside an existing facility or as a standalone structure, to your exact spec.",
-    img: "https://images.unsplash.com/photo-1581093458791-9d09e1afe9d2?auto=format&fit=crop&w=800&q=80",
+    img: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?auto=format&fit=crop&w=800&q=80",
   },
 ];
 
@@ -70,20 +132,20 @@ const EXTERIOR_PANELS = [
 
 const FAQS = [
   {
-    question: "Tell me about Harvest Panel Systems?",
-    answer: "Harvest Panel Systems is a global distributor of Insulated Metal Panels and Doors, serving the Indoor Cultivation, Industrial, Commercial, and Residential markets with a modern, energy-efficient alternative to traditional construction.",
+    question: "Tell me about US Panels?",
+    answer: "US Panels is a global distributor of Insulated Metal Panels and Doors, serving the Indoor Cultivation, Industrial, Commercial, and Residential markets with a modern, energy-efficient alternative to traditional construction.",
   },
   {
-    question: "What kind of services does Harvest Panels offer?",
+    question: "What kind of services does US Panels offer?",
     answer: "We offer budgeting, design assistance, continuous communication, and quality workmanship on every Insulated Metal Panel and Door project, working alongside architects, engineers, and designers.",
   },
   {
-    question: "Does Harvest Panels provide free estimates?",
+    question: "Does US Panels provide free estimates?",
     answer: "Yes. Reach out through our contact form or by phone and our team will put together a no-cost estimate for your project.",
   },
   {
-    question: "Is Harvest Panel Systems licensed and insured?",
-    answer: "Yes, Harvest Panel Systems is fully licensed and insured for panel and door installation projects nationwide.",
+    question: "Is US Panels licensed and insured?",
+    answer: "Yes, US Panels is fully licensed and insured for panel and door installation projects nationwide.",
   },
   {
     question: "Who uses Insulated Metal Panels?",
@@ -214,11 +276,80 @@ function App() {
 
   const revealRegistry = useRef(new Set());
   const revealTargets = useRef([]);
+  const galleryViewportRef = useRef(null);
 
   const [activeFaqIndex, setActiveFaqIndex] = useState(null);
   const [formStatus, setFormStatus] = useState("idle");
   const [formErrors, setFormErrors] = useState({});
   const [menuOpen, setMenuOpen] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  const [galleryCols, setGalleryCols] = useState(3);
+  const [galleryStepPx, setGalleryStepPx] = useState(0);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  useEffect(() => {
+    const queries = [
+      window.matchMedia("(max-width: 640px)"),
+      window.matchMedia("(max-width: 1024px)"),
+    ];
+
+    function updateCols() {
+      const cols = queries[0].matches ? 1 : queries[1].matches ? 2 : 3;
+      setGalleryCols(cols);
+      setGalleryIndex((i) => Math.min(i, Math.max(0, GALLERY_IMAGES.length - cols)));
+    }
+
+    updateCols();
+    queries.forEach((mq) => mq.addEventListener("change", updateCols));
+    return () => queries.forEach((mq) => mq.removeEventListener("change", updateCols));
+  }, []);
+
+  // Measure the real rendered width so the slide offset is computed in px —
+  // a transform translateX(%) would be relative to the (much wider) track's
+  // own width, not the visible viewport, so it can't be used here.
+  useEffect(() => {
+    const viewport = galleryViewportRef.current;
+    if (!viewport) return;
+
+    function measure() {
+      const width = viewport.offsetWidth;
+      const itemWidth = (width - GALLERY_GAP_PX * (galleryCols - 1)) / galleryCols;
+      setGalleryStepPx(itemWidth + GALLERY_GAP_PX);
+    }
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, [galleryCols]);
+
+  const galleryMaxIndex = Math.max(0, GALLERY_IMAGES.length - galleryCols);
+  const galleryNext = () => setGalleryIndex((i) => Math.min(i + 1, galleryMaxIndex));
+  const galleryPrev = () => setGalleryIndex((i) => Math.max(i - 1, 0));
+  const openLightbox = (i) => { setLightboxIndex(i); setLightboxOpen(true); };
+  const closeLightbox = () => setLightboxOpen(false);
+  const lightboxNext = () => setLightboxIndex((i) => Math.min(i + 1, GALLERY_IMAGES.length - 1));
+  const lightboxPrev = () => setLightboxIndex((i) => Math.max(i - 1, 0));
+
+  // Keyboard navigation + scroll lock while the lightbox is open
+  useEffect(() => {
+    if (!lightboxOpen) return;
+
+    function onKeyDown(e) {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowRight") lightboxNext();
+      else if (e.key === "ArrowLeft") lightboxPrev();
+    }
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [lightboxOpen]);
 
   useLayoutEffect(() => {
     const y = window.scrollY;
@@ -421,9 +552,9 @@ function App() {
             <button
               className="hp-logo"
               onClick={scrollToTop}
-              aria-label="Harvest Panel Systems — scroll to top"
+              aria-label="US Panels — scroll to top"
             >
-              Harvest<span>Panels</span>
+              <img src={logo} alt="US Panels" className="hp-logo__img" />
             </button>
             <div className="hp-nav__links">
               <a href="#why"     onClick={(e) => navClick(e, "why")}>Who We Are</a>
@@ -434,7 +565,7 @@ function App() {
             </div>
             <a
               href="#contact"
-              className="hp-btn hp-btn--primary hp-btn--nav"
+              className="hp-nav__quote"
               onClick={(e) => navClick(e, "contact")}
             >
               Get a quote
@@ -457,7 +588,7 @@ function App() {
             <a href="#gallery" onClick={(e) => navClick(e, "gallery", () => setMenuOpen(false))}>Gallery</a>
             <a href="#faq"     onClick={(e) => navClick(e, "faq",     () => setMenuOpen(false))}>FAQ</a>
             <a href="#contact" onClick={(e) => navClick(e, "contact", () => setMenuOpen(false))}>Contact</a>
-            <a href="#contact" className="hp-btn hp-btn--primary hp-nav__mobile-cta" onClick={(e) => navClick(e, "contact", () => setMenuOpen(false))}>Get a quote</a>
+            <a href="#contact" className="hp-nav__quote hp-nav__mobile-cta" onClick={(e) => navClick(e, "contact", () => setMenuOpen(false))}>Get a quote</a>
           </div>
         </div>
       </nav>
@@ -498,7 +629,7 @@ function App() {
             Smarter solutions.
           </h1>
           <p className="hp-hero__sub">
-            Harvest Panel Systems is a global distributor of Insulated Metal
+            US Panels is a global distributor of Insulated Metal
             Panels and Doors for Indoor Cultivation, Industrial, Commercial, and
             Residential projects.
           </p>
@@ -590,14 +721,58 @@ function App() {
       <section className="hp-section" id="gallery">
         <div className="hp-section__inner">
           <div className="hp-glass">
-            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Photo gallery</p>
-            <h2 className="hp-reveal" ref={registerReveal}>Projects from the field</h2>
-            <div className="hp-gallery-grid">
-              {GALLERY_IMAGES.map((src, i) => (
-                <div className="hp-gallery-item hp-reveal" key={src} ref={registerReveal}>
-                  <img src={`https:${src}`} alt={`Harvest Panel Systems project ${i + 1}`} loading="lazy" decoding="async" />
-                </div>
-              ))}
+            <div className="hp-gallery-header">
+              <div>
+                <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Photo gallery</p>
+                <h2 className="hp-reveal" ref={registerReveal}>Projects from the field</h2>
+              </div>
+              <div className="hp-gallery-header__nav hp-reveal" ref={registerReveal}>
+                <button
+                  type="button"
+                  className="hp-gallery-nav hp-gallery-nav--prev"
+                  onClick={galleryPrev}
+                  disabled={galleryIndex === 0}
+                  aria-label="Previous photos"
+                >
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+                <button
+                  type="button"
+                  className="hp-gallery-nav hp-gallery-nav--next"
+                  onClick={galleryNext}
+                  disabled={galleryIndex >= galleryMaxIndex}
+                  aria-label="Next photos"
+                >
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="hp-gallery-viewport hp-reveal" ref={(el) => { galleryViewportRef.current = el; registerReveal(el); }}>
+              <div
+                className="hp-gallery-track"
+                style={{
+                  transform: `translateX(-${galleryIndex * galleryStepPx}px)`,
+                  "--cols": galleryCols,
+                }}
+              >
+                {GALLERY_IMAGES.map((img, i) => (
+                  <button
+                    type="button"
+                    className="hp-gallery-card"
+                    key={img.src}
+                    onClick={() => openLightbox(i)}
+                    aria-label={`View "${img.title}" full screen`}
+                  >
+                    <img src={`https:${img.src}`} alt={img.title} loading="lazy" decoding="async" />
+                    <span className="hp-gallery-card__label">
+                      <span className="hp-gallery-card__use">{img.category}</span>
+                      <span className="hp-gallery-card__caption">{img.title}</span>
+                      <span className="hp-gallery-card__desc"><span>{img.desc}</span></span>
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -610,7 +785,7 @@ function App() {
             <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>FAQ</p>
             <h2 className="hp-reveal" ref={registerReveal}>Frequently asked questions</h2>
             <p className="hp-faq__intro hp-reveal" ref={registerReveal}>
-              Please reach us at <a href="mailto:sales@harvestpanels.com">sales@harvestpanels.com</a> if you cannot find an answer to your question.
+              Please reach us at <a href="mailto:sales@uspanels.com">sales@uspanels.com</a> if you cannot find an answer to your question.
             </p>
             <div className="hp-faq-list">
               {FAQS.map((item, i) => {
@@ -658,7 +833,7 @@ function App() {
                 </li>
                 <li>
                   <strong>Email</strong>
-                  <span><a href="mailto:Sales@harvestpanels.com">Sales@harvestpanels.com</a></span>
+                  <span><a href="mailto:Sales@uspanels.com">Sales@uspanels.com</a></span>
                 </li>
               </ul>
             </div>
@@ -698,7 +873,7 @@ function App() {
                 <input id="f-attachment" type="file" name="attachment" accept=".pdf,.dwg,.png,.jpg,.jpeg" className="hp-file-input" />
 
                 <button type="submit" className="hp-btn hp-btn--primary">Send message</button>
-                <p className="hp-contact__legal">By submitting this form you agree to be contacted by Harvest Panel Systems regarding your inquiry.</p>
+                <p className="hp-contact__legal">By submitting this form you agree to be contacted by US Panels regarding your inquiry.</p>
               </form>
             )}
           </div>
@@ -709,36 +884,85 @@ function App() {
       <footer className="hp-footer">
         <div className="hp-footer__inner">
           <div>
-            <button className="hp-logo hp-logo--footer" onClick={scrollToTop} aria-label="Harvest Panel Systems — scroll to top">
-              Harvest<span>Panels</span>
+            <button className="hp-logo hp-logo--footer" onClick={scrollToTop} aria-label="US Panels — scroll to top">
+              <img src={logo} alt="US Panels" className="hp-logo__img" />
             </button>
             <p>5920 Campbell Ln, Piedmont, Oklahoma 73078, United States</p>
             <p>
               <a href="tel:4057231220">(405) 723-1220</a> &middot;{" "}
-              <a href="mailto:Sales@harvestpanels.com">Sales@harvestpanels.com</a>
+              <a href="mailto:Sales@uspanels.com">Sales@uspanels.com</a>
             </p>
           </div>
           <div className="hp-footer__social" aria-label="Social media links">
-            <a href="https://www.facebook.com/people/Harvest-Panels/61555678774736/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <a href="https://www.facebook.com/people/US-Panels/61555678774736/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" /></svg>
             </a>
-            <a href="https://www.instagram.com/harvestpanels/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <a href="https://www.instagram.com/uspanels/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" /></svg>
             </a>
-            <a href="https://www.tiktok.com/@harvestpanels" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <a href="https://www.tiktok.com/@uspanels" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
               <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true"><path d="M16.6 5.82s.51.5 0 0A4.278 4.278 0 0115.54 3h-3.09v12.4a2.592 2.592 0 01-2.59 2.5c-1.42 0-2.6-1.16-2.6-2.6 0-1.72 1.66-3.01 3.37-2.48V9.66c-3.45-.46-6.47 2.22-6.47 5.64 0 3.33 2.76 5.7 5.69 5.7 3.14 0 5.69-2.55 5.69-5.7V9.01a7.35 7.35 0 004.3 1.38V7.3s-1.88.09-3.24-1.48z" /></svg>
             </a>
-            <a href="https://x.com/harvestpanels" target="_blank" rel="noopener noreferrer" aria-label="X (formerly Twitter)">
+            <a href="https://x.com/uspanels" target="_blank" rel="noopener noreferrer" aria-label="X (formerly Twitter)">
               <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" /></svg>
             </a>
           </div>
         </div>
         <p className="hp-footer__legal">
-          Insulated metal panel, insulation panel, insulated panel door, pir panel, pur panel, eps panel, cannabis cultivation panel, grow room, grow house panel, Harvest Park OK, panel manufacturer.
+          Insulated metal panel, insulation panel, insulated panel door, pir panel, pur panel, eps panel, data center facilities, controlled environment agriculture (CEA), cold storage, grow room, grow house panel, Piedmont OK, panel manufacturer.
           <br />
-          &copy; {CURRENT_YEAR} Harvest Panel Systems - All Rights Reserved. A Globus Ventures Company.
+          &copy; {CURRENT_YEAR} US Panels - All Rights Reserved. A Globus Ventures Company.
         </p>
       </footer>
+
+      {/* ===== GALLERY LIGHTBOX ===== */}
+      {lightboxOpen && (
+        <div
+          className="hp-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={GALLERY_IMAGES[lightboxIndex].title}
+          onClick={(e) => { if (e.target === e.currentTarget) closeLightbox(); }}
+        >
+          <button type="button" className="hp-lightbox__close" onClick={closeLightbox} aria-label="Close">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" /></svg>
+          </button>
+
+          <button
+            type="button"
+            className="hp-lightbox__nav hp-lightbox__nav--prev"
+            onClick={lightboxPrev}
+            disabled={lightboxIndex === 0}
+            aria-label="Previous photo"
+          >
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+
+          <figure className="hp-lightbox__figure">
+            <img
+              key={lightboxIndex}
+              src={`https:${GALLERY_IMAGES[lightboxIndex].src}`}
+              alt={GALLERY_IMAGES[lightboxIndex].title}
+            />
+            <span className="hp-lightbox__count">{lightboxIndex + 1} / {GALLERY_IMAGES.length}</span>
+            <figcaption>
+              <span className="hp-lightbox__use">{GALLERY_IMAGES[lightboxIndex].category}</span>
+              <span className="hp-lightbox__title">{GALLERY_IMAGES[lightboxIndex].title}</span>
+              <span className="hp-lightbox__desc">{GALLERY_IMAGES[lightboxIndex].desc}</span>
+            </figcaption>
+          </figure>
+
+          <button
+            type="button"
+            className="hp-lightbox__nav hp-lightbox__nav--next"
+            onClick={lightboxNext}
+            disabled={lightboxIndex >= GALLERY_IMAGES.length - 1}
+            aria-label="Next photo"
+          >
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 }
