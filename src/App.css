@@ -1287,11 +1287,11 @@ h3 {
 
 /* Only the open (X / close) state gets hover/press feedback */
 .hp-nav--open .hp-nav__hamburger:hover {
-  transform: scale(1.08) rotate(90deg);
+  transform: scale(1.08);
 }
 
 .hp-nav--open .hp-nav__hamburger:active {
-  transform: scale(0.94) rotate(90deg);
+  transform: scale(0.94);
 }
 
 .hp-nav__hamburger-icon {
