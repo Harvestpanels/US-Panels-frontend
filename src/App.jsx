@@ -642,7 +642,7 @@ function App() {
               className="hp-btn hp-btn--primary"
               onClick={(e) => navClick(e, "panels")}
             >
-              Shop panels <span aria-hidden="true">&rarr;</span>
+              Shop panels
             </a>
             <a href="tel:4057231220" className="hp-btn hp-btn--ghost">
               Call today: (405) 723-1220
