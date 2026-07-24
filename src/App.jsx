@@ -7,7 +7,7 @@ import logo from "./assets/us-panels-logo.png";
 // ---------------------------------------------------------------------------
 
 const VIDEO_URL = "/skies.mp4";
-const PARALLAX_BG_URL = "/US%20Panels%20Facility.png";
+const PARALLAX_BG_URL = "/US%20Panels%20Facility%20Banner.png";
 
 const CURRENT_YEAR = 2022;
 const GALLERY_GAP_PX = 16;
