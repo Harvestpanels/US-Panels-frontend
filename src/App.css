@@ -284,12 +284,10 @@ h3 {
   width: 100%;
   height: 100%;
   background-size: cover;
-  /* This asset is pre-cropped to a tight banner around the logo (see
-     scripts used to generate US Panels Facility Banner.png), so a mild
-     left bias is enough to keep it in frame on narrow/tall viewports —
-     unlike the full building photo, there's very little vertical
-     content left to lose to center-cover cropping. */
-  background-position: 30% center;
+  /* Biased toward the logo signage on the building (upper-left third of
+     the source photo) so it stays in frame on narrow/tall viewports
+     instead of getting cropped out by center-cover. */
+  background-position: 25% 20%;
   will-change: transform;
   transform: translate3d(0, 0%, 0);
   filter: grayscale(0.25) brightness(0.7);
