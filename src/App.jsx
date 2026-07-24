@@ -92,40 +92,46 @@ const BUILDING_ENVELOPE_PANELS = [
     name: "Industrial",
     category: "Building Envelope",
     desc: "From a 2,000 sqft shop to a 200,000 sqft factory, insulated metal panels save time and money on every build.",
-    img: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=800&q=80",
+    // Photo: US Panels project photo — steel frame under construction
+    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse.jpg/:/rs=w:800,h:1000",
   },
   {
     name: "Commercial",
     category: "Building Envelope",
     desc: "Commercial facilities need to look good and perform well. Insulated metal panels deliver both.",
-    img: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=800&q=80",
+    // Photo: US Panels facility building
+    img: "/US%20Panels%20Facility.png",
   },
   {
     name: "Residential",
     category: "Building Envelope",
     desc: "Single-family, multi-family, stand-alone, or connected — a great option for your next residential project.",
-    img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
+    // Photo: Wikimedia Commons, public domain — https://commons.wikimedia.org/wiki/File:Big_single-family_home_2.jpg
+    img: "https://upload.wikimedia.org/wikipedia/commons/a/af/Big_single-family_home_2.jpg",
   },
 ];
 
-const EXTERIOR_PANELS = [
+const ROOF_PANELS = [
   {
-    name: "Industrial",
-    category: "Exterior",
-    desc: "From a 2,000 sqft shop to a 200,000 sqft factory, insulated metal panels save time and money on every build.",
-    img: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=800&q=80",
+    name: "Corrugated Roof Panels",
+    category: "Roof",
+    desc: "A ribbed metal profile that sheds water fast and holds up to decades of weather with minimal maintenance.",
+    // Photo: Wikimedia Commons, CC0 — https://commons.wikimedia.org/wiki/File:Barn_roof_in_sunlight_(30228844686).jpg
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Barn_roof_in_sunlight_%2830228844686%29.jpg/960px-Barn_roof_in_sunlight_%2830228844686%29.jpg",
   },
   {
-    name: "Commercial",
-    category: "Exterior",
-    desc: "Commercial facilities need to look good and perform well. Insulated metal panels deliver both.",
-    img: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=800&q=80",
+    name: "Structural Roof Framing",
+    category: "Roof",
+    desc: "Purlins and framing go up first, engineered to carry the insulated roof panel system above.",
+    // Photo: US Panels project photo — roof structure under construction
+    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse%202.jpg/:/rs=w:800,h:1000",
   },
   {
-    name: "Residential",
-    category: "Exterior",
-    desc: "Single-family, multi-family, stand-alone, or connected — a great option for your next residential project.",
-    img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
+    name: "Standing Seam Roof Panels",
+    category: "Roof",
+    desc: "Concealed fasteners and clean vertical seams for a sleek, low-maintenance roofline on any building.",
+    // Photo: US Panels facility building
+    img: "/US%20Panels%20Facility.png",
   },
 ];
 
@@ -694,14 +700,14 @@ function App() {
         </div>
       </section>
 
-      {/* ===== EXTERIOR PANELS ===== */}
+      {/* ===== ROOF PANELS ===== */}
       <section className="hp-section" id="exterior">
         <div className="hp-section__inner">
           <div className="hp-glass">
-            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Exterior panels</p>
-            <h2 className="hp-reveal" ref={registerReveal}>Industrial, commercial &amp; residential</h2>
+            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Roof panels</p>
+            <h2 className="hp-reveal" ref={registerReveal}>Roof panels built to complete the envelope</h2>
             <div className="hp-panel-grid">
-              {EXTERIOR_PANELS.map((panel) => (
+              {ROOF_PANELS.map((panel) => (
                 <article className="hp-panel-card hp-reveal" key={panel.name} ref={registerReveal}>
                   <div className="hp-panel-card__img" style={{ backgroundImage: `url(${panel.img})` }} role="img" aria-label={panel.name} />
                   <div className="hp-panel-card__label">
