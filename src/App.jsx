@@ -563,7 +563,7 @@ function App() {
             </button>
             <div className="hp-nav__links">
               <a href="#why"     onClick={(e) => navClick(e, "why")}>Who We Are</a>
-              <a href="#panels"  onClick={(e) => navClick(e, "panels")}>Panels &amp; Doors</a>
+              <a href="#panels"  onClick={(e) => navClick(e, "panels")}>Panels &amp; Roofs</a>
               <a href="#gallery" onClick={(e) => navClick(e, "gallery")}>Gallery</a>
               <a href="#faq"     onClick={(e) => navClick(e, "faq")}>FAQ</a>
               <a href="#contact" onClick={(e) => navClick(e, "contact")}>Contact</a>
@@ -591,7 +591,7 @@ function App() {
           {/* Mobile dropdown */}
           <div className={`hp-nav__mobile${menuOpen ? " is-open" : ""}`} aria-hidden={!menuOpen}>
             <a href="#why"     onClick={(e) => navClick(e, "why",     () => setMenuOpen(false))}>Who We Are</a>
-            <a href="#panels"  onClick={(e) => navClick(e, "panels",  () => setMenuOpen(false))}>Panels &amp; Doors</a>
+            <a href="#panels"  onClick={(e) => navClick(e, "panels",  () => setMenuOpen(false))}>Panels &amp; Roofs</a>
             <a href="#gallery" onClick={(e) => navClick(e, "gallery", () => setMenuOpen(false))}>Gallery</a>
             <a href="#faq"     onClick={(e) => navClick(e, "faq",     () => setMenuOpen(false))}>FAQ</a>
             <a href="#contact" onClick={(e) => navClick(e, "contact", () => setMenuOpen(false))}>Contact</a>
