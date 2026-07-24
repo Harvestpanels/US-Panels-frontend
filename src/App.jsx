@@ -88,27 +88,27 @@ const GALLERY_IMAGES = [
   },
 ];
 
-const INTERIOR_PANELS = [
+const BUILDING_ENVELOPE_PANELS = [
   {
-    name: "Indoor Cultivation",
-    category: "Interior",
-    desc: "An exact environment of controlled temperature, humidity, light reflection, and cleanliness — installed nationwide.",
-    // Photo: Ilnar A. Salakhiev, Wikimedia Commons, CC BY 3.0
-    // https://commons.wikimedia.org/wiki/File:Ifarm_inside_interior_New.jpg
-    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Ifarm_inside_interior_New.jpg/960px-Ifarm_inside_interior_New.jpg",
+    name: "Flush Wall Panels",
+    category: "Building Envelope",
+    desc: "A smooth, seamless face with minimal visible joints — a clean architectural look for sanitation-sensitive and food-grade environments.",
+    // Photo: US Panels project photo — flush insulated wall panel modular enclosure
+    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/74a5a362-e5c8-4ceb-a326-5fd0cd86305f%202.JPG/:/rs=w:800,h:1000",
   },
   {
-    name: "Cold Storage",
-    category: "Interior",
-    desc: "Built using a wide variety of insulated metal panel materials, in almost any size, height, width, or condition.",
-    img: "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=800&q=80",
+    name: "Corrugated Wall Panels",
+    category: "Building Envelope",
+    desc: "A ribbed profile that adds rigidity and a classic industrial appearance, built to hold up under everyday wear.",
+    // Photo: US Panels project photo — corrugated insulated wall panel installation
+    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/pvc%20wall.jpg/:/rs=w:800,h:1000",
   },
   {
-    name: "Freezers",
-    category: "Interior",
-    desc: "Walk-in freezers and coolers built inside an existing facility or as a standalone structure, to your exact spec.",
-    // Photo: USDA (Lance Cheung), Wikimedia Commons, public domain
-    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/20170922-OSEC-LSC-0294_%2836665189353%29.jpg/960px-20170922-OSEC-LSC-0294_%2836665189353%29.jpg",
+    name: "Insulated Wall Panels",
+    category: "Building Envelope",
+    desc: "The building envelope in a single panel — structure, insulation, and finish combined into one fast, energy-efficient install.",
+    // Photo: US Panels project photo — insulated wall panel corridor
+    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_0380.jpeg/:/rs=w:800,h:1000",
   },
 ];
 
@@ -676,14 +676,14 @@ function App() {
         </div>
       </section>
 
-      {/* ===== INTERIOR PANELS ===== */}
+      {/* ===== BUILDING ENVELOPE ===== */}
       <section className="hp-section" id="panels">
         <div className="hp-section__inner">
           <div className="hp-glass">
-            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Interior panels</p>
-            <h2 className="hp-reveal" ref={registerReveal}>Indoor cultivation &amp; cold storage</h2>
+            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Building envelope</p>
+            <h2 className="hp-reveal" ref={registerReveal}>Wall panels engineered as your building envelope</h2>
             <div className="hp-panel-grid">
-              {INTERIOR_PANELS.map((panel) => (
+              {BUILDING_ENVELOPE_PANELS.map((panel) => (
                 <article className="hp-panel-card hp-reveal" key={panel.name} ref={registerReveal}>
                   <div className="hp-panel-card__img" style={{ backgroundImage: `url(${panel.img})` }} role="img" aria-label={panel.name} />
                   <div className="hp-panel-card__label">
