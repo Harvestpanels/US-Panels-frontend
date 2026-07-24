@@ -1285,12 +1285,12 @@ h3 {
   transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), background 0.2s ease;
 }
 
-/* Only the open (X / close) state gets hover/press feedback */
-.hp-nav--open .hp-nav__hamburger:hover {
-  transform: scale(1.08);
+/* Whole button scales up on hover, in either state */
+.hp-nav__hamburger:hover {
+  transform: scale(1.1);
 }
 
-.hp-nav--open .hp-nav__hamburger:active {
+.hp-nav__hamburger:active {
   transform: scale(0.94);
 }
 
@@ -1301,9 +1301,7 @@ h3 {
   transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1), filter 0.25s ease;
 }
 
-/* Same hover feel as the nav logo — scale up with a soft drop-shadow */
-.hp-nav__hamburger:not(.is-open):hover .hp-nav__hamburger-icon {
-  transform: scale(1.1);
+.hp-nav__hamburger:hover .hp-nav__hamburger-icon {
   filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.4));
 }
 
