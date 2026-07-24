@@ -1050,9 +1050,33 @@ h3 {
   border: 1px solid rgba(20, 30, 50, 0.14);
   border-radius: 6px;
   padding: 11px 14px;
-  resize: vertical;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   margin-top: 6px;
+}
+
+.hp-contact__form textarea {
+  resize: none;
+  height: 120px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(20, 30, 50, 0.3) transparent;
+}
+
+.hp-contact__form textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hp-contact__form textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hp-contact__form textarea::-webkit-scrollbar-thumb {
+  background: rgba(20, 30, 50, 0.25);
+  border-radius: 999px;
+}
+
+.hp-contact__form textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 30, 50, 0.4);
 }
 
 .hp-contact__form input:focus,
