@@ -1022,12 +1022,7 @@ h3 {
   color: #4a8fd6;
 }
 
-.hp-contact__details li > span {
-  color: #14213a;
-}
-
 .hp-contact__details a {
-  color: #14213a;
   transition: color 0.2s ease;
 }
 
