@@ -1242,7 +1242,7 @@ h3 {
 }
 
 /* True brand colors on hover for each platform */
-.hp-footer__social a[aria-label="Facebook"]:hover { color: #1877f2; }
+.hp-footer__social a[aria-label="Facebook"]:hover { color: #4a9aff; }
 .hp-footer__social a[aria-label="Instagram"]:hover { color: #e1306c; }
 .hp-footer__social a[aria-label="TikTok"]:hover { color: #000000; }
 .hp-footer__social a[aria-label="X (formerly Twitter)"]:hover { color: #1da1f2; }
