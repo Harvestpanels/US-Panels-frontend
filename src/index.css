@@ -5,15 +5,14 @@
 */
 
 :root {
-  /* Site is light-themed — tell the browser so native UI elements
-     (scrollbars, date pickers, etc.) render light by default and the
-     browser's very first paint (before any CSS loads) isn't black. */
-  color-scheme: light;
+  /* Tell the browser this is a dark-only site so native UI elements
+     (scrollbars, date pickers, etc.) render dark by default and never
+     flash white on paint. */
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
-  background: #f3f1ec;
   /* Sub-pixel font rendering on macOS / iOS */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
