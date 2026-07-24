@@ -1298,7 +1298,13 @@ h3 {
   width: 48px;
   height: auto;
   object-fit: contain;
-  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1), filter 0.25s ease;
+}
+
+/* Same hover feel as the nav logo — scale up with a soft drop-shadow */
+.hp-nav__hamburger:not(.is-open):hover .hp-nav__hamburger-icon {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.4));
 }
 
 .hp-nav__hamburger.is-open .hp-nav__hamburger-icon {
