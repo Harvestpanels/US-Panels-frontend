@@ -89,25 +89,22 @@ const GALLERY_IMAGES = [
 
 const BUILDING_ENVELOPE_PANELS = [
   {
-    name: "Structural Framing",
+    name: "Industrial",
     category: "Building Envelope",
-    desc: "The steel frame goes up first, engineered to carry the insulated panel envelope from the ground up.",
-    // Photo: US Panels project photo — steel frame under construction
-    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse.jpg/:/rs=w:800,h:1000",
+    desc: "From a 2,000 sqft shop to a 200,000 sqft factory, insulated metal panels save time and money on every build.",
+    img: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=800&q=80",
   },
   {
-    name: "Site Assembly",
+    name: "Commercial",
     category: "Building Envelope",
-    desc: "Framing complete and the site prepped, ready for the panel envelope to go up wall by wall.",
-    // Photo: US Panels project photo — steel frame under construction, interior view
-    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse%202.jpg/:/rs=w:800,h:1000",
+    desc: "Commercial facilities need to look good and perform well. Insulated metal panels deliver both.",
+    img: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?auto=format&fit=crop&w=800&q=80",
   },
   {
-    name: "Panel Installation",
+    name: "Residential",
     category: "Building Envelope",
-    desc: "Panels are lifted and fastened into place, sealing the building envelope as installation moves down the wall.",
-    // Photo: US Panels project photo — wall panel installation in progress
-    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_4979.jpeg/:/rs=w:800,h:1000",
+    desc: "Single-family, multi-family, stand-alone, or connected — a great option for your next residential project.",
+    img: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",
   },
 ];
 
