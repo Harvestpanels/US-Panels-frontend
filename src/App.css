@@ -1067,7 +1067,39 @@ h3 {
   border-color: #e0453d;
 }
 
-.hp-file-input { padding: 8px 14px; cursor: pointer; }
+.hp-file-input {
+  padding: 8px 14px;
+  cursor: pointer;
+  color: rgba(20, 30, 50, 0.6);
+  font-size: 14px;
+}
+
+/* Style the native "choose file" button consistently across browsers/devices —
+   otherwise it renders as each OS's default button style. */
+.hp-file-input::file-selector-button,
+.hp-file-input::-webkit-file-upload-button {
+  margin-right: 12px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 999px;
+  background: #14213a;
+  color: #f3f1ec;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hp-file-input:hover::file-selector-button,
+.hp-file-input:hover::-webkit-file-upload-button {
+  background: #1f3050;
+}
+
+.hp-file-input:active::file-selector-button,
+.hp-file-input:active::-webkit-file-upload-button {
+  transform: scale(0.97);
+}
 
 .hp-contact__form .hp-btn { margin-top: 10px; align-self: flex-start; }
 
