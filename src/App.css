@@ -284,7 +284,10 @@ h3 {
   width: 100%;
   height: 100%;
   background-size: cover;
-  background-position: center;
+  /* Biased toward the logo signage on the building (upper-left third of
+     the source photo) so it stays in frame on narrow/tall viewports
+     instead of getting cropped out by center-cover. */
+  background-position: 25% 20%;
   will-change: transform;
   transform: translate3d(0, 0%, 0);
   filter: grayscale(0.25) brightness(0.7);
