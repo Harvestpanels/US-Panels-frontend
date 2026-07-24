@@ -33,21 +33,21 @@ const GALLERY_IMAGES = [
   },
   {
     src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/b206acf5-13ee-475b-a65d-00398f243975.JPG/:/rs=w:1300,h:800",
-    category: "Cold Storage",
+    category: "Exterior",
     title: "High-Speed Roll-Up Door",
-    desc: "An insulated high-speed door installed for fast, efficient access in a cold storage environment.",
+    desc: "An insulated high-speed door built for fast, efficient access on any exterior loading dock.",
   },
   {
     src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/pvc%20wall.jpg/:/rs=w:1300,h:800",
     category: "Exterior",
     title: "Corrugated Wall Panel",
-    desc: "A durable, corrugated metal wall panel finish suited for industrial and warehouse interiors.",
+    desc: "A durable, corrugated metal wall panel finish suited for industrial and warehouse exteriors.",
   },
   {
     src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/37253940_l-5b6bb8e.webp/:/rs=w:1300,h:800",
-    category: "Cold Storage",
-    title: "Cold Storage Sliding Door",
-    desc: "A heavy-duty sliding door built for consistent temperature control in a cold storage facility.",
+    category: "Exterior",
+    title: "Insulated Sliding Door",
+    desc: "A heavy-duty sliding door built for consistent temperature control and secure exterior access.",
   },
   {
     src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse%202.jpg/:/rs=w:1300,h:800",
@@ -135,7 +135,7 @@ const EXTERIOR_PANELS = [
 const FAQS = [
   {
     question: "Tell me about US Panels?",
-    answer: "US Panels is a global distributor of Insulated Metal Panels and Doors, serving the Indoor Cultivation, Industrial, Commercial, and Residential markets with a modern, energy-efficient alternative to traditional construction.",
+    answer: "US Panels is a global distributor of exterior Insulated Metal Panels and Doors, serving the Industrial, Commercial, and Residential markets with a modern, energy-efficient alternative to traditional construction.",
   },
   {
     question: "What kind of services does US Panels offer?",
@@ -151,7 +151,7 @@ const FAQS = [
   },
   {
     question: "Who uses Insulated Metal Panels?",
-    answer: "Indoor cultivation facilities, cold storage and freezer operators, industrial and commercial builders, and residential developers all rely on insulated metal panels.",
+    answer: "Industrial and commercial builders, general contractors, and residential developers all rely on insulated metal panels for a fast, energy-efficient building envelope.",
   },
   {
     question: "How are Panels constructed?",
@@ -631,8 +631,8 @@ function App() {
             Smarter solutions.
           </h1>
           <p className="hp-hero__sub">
-            US Panels is a global distributor of Insulated Metal
-            Panels and Doors for Indoor Cultivation, Industrial, Commercial, and
+            US Panels is a global distributor of exterior Insulated Metal
+            Panels and Doors for Industrial, Commercial, and
             Residential projects.
           </p>
           <div className="hp-hero__ctas">
@@ -660,7 +660,7 @@ function App() {
             <div className="hp-cards">
               <article className="hp-card" ref={registerReveal}>
                 <h3>Who we are</h3>
-                <p>A global distributor of Insulated Metal Panels and Doors, offering products and installation services to the Indoor Cultivation, Industrial, Commercial, and Residential markets &mdash; a modern, energy-efficient alternative to traditional construction.</p>
+                <p>A global distributor of exterior Insulated Metal Panels and Doors, offering products and installation services to the Industrial, Commercial, and Residential markets &mdash; a modern, energy-efficient alternative to traditional construction.</p>
               </article>
               <article className="hp-card" ref={registerReveal}>
                 <h3>How we work</h3>
@@ -911,7 +911,7 @@ function App() {
           </div>
         </div>
         <p className="hp-footer__legal">
-          Insulated metal panel, insulation panel, insulated panel door, pir panel, pur panel, eps panel, data center facilities, controlled environment agriculture (CEA), cold storage, grow room, grow house panel, Piedmont OK, panel manufacturer.
+          Insulated metal panel, exterior wall panel, insulated panel door, pir panel, pur panel, eps panel, metal building envelope, industrial building panel, commercial building panel, Piedmont OK, panel manufacturer.
           <br />
           &copy; {CURRENT_YEAR} US Panels - All Rights Reserved. A Globus Ventures Company.
         </p>
