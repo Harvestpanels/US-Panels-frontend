@@ -1,6 +1,7 @@
 ﻿import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import "./App.css";
 import logo from "./assets/us-panels-logo.png";
+import logoIcon from "./assets/us-panels-icon.png";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -576,14 +577,16 @@ function App() {
               Get a quote
             </a>
             <button
-              className="hp-nav__hamburger"
+              className={`hp-nav__hamburger${menuOpen ? " is-open" : ""}`}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((o) => !o)}
             >
-              <span />
-              <span />
-              <span />
+              <img src={logoIcon} alt="" className="hp-nav__hamburger-icon" />
+              <span className="hp-nav__hamburger-close">
+                <span />
+                <span />
+              </span>
             </button>
           </div>
           {/* Mobile dropdown */}
