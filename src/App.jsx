@@ -1,7 +1,6 @@
 ﻿import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import "./App.css";
 import logo from "./assets/us-panels-logo.png";
-import logoIcon from "./assets/us-panels-icon.png";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -582,7 +581,7 @@ function App() {
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((o) => !o)}
             >
-              <img src={logoIcon} alt="" className="hp-nav__hamburger-icon" />
+              <img src={logo} alt="" className="hp-nav__hamburger-icon" />
               <span className="hp-nav__hamburger-close">
                 <span />
                 <span />

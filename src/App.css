@@ -1295,8 +1295,8 @@ h3 {
 }
 
 .hp-nav__hamburger-icon {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: auto;
   object-fit: contain;
   transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
 }
