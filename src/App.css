@@ -1285,12 +1285,17 @@ h3 {
   transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), background 0.2s ease;
 }
 
-/* Whole button scales up on hover, in either state */
-.hp-nav__hamburger:hover {
+/* Closed state: the pill itself scales on hover (see :has() rule above) so
+   the button doesn't also scale — that would compound into a double zoom. */
+.hp-nav--open .hp-nav__hamburger:hover {
   transform: scale(1.1);
 }
 
-.hp-nav__hamburger:active {
+.hp-nav--open .hp-nav__hamburger:active {
+  transform: scale(0.94);
+}
+
+.hp-nav:not(.hp-nav--open) .hp-nav__hamburger:active {
   transform: scale(0.94);
 }
 
@@ -1412,6 +1417,11 @@ h3 {
   }
 
   .hp-nav:not(.hp-nav--open) .hp-nav__pill:active { transform: scale(0.96); }
+
+  /* Hovering the hamburger scales the whole visible circle, not just the icon inside it */
+  .hp-nav:not(.hp-nav--open) .hp-nav__pill:has(.hp-nav__hamburger:hover) {
+    transform: scale(1.1);
+  }
 
   /* Expanded: full-width dropdown card */
   .hp-nav--open .hp-nav__pill {
