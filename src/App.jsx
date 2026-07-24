@@ -90,25 +90,25 @@ const GALLERY_IMAGES = [
 
 const BUILDING_ENVELOPE_PANELS = [
   {
-    name: "Flush Wall Panels",
+    name: "Structural Framing",
     category: "Building Envelope",
-    desc: "A smooth, seamless face with minimal visible joints — a clean architectural look for sanitation-sensitive and food-grade environments.",
-    // Photo: US Panels project photo — flush insulated wall panel modular enclosure
-    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/74a5a362-e5c8-4ceb-a326-5fd0cd86305f%202.JPG/:/rs=w:800,h:1000",
+    desc: "The steel frame goes up first, engineered to carry the insulated panel envelope from the ground up.",
+    // Photo: US Panels project photo — steel frame under construction
+    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse.jpg/:/rs=w:800,h:1000",
   },
   {
-    name: "Corrugated Wall Panels",
+    name: "Site Assembly",
     category: "Building Envelope",
-    desc: "A ribbed profile that adds rigidity and a classic industrial appearance, built to hold up under everyday wear.",
-    // Photo: US Panels project photo — corrugated insulated wall panel installation
-    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/pvc%20wall.jpg/:/rs=w:800,h:1000",
+    desc: "Framing complete and the site prepped, ready for the panel envelope to go up wall by wall.",
+    // Photo: US Panels project photo — steel frame under construction, interior view
+    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse%202.jpg/:/rs=w:800,h:1000",
   },
   {
-    name: "Insulated Wall Panels",
+    name: "Panel Installation",
     category: "Building Envelope",
-    desc: "The building envelope in a single panel — structure, insulation, and finish combined into one fast, energy-efficient install.",
-    // Photo: US Panels project photo — insulated wall panel corridor
-    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_0380.jpeg/:/rs=w:800,h:1000",
+    desc: "Panels are lifted and fastened into place, sealing the building envelope as installation moves down the wall.",
+    // Photo: US Panels project photo — wall panel installation in progress
+    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_4979.jpeg/:/rs=w:800,h:1000",
   },
 ];
 
