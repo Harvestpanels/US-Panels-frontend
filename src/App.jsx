@@ -9,7 +9,7 @@ import logo from "./assets/us-panels-logo.png";
 const VIDEO_URL = "/skies.mp4";
 const PARALLAX_BG_URL = "/US%20Panels%20Facility.png";
 
-const CURRENT_YEAR = 2022;
+const CURRENT_YEAR = new Date().getFullYear();
 const GALLERY_GAP_PX = 16;
 
 const GALLERY_IMAGES = [
@@ -92,46 +92,40 @@ const BUILDING_ENVELOPE_PANELS = [
     name: "Industrial",
     category: "Building Envelope",
     desc: "From a 2,000 sqft shop to a 200,000 sqft factory, insulated metal panels save time and money on every build.",
-    // Photo: US Panels project photo — steel frame under construction
-    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse.jpg/:/rs=w:800,h:1000",
+    img: "/Building%20Envelope%20-%20Industrial.png",
   },
   {
     name: "Commercial",
     category: "Building Envelope",
     desc: "Commercial facilities need to look good and perform well. Insulated metal panels deliver both.",
-    // Photo: US Panels facility building
-    img: "/US%20Panels%20Facility.png",
+    img: "/Building%20Envelope%20-%20Commercial.png",
   },
   {
     name: "Residential",
     category: "Building Envelope",
     desc: "Single-family, multi-family, stand-alone, or connected — a great option for your next residential project.",
-    // Photo: Wikimedia Commons, public domain — https://commons.wikimedia.org/wiki/File:Big_single-family_home_2.jpg
-    img: "https://upload.wikimedia.org/wikipedia/commons/a/af/Big_single-family_home_2.jpg",
+    img: "/Building%20Envelope%20-%20Residential.png",
   },
 ];
 
 const ROOF_PANELS = [
   {
-    name: "Corrugated Roof Panels",
+    name: "Industrial",
     category: "Roof",
-    desc: "A ribbed metal profile that sheds water fast and holds up to decades of weather with minimal maintenance.",
-    // Photo: Wikimedia Commons, CC0 — https://commons.wikimedia.org/wiki/File:Barn_roof_in_sunlight_(30228844686).jpg
-    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Barn_roof_in_sunlight_%2830228844686%29.jpg/960px-Barn_roof_in_sunlight_%2830228844686%29.jpg",
+    desc: "A ribbed metal roof profile engineered to shed water fast and hold up to decades of heavy-use weather with minimal maintenance.",
+    img: "/Roof%20Panels%20-%20Industrial.png",
   },
   {
-    name: "Structural Roof Framing",
+    name: "Commercial",
     category: "Roof",
-    desc: "Purlins and framing go up first, engineered to carry the insulated roof panel system above.",
-    // Photo: US Panels project photo — roof structure under construction
-    img: "https://img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse%202.jpg/:/rs=w:800,h:1000",
+    desc: "Standing seam roof panels with concealed fasteners for a clean, professional roofline on any commercial building.",
+    img: "/Roof%20Panels%20-%20Commercial.png",
   },
   {
-    name: "Standing Seam Roof Panels",
+    name: "Residential",
     category: "Roof",
-    desc: "Concealed fasteners and clean vertical seams for a sleek, low-maintenance roofline on any building.",
-    // Photo: US Panels facility building
-    img: "/US%20Panels%20Facility.png",
+    desc: "Durable, low-maintenance metal roofing built to outlast traditional shingles on single-family and multi-family homes.",
+    img: "/Roof%20Panels%20-%20Residential.png",
   },
 ];
 
@@ -665,11 +659,11 @@ function App() {
             <div className="hp-cards">
               <article className="hp-card" ref={registerReveal}>
                 <h3>Who we are</h3>
-                <p>A global distributor of exterior Insulated Metal Panels and Doors, offering products and installation services to the Industrial, Commercial, and Residential markets &mdash; a modern, energy-efficient alternative to traditional construction.</p>
+                <p>A global distributor of exterior Insulated Metal Panels and Doors, offering products and installation services to the Industrial, Commercial, and Residential markets, a modern, energy-efficient alternative to traditional construction.</p>
               </article>
               <article className="hp-card" ref={registerReveal}>
                 <h3>How we work</h3>
-                <p>Budgeting, design assistance, continuous communication, and quality workmanship on every project &mdash; working alongside architects, engineers, and designers to produce beautiful, multi-functional structures.</p>
+                <p>Budgeting, design assistance, continuous communication, and quality workmanship on every project, working alongside architects, engineers, and designers to produce beautiful, multi-functional structures.</p>
               </article>
               <article className="hp-card" ref={registerReveal}>
                 <h3>Product availability</h3>
