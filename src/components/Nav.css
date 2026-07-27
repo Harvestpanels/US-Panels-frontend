@@ -1,0 +1,301 @@
+.hp-nav {
+  position: fixed;
+  top: 18px;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hp-nav--hidden {
+  transform: translateY(-140%);
+}
+
+/* Pill container — holds both the top bar and the mobile dropdown */
+.hp-nav__pill {
+  max-width: 920px;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.5));
+  border: 1px solid rgba(20, 30, 50, 0.1);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  overflow: hidden;
+  transform: translateY(0) scale(1);
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), border-radius 0.3s ease;
+  position: relative;
+}
+
+.hp-nav__pill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.18) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.3) inset,
+    0 12px 30px rgba(0, 0, 0, 0.35);
+  opacity: 1;
+  transition: opacity 0.4s cubic-bezier(0.16,1,0.3,1);
+  pointer-events: none;
+}
+
+.hp-nav__pill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.25) inset,
+    0 -1px 1px rgba(0, 0, 0, 0.2) inset,
+    0 16px 36px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.16,1,0.3,1);
+  pointer-events: none;
+}
+
+.hp-nav--solid .hp-nav__pill {
+  transform: translateY(2px) scale(0.99);
+}
+.hp-nav--solid .hp-nav__pill::before { opacity: 0; }
+.hp-nav--solid .hp-nav__pill::after  { opacity: 1; }
+
+/* Top bar row */
+.hp-nav__inner {
+  padding: 10px 14px 10px 22px;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 36px;
+  position: relative;
+}
+
+.hp-nav__links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(20, 30, 50, 0.7);
+}
+
+.hp-nav__links a {
+  display: inline-block;
+  transition: color 0.2s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hp-nav__links a:hover {
+  color: #14213a;
+  transform: translateY(-1px);
+}
+
+.hp-nav__links a:active {
+  transform: translateY(0);
+}
+
+/* Plain text CTA link in the desktop nav — no border/background, just like the other nav links */
+.hp-nav__quote {
+  font-size: 15px;
+  font-weight: 600;
+  color: #c8262e;
+  transition: color 0.2s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hp-nav__quote:hover {
+  color: #a81f26;
+  transform: translateY(-1px);
+}
+
+.hp-nav__quote:active {
+  transform: translateY(0);
+}
+
+/* ===================== HAMBURGER ===================== */
+.hp-nav__hamburger {
+  display: none;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: 50%;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), background 0.2s ease;
+}
+
+/* Closed state: the pill itself scales on hover (see :has() rule in the
+   1024px breakpoint below) so the button doesn't also scale — that would
+   compound into a double zoom. */
+.hp-nav--open .hp-nav__hamburger:hover {
+  transform: scale(1.1);
+}
+
+.hp-nav--open .hp-nav__hamburger:active {
+  transform: scale(0.94);
+}
+
+.hp-nav:not(.hp-nav--open) .hp-nav__hamburger:active {
+  transform: scale(0.94);
+}
+
+.hp-nav__hamburger-icon {
+  width: 46px;
+  height: auto;
+  object-fit: contain;
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1), filter 0.25s ease;
+}
+
+.hp-nav__hamburger:hover .hp-nav__hamburger-icon {
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.4));
+}
+
+.hp-nav__hamburger.is-open .hp-nav__hamburger-icon {
+  opacity: 0;
+  transform: scale(0.5) rotate(45deg);
+}
+
+/* X built from two crossed bars, shown only while the menu is open */
+.hp-nav__hamburger-close {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+  opacity: 0;
+  transform: scale(0.5) rotate(-45deg);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+  pointer-events: none;
+}
+
+.hp-nav__hamburger.is-open .hp-nav__hamburger-close {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.hp-nav__hamburger-close span {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #14213a;
+  border-radius: 2px;
+}
+
+.hp-nav__hamburger-close span:first-child { transform: translateY(-50%) rotate(45deg); }
+.hp-nav__hamburger-close span:last-child { transform: translateY(-50%) rotate(-45deg); }
+
+/* Mobile dropdown panel */
+.hp-nav__mobile {
+  display: none;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 20px;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition:
+    max-height 0.38s cubic-bezier(0.16,1,0.3,1),
+    opacity 0.28s ease,
+    padding 0.2s ease;
+}
+
+.hp-nav__mobile.is-open {
+  max-height: 420px;
+  opacity: 1;
+  padding: 4px 20px 18px;
+  border-top: 1px solid rgba(20, 30, 50, 0.1);
+}
+
+.hp-nav__mobile a:not(.hp-nav__mobile-cta) {
+  display: block;
+  padding: 14px 4px;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(20, 30, 50, 0.75);
+  border-bottom: 1px solid rgba(20, 30, 50, 0.08);
+  transition: color 0.2s ease;
+}
+
+.hp-nav__mobile a:not(.hp-nav__mobile-cta):last-of-type { border-bottom: none; }
+.hp-nav__mobile a:not(.hp-nav__mobile-cta):hover { color: #14213a; }
+
+.hp-nav__mobile-cta {
+  display: block;
+  text-align: center;
+  margin-top: 14px;
+  padding: 10px 4px;
+  font-size: 17px;
+}
+
+@media (max-width: 1024px) {
+  /* Position nav to the right */
+  .hp-nav { justify-content: flex-end; padding: 0 20px; }
+
+  /* Collapsed: circle button only */
+  .hp-nav__pill {
+    width: 52px !important;
+    height: 52px;
+    max-width: 52px;
+    margin: 0 !important;
+    border-radius: 50% !important;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.5));
+    border: 1px solid rgba(20, 30, 50, 0.1);
+    transition: width 0.35s cubic-bezier(0.16,1,0.3,1),
+                height 0.35s cubic-bezier(0.16,1,0.3,1),
+                border-radius 0.35s cubic-bezier(0.16,1,0.3,1),
+                max-width 0.35s cubic-bezier(0.16,1,0.3,1),
+                background 0.35s ease,
+                box-shadow 0.35s ease;
+  }
+
+  .hp-nav:not(.hp-nav--open) .hp-nav__pill:active { transform: scale(0.96); }
+
+  /* Hovering the hamburger scales the whole visible circle, not just the icon inside it */
+  .hp-nav:not(.hp-nav--open) .hp-nav__pill:has(.hp-nav__hamburger:hover) {
+    transform: scale(1.1);
+  }
+
+  /* Expanded: full-width dropdown card */
+  .hp-nav--open .hp-nav__pill {
+    width: 100% !important;
+    max-width: 920px !important;
+    height: auto;
+    border-radius: 20px !important;
+    margin: 0 !important;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.5));
+  }
+
+  /* Hide nav logo only — footer logo keeps showing */
+  .hp-nav .hp-logo { display: none; }
+  .hp-nav__links { display: none; }
+  .hp-nav__quote:not(.hp-nav__mobile-cta) { display: none; }
+  .hp-nav__inner { display: flex; padding: 0; gap: 0; width: 52px; height: 52px; align-items: center; justify-content: center; }
+  /* When open: show logo on left, X on right */
+  .hp-nav--open .hp-nav__inner { width: 100%; height: auto; padding: 12px 16px; justify-content: space-between; }
+  .hp-nav--open .hp-nav .hp-logo { display: block; }
+  .hp-nav--open .hp-logo { display: block; }
+  .hp-nav__hamburger { display: flex; }
+  .hp-nav__mobile { display: flex; }
+}
+
+@media (max-width: 640px) {
+  .hp-nav { top: 10px; padding: 0 12px; }
+}
+
+@media (hover: none) {
+  .hp-nav__pill {
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+}

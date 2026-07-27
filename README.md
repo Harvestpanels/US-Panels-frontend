@@ -1,18 +1,28 @@
-# React + Vite
+# US Panels — Marketing Site
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Marketing website for US Panels, a distributor of exterior Insulated Metal
+Panels and Doors for Industrial, Commercial, and Residential projects.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React 19 + Vite 8 (Rolldown), single-page app
+- Plain CSS (`src/styles/App.css`), no CSS framework
+- Deployed on Vercel
 
-## React Compiler
+## Project structure
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- `src/components/` — page sections (Nav, Hero, Gallery, Contact, etc.)
+- `src/hooks/` — scroll/reveal/parallax/lightbox/toast logic
+- `src/data/` — site content (panels, FAQs, contact info)
+- `src/utils/` — form validation, scroll helpers
+- `src/assets/` — bundled images/video (imported in JS)
+- `public/` — files served as-is (favicon, `_headers`, social share image)
 
-Note: This will impact Vite dev & build performances.
+## Scripts
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```bash
+npm run dev       # start local dev server
+npm run build     # production build to dist/
+npm run preview   # preview the production build locally
+npm run lint      # run ESLint
+```

@@ -1,0 +1,95 @@
+.hp-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 24px;
+}
+
+.hp-card {
+  border: 1px solid rgba(20, 30, 50, 0.12);
+  padding: 32px 28px;
+  transition-delay: 0.05s;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition:
+    opacity 0.65s cubic-bezier(0.16,1,0.3,1),
+    transform 0.4s cubic-bezier(0.16,1,0.3,1),
+    box-shadow 0.4s ease,
+    border-color 0.4s ease,
+    background 0.4s ease;
+}
+
+.hp-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(220px circle at 50% 0%, rgba(214, 40, 40, 0.1), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.hp-card::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid rgba(20, 30, 50, 0.3);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.hp-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(214, 40, 40, 0.35);
+  box-shadow: 0 20px 40px -20px rgba(20, 30, 50, 0.35);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.hp-card:hover::before { opacity: 1; }
+.hp-card:hover::after { opacity: 1; }
+
+.hp-cards .hp-card:nth-child(2) { transition-delay: 0.13s; }
+.hp-cards .hp-card:nth-child(3) { transition-delay: 0.26s; }
+
+.hp-card h3 {
+  font-size: 20px;
+  margin-bottom: 14px;
+  text-transform: none;
+  color: #14213a;
+  transition: color 0.3s ease;
+}
+
+.hp-card p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(20, 30, 50, 0.72);
+  margin: 0;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.hp-card:hover p { color: rgba(20, 30, 50, 0.88); }
+
+@media (max-width: 1024px) {
+  .hp-cards { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .hp-card { padding: 22px 18px; }
+}
+
+@media (hover: none) {
+  /* Cards — no border highlight */
+  .hp-card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(20, 30, 50, 0.12);
+    background: transparent;
+  }
+  .hp-card:hover::before { opacity: 0; }
+  .hp-card:hover::after { opacity: 0; }
+  .hp-card:hover p { color: rgba(20, 30, 50, 0.72); }
+}

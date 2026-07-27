@@ -1,0 +1,208 @@
+.hp-contact__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+}
+
+.hp-contact__info p:not(.hp-section__eyebrow) {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(20, 30, 50, 0.72);
+  margin: 0 0 28px;
+}
+
+.hp-contact__info .hp-panel-section__desc {
+  margin: 12px 0 0;
+}
+
+.hp-contact__details {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hp-contact__details li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 2px solid #c8262e;
+  padding-left: 14px;
+}
+
+.hp-contact__details strong {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #4a8fd6;
+}
+
+.hp-contact__details li > span {
+  color: #14213a;
+  font-weight: 700;
+}
+
+.hp-contact__details a {
+  color: #14213a;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.hp-contact__details a:hover { color: #c8262e; }
+
+.hp-contact__form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hp-contact__form label {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(20, 30, 50, 0.6);
+  font-family: "JetBrains Mono", monospace;
+  margin-top: 10px;
+}
+
+.hp-contact__form label:first-of-type { margin-top: 0; }
+
+.hp-contact__form input,
+.hp-contact__form textarea {
+  display: block;
+  width: 100%;
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: #14213a;
+  background: rgba(20, 30, 50, 0.04);
+  border: 1px solid rgba(20, 30, 50, 0.14);
+  border-radius: 6px;
+  padding: 11px 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 6px;
+}
+
+.hp-contact__form textarea {
+  resize: none;
+  height: 120px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(20, 30, 50, 0.3) transparent;
+}
+
+.hp-contact__form textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hp-contact__form textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hp-contact__form textarea::-webkit-scrollbar-thumb {
+  background: rgba(20, 30, 50, 0.25);
+  border-radius: 999px;
+}
+
+.hp-contact__form textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(20, 30, 50, 0.4);
+}
+
+.hp-contact__form input:focus,
+.hp-contact__form textarea:focus {
+  outline: none;
+  border-color: #c8262e;
+  box-shadow: 0 0 0 3px rgba(200, 38, 46, 0.2);
+}
+
+.hp-contact__form input[aria-invalid="true"],
+.hp-contact__form textarea[aria-invalid="true"] {
+  border-color: #e0453d;
+}
+
+.hp-file-input {
+  padding: 8px 14px;
+  cursor: pointer;
+  color: rgba(20, 30, 50, 0.6);
+  font-size: 14px;
+}
+
+/* Style the native "choose file" button consistently across browsers/devices —
+   otherwise it renders as each OS's default button style. */
+.hp-file-input::file-selector-button,
+.hp-file-input::-webkit-file-upload-button {
+  margin-right: 12px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: 999px;
+  background: #14213a;
+  color: #f3f1ec;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hp-file-input:hover::file-selector-button,
+.hp-file-input:hover::-webkit-file-upload-button {
+  background: #1f3050;
+}
+
+.hp-file-input:active::file-selector-button,
+.hp-file-input:active::-webkit-file-upload-button {
+  transform: scale(0.97);
+}
+
+.hp-contact__form .hp-btn { margin-top: 10px; align-self: flex-start; }
+
+.hp-contact__legal {
+  font-size: 11px;
+  color: rgba(20, 30, 50, 0.5);
+  margin: 4px 0 0;
+}
+
+/* Inline field error */
+.hp-field-error {
+  display: block;
+  font-size: 12px;
+  color: #e0453d;
+  margin-top: 4px;
+  font-family: "Inter", sans-serif;
+}
+
+/* Success state */
+.hp-form-success {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 0;
+}
+
+.hp-form-success__title {
+  font-family: "Big Shoulders Display", sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: #14213a;
+  margin: 0;
+}
+
+.hp-form-success p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(20, 30, 50, 0.72);
+}
+
+@media (max-width: 1024px) {
+  .hp-contact__grid { grid-template-columns: 1fr; gap: 36px; }
+}
+
+@media (max-width: 640px) {
+  .hp-contact__form .hp-btn { align-self: stretch; justify-content: center; }
+}

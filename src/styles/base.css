@@ -1,0 +1,268 @@
+/* Shared, cross-component foundation: resets, typography, buttons, the
+   section/glass container system, and the scroll-reveal utility. Anything
+   used by more than one component lives here; component-specific styling
+   lives in that component's own .css file. */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #1b1d1f;
+  color: #f3f1ec;
+  font-family: "Inter", sans-serif;
+}
+
+a,
+button {
+  /* Disable the default mobile tap-highlight (shows as a black flash on
+     iOS/Android since our buttons sit on translucent glass backgrounds) */
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Accessible, on-brand focus ring for keyboard navigation.
+   :focus-visible so mouse clicks don't show a ring. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #4a8fd6;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Big Shoulders Display", sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin: 0;
+  line-height: 1.05;
+}
+
+/* ===================== SHARED LOGO (Nav + Footer) ===================== */
+.hp-logo {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.hp-logo:hover .hp-logo__img {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.4));
+}
+
+.hp-logo__img {
+  height: 44px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.35));
+  transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), filter 0.25s ease;
+  will-change: transform;
+}
+
+.hp-logo--footer .hp-logo__img {
+  height: 52px;
+}
+
+/* ===================== BUTTONS ===================== */
+.hp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 11px 22px;
+  border-radius: 6px;
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+  transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), opacity 0.22s ease;
+  will-change: transform;
+}
+
+.hp-btn--primary {
+  background: #c8262e;
+  color: #f3f1ec;
+}
+
+.hp-btn--primary:hover {
+  transform: translateY(-2px);
+}
+
+.hp-btn--primary:active {
+  transform: translateY(0);
+}
+
+.hp-btn--ghost {
+  border: 1px solid rgba(20, 30, 50, 0.18);
+  color: #14213a;
+  background: transparent;
+}
+
+.hp-btn--ghost:hover {
+  transform: translateY(-2px);
+  opacity: 0.85;
+}
+
+.hp-btn--ghost:active {
+  transform: translateY(0);
+}
+
+/* ===================== SECTIONS / REVEAL ===================== */
+.hp-section {
+  position: relative;
+  z-index: 5;
+  padding: 110px 0;
+  isolation: isolate;
+}
+
+.hp-section__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ===================== LIQUID GLASS CONTAINER ===================== */
+.hp-glass {
+  position: relative;
+  border-radius: 28px;
+  padding: 56px 48px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.5));
+  border: 1px solid rgba(20, 30, 50, 0.1);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  backdrop-filter: blur(28px) saturate(150%);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.6) inset,
+    0 -1px 1px rgba(20, 30, 50, 0.08) inset,
+    0 24px 60px rgba(20, 30, 50, 0.12);
+  overflow: hidden;
+}
+
+.hp-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0) 70%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  pointer-events: none;
+}
+
+.hp-section__eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c8262e;
+  margin: 0 0 14px;
+}
+
+.hp-section h2 {
+  font-size: clamp(32px, 5vw, 52px);
+  margin-bottom: 56px;
+  color: #14213a;
+}
+
+/* Shared "description under heading" pattern — used by WhoWeAre,
+   PanelSection (Building Envelope / Roof Panels), Gallery, and Contact. */
+.hp-section h2:has(+ .hp-panel-section__desc),
+.hp-section h2:has(+ .hp-faq__intro) {
+  margin-bottom: 0;
+}
+
+.hp-panel-section__desc {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(20, 30, 50, 0.72);
+  margin: 12px 0 0;
+  max-width: 640px;
+}
+
+/* Reveal animation — transform+opacity only (GPU composited) */
+.hp-reveal,
+.hp-card,
+.hp-section__eyebrow,
+.hp-section h2 {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 0.65s cubic-bezier(0.16,1,0.3,1),
+    transform 0.65s cubic-bezier(0.16,1,0.3,1);
+  will-change: opacity, transform;
+}
+
+.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+@media (max-width: 640px) {
+  .hp-section { padding: 72px 0; }
+  .hp-section__inner { padding: 0 16px; }
+  .hp-glass { padding: 28px 20px; border-radius: 18px; }
+  .hp-section h2 { margin-bottom: 32px; font-size: clamp(26px, 7vw, 40px); }
+}
+
+@media (max-width: 400px) {
+  .hp-logo__img { height: 28px; }
+}
+
+@media (hover: none) {
+  .hp-btn--primary:hover,
+  .hp-btn--ghost:hover { transform: none; }
+
+  /* Reduce backdrop-filter cost on mobile GPU */
+  .hp-glass {
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+    backdrop-filter: blur(12px) saturate(130%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .hp-reveal,
+  .hp-card,
+  .hp-section__eyebrow,
+  .hp-section h2 {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
