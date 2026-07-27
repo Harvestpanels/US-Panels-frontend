@@ -1,9 +1,11 @@
-import buildingCommercialImg from "../assets/images/Building Envelope - Commercial.webp";
-import buildingIndustrialImg from "../assets/images/Building Envelope - Industrial.webp";
-import buildingResidentialImg from "../assets/images/Building Envelope - Residential.webp";
-import roofCommercialImg from "../assets/images/Roof Panels - Commercial.webp";
-import roofIndustrialImg from "../assets/images/Roof Panels - Industrial.webp";
-import roofResidentialImg from "../assets/images/Roof Panels - Residential.webp";
+import buildingCommercialImg from "../assets/images/Building Envelope/Commercial.webp";
+import buildingIndustrialImg from "../assets/images/Building Envelope/Industrial.webp";
+import buildingResidentialImg from "../assets/images/Building Envelope/Residential.webp";
+import roofCommercialImg from "../assets/images/Roof Panels/Commercial.webp";
+import roofIndustrialImg from "../assets/images/Roof Panels/Industrial.webp";
+import roofResidentialImg from "../assets/images/Roof Panels/Residential.webp";
+// TODO: placeholder photo — swap each card's `img` for a real photo once provided.
+import placeholderImg from "../assets/images/US Panels Facility.webp";
 
 export const GALLERY_IMAGES = [
   {
@@ -119,5 +121,69 @@ export const ROOF_PANELS = [
     category: "Roof",
     desc: "Durable, low-maintenance metal roofing built to outlast traditional shingles on single-family and multi-family homes.",
     img: roofResidentialImg,
+  },
+];
+
+// TODO: every `img` below is a placeholder — swap for real photos one at a time.
+export const DATA_CENTER_PANELS = [
+  {
+    name: "Exterior Panels",
+    category: "Data Center",
+    desc: "Insulated exterior wall systems built to protect critical equipment with a tight, secure, weather-resistant envelope.",
+    img: placeholderImg,
+  },
+  {
+    name: "Interior Panels",
+    category: "Data Center",
+    desc: "Clean, finish-grade interior panels for server halls and controlled-access spaces that need a durable, easy-to-maintain surface.",
+    img: placeholderImg,
+  },
+  {
+    name: "Benefits",
+    category: "Data Center",
+    desc: "Consistent thermal performance, fire-rated core options, and fast installation help keep critical environments stable and on schedule.",
+    img: placeholderImg,
+  },
+];
+
+export const COLD_STORAGE_PANELS = [
+  {
+    name: "Exterior Panels",
+    category: "Cold Storage",
+    desc: "Heavy-duty insulated exterior panels engineered to hold a tight thermal envelope for refrigerated and frozen storage facilities.",
+    img: placeholderImg,
+  },
+  {
+    name: "Interior Panels",
+    category: "Cold Storage",
+    desc: "Interior partition panels built for consistent temperature zones, with finishes suited to food-safety and sanitation requirements.",
+    img: placeholderImg,
+  },
+  {
+    name: "Benefits",
+    category: "Cold Storage",
+    desc: "Superior insulation values, moisture resistance, and low-maintenance surfaces keep cold storage facilities efficient year-round.",
+    img: placeholderImg,
+  },
+];
+
+export const PEMB_PANELS = [
+  {
+    name: "Frame & Structure",
+    category: "Metal Building",
+    desc: "Pre-engineered steel frame systems designed for fast erection and a strong, code-compliant structural foundation.",
+    img: placeholderImg,
+  },
+  {
+    name: "Wall & Roof Panels",
+    category: "Metal Building",
+    desc: "Insulated wall and roof panel systems that clad the structure for a complete, weather-tight building envelope.",
+    img: placeholderImg,
+  },
+  {
+    name: "Custom Options",
+    category: "Metal Building",
+    desc: "Custom sizes, designs, and color options let every pre-engineered building match the look and footprint your project needs.",
+    img: placeholderImg,
   },
 ];

@@ -1,6 +1,6 @@
+import { Link } from "react-router-dom";
 import "./Hero.css";
 import { CONTACT } from "../data/site";
-import { navClick } from "../utils/scroll";
 
 export default function Hero({ heroContentRef }) {
   return (
@@ -20,13 +20,9 @@ export default function Hero({ heroContentRef }) {
           Residential projects.
         </p>
         <div className="hp-hero__ctas">
-          <a
-            href="#panels"
-            className="hp-btn hp-btn--primary"
-            onClick={(e) => navClick(e, "panels")}
-          >
+          <Link to="/products" className="hp-btn hp-btn--primary">
             Shop panels
-          </a>
+          </Link>
           <a href={`tel:${CONTACT.phoneHref}`} className="hp-btn hp-btn--ghost">
             Call today: {CONTACT.phone}
           </a>

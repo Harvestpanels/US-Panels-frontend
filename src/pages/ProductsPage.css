@@ -1,0 +1,346 @@
+.hp-products-page {
+  background: #1b1d1f;
+  min-height: 100vh;
+}
+
+.hp-products-hero {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 168px 32px 64px;
+  text-align: center;
+}
+
+.hp-hero-heading {
+  font-size: clamp(32px, 6vw, 56px);
+  color: #f3f1ec;
+  margin: 14px 0 24px;
+}
+
+/* Staggered per-word reveal on load — each word's delay is set inline
+   (see ProductsPage.jsx) so it scales with however many words are in the
+   heading instead of a fixed set of nth-child rules. */
+.hp-hero-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(26px);
+  animation: hp-word-in 0.65s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+@keyframes hp-word-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-hero-word { animation: none; opacity: 1; transform: none; }
+}
+
+/* Plain, once-per-visit fade for the hero eyebrow/subtext and the filter
+   bar — deliberately simpler than .hp-filter-anim's pop, and never
+   re-triggered by searching or switching categories (see the effect in
+   ProductsPage.jsx, which is scoped to leave these alone). */
+.hp-hero-fade {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: hp-fade-in 0.7s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+@keyframes hp-fade-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-hero-fade { animation: none; opacity: 1; transform: none; }
+}
+
+.hp-products-hero__sub {
+  font-size: 16px;
+  line-height: 1.65;
+  color: rgba(243, 241, 236, 0.75);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.hp-products-hero__sub a {
+  color: #4a8fd6;
+  text-decoration: underline;
+}
+
+.hp-products-filter {
+  max-width: 1180px;
+  margin: 0 auto 48px;
+  padding: 0 32px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.hp-products-filter__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 280px;
+  max-width: 420px;
+  color: rgba(243, 241, 236, 0.5);
+}
+
+.hp-products-filter__search svg {
+  position: absolute;
+  left: 14px;
+  pointer-events: none;
+}
+
+.hp-products-filter__search input {
+  /* Reset native OS search-field chrome (iOS/macOS Safari render
+     type="search" with baked-in rounding/padding/icon that fights our
+     custom icon and pill styling otherwise). */
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  font-family: "Inter", sans-serif;
+  /* 16px avoids iOS Safari's auto-zoom-on-focus for inputs under 16px */
+  font-size: 16px;
+  color: #f3f1ec;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(243, 241, 236, 0.15);
+  border-radius: 999px;
+  padding: 11px 16px 11px 42px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.hp-products-filter__search input::-webkit-search-cancel-button,
+.hp-products-filter__search input::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.hp-products-filter__search input::placeholder {
+  color: rgba(243, 241, 236, 0.4);
+}
+
+.hp-products-filter__search input:focus-visible {
+  outline: none;
+  border-color: #c8262e;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.hp-products-filter__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hp-products-filter__chip {
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(243, 241, 236, 0.65);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(243, 241, 236, 0.15);
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease, transform 0.2s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hp-products-filter__chip:hover {
+  color: #f3f1ec;
+  border-color: rgba(243, 241, 236, 0.3);
+  transform: translateY(-1px);
+}
+
+.hp-products-filter__chip.is-active {
+  color: #f3f1ec;
+  background: #c8262e;
+  border-color: #c8262e;
+}
+
+.hp-products-empty {
+  max-width: 1180px;
+  margin: 32px auto 0;
+  padding: 0 32px;
+  font-size: 14px;
+  color: rgba(243, 241, 236, 0.6);
+}
+
+.hp-products-hidden {
+  display: none;
+}
+
+.hp-products-category {
+  padding: 110px 0;
+  border-top: 1px solid rgba(243, 241, 236, 0.08);
+}
+
+.hp-products-category__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+.hp-products-category h2 {
+  font-size: clamp(26px, 4vw, 38px);
+  color: #f3f1ec;
+  margin-bottom: 12px;
+}
+
+.hp-products-category__blurb {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(243, 241, 236, 0.65);
+  max-width: 640px;
+  margin: 0 0 32px;
+}
+
+.hp-products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  perspective: 1000px;
+}
+
+/* Every piece of text and every card carries this class and starts
+   hidden — see the mount/filter-change effect in ProductsPage.jsx, which
+   triggers the entrance animation below every time. */
+.hp-anim-item {
+  opacity: 0;
+}
+
+/* Holds the entrance animation's final state after it finishes (see
+   clearAnimOnEnd in ProductsPage.jsx) — plain, non-!important, so it
+   never fights the product cards' :hover tilt transform. */
+.hp-anim-item.hp-anim-done {
+  opacity: 1;
+}
+
+@keyframes hp-filter-pop {
+  0%   { opacity: 0; transform: translateY(26px) scale(0.94); }
+  60%  { opacity: 1; transform: translateY(-3px) scale(1.015); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* animation-delay is set inline per element in ProductsPage.jsx (section
+   cascade + per-item stagger combined into one value), so no nth-child
+   delay rules are needed here. */
+.hp-filter-anim {
+  animation: hp-filter-pop 0.55s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-anim-item { opacity: 1; }
+  .hp-filter-anim { animation: none; }
+}
+
+.hp-product-card {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(243, 241, 236, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  transition:
+    transform 0.25s cubic-bezier(0.16,1,0.3,1),
+    opacity 0.45s cubic-bezier(0.16,1,0.3,1),
+    border-color 0.35s ease;
+}
+
+.hp-product-card:hover {
+  z-index: 2;
+  transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(1.03);
+  border-color: rgba(243, 241, 236, 0.25);
+}
+
+.hp-products-grid:hover .hp-product-card:not(:hover) {
+  opacity: 0.6;
+  transform: scale(0.98);
+}
+
+.hp-product-card__img {
+  aspect-ratio: 4 / 3;
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(0.1) brightness(0.9);
+  transition: transform 0.55s cubic-bezier(0.16,1,0.3,1), filter 0.45s ease;
+  will-change: transform;
+}
+
+.hp-product-card:hover .hp-product-card__img {
+  transform: scale(1.06);
+  filter: grayscale(0) brightness(1);
+}
+
+.hp-product-card--hidden {
+  display: none;
+}
+
+.hp-product-card__glare {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    rgba(255, 255, 255, 0.22),
+    transparent 55%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hp-product-card:hover .hp-product-card__glare {
+  opacity: 1;
+}
+
+.hp-product-card__body {
+  padding: 18px 20px 22px;
+}
+
+.hp-product-card__spec {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #c8262e;
+  margin-bottom: 8px;
+}
+
+.hp-product-card__body h3 {
+  font-size: 17px;
+  text-transform: none;
+  color: #f3f1ec;
+  margin-bottom: 8px;
+}
+
+.hp-product-card__body p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(243, 241, 236, 0.7);
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .hp-products-hero { padding: 110px 20px 40px; }
+  .hp-products-filter { padding: 0 20px; margin-bottom: 32px; }
+  .hp-products-empty { padding: 0 20px; }
+  .hp-products-category { padding: 72px 0; }
+  .hp-products-category__inner { padding: 0 20px; }
+  .hp-products-grid { grid-template-columns: 1fr; }
+}
+
+@media (hover: none) {
+  .hp-products-grid:hover .hp-product-card:not(:hover) { opacity: 1; transform: none; }
+  .hp-product-card:hover { transform: none; }
+  .hp-product-card:hover .hp-product-card__img { transform: none; filter: grayscale(0.1) brightness(0.9); }
+  .hp-product-card:hover .hp-product-card__glare { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-product-card:hover { transform: none; }
+}

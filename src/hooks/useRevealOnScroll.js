@@ -4,19 +4,25 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 // they enter the viewport (via IntersectionObserver). A synchronous
 // useLayoutEffect pass runs first so elements already in view on load
 // (e.g. after a refresh mid-scroll) don't flash hidden before paint.
+//
+// Elements can also be registered well after the initial mount — e.g. a
+// search/filter UI that swaps one subtree for another. registerReveal
+// observes those on the spot instead of relying solely on the one-time
+// mount pass, so newly-mounted content that's already on screen reveals
+// itself immediately rather than staying stuck invisible forever.
 export function useRevealOnScroll() {
   const revealRegistry = useRef(new Set());
-  const revealTargets = useRef([]);
+  const observerRef = useRef(null);
 
   function registerReveal(el) {
     if (!el || revealRegistry.current.has(el)) return;
     revealRegistry.current.add(el);
-    revealTargets.current.push(el);
+    observerRef.current?.observe(el);
   }
 
   useLayoutEffect(() => {
     const vh = window.innerHeight;
-    revealTargets.current.forEach((el) => {
+    revealRegistry.current.forEach((el) => {
       const rect = el.getBoundingClientRect();
       if (rect.top < vh && rect.bottom > 0) {
         el.classList.add("is-visible");
@@ -36,7 +42,8 @@ export function useRevealOnScroll() {
       },
       { threshold: 0.12, rootMargin: isTouch ? "0px 0px -5% 0px" : "0px 0px -10% 0px" }
     );
-    revealTargets.current.forEach((el) => observer.observe(el));
+    observerRef.current = observer;
+    revealRegistry.current.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
