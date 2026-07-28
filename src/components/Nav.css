@@ -251,7 +251,7 @@
 
 .hp-nav__quote:hover {
   color: #a81f26;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .hp-nav__quote:active {

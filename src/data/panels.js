@@ -6,6 +6,12 @@ import roofIndustrialImg from "../assets/images/Roof Panels/Industrial.webp";
 import roofResidentialImg from "../assets/images/Roof Panels/Residential.webp";
 // TODO: placeholder photo — swap each card's `img` for a real photo once provided.
 import placeholderImg from "../assets/images/US Panels Facility.webp";
+import dataCenterExteriorImg from "../assets/images/Sections/Data Centers/Data Centers -  Exterior Panels.png";
+import dataCenterInteriorImg from "../assets/images/Sections/Data Centers/Data Centers - Interior Panels.png";
+import dataCenterBenefitsImg from "../assets/images/Sections/Data Centers/Data Centers - Benefits.png";
+import coldStorageExteriorImg from "../assets/images/Sections/Cold Storage/Cold Storage - Exterior Panels.png";
+import coldStorageInteriorImg from "../assets/images/Sections/Cold Storage/Cold Storage - Interior Panels.png";
+import coldStorageBenefitsImg from "../assets/images/Sections/Cold Storage/Cold Storage - Benefits.png";
 
 const slidingDoorImg =
   "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/37253940_l-5b6bb8e.webp/:/rs=w:1300,h:800";
@@ -133,19 +139,19 @@ export const DATA_CENTER_PANELS = [
     name: "Exterior Panels",
     category: "Data Center",
     desc: "Insulated exterior wall systems built to protect critical equipment with a tight, secure, weather-resistant envelope.",
-    img: placeholderImg,
+    img: dataCenterExteriorImg,
   },
   {
     name: "Interior Panels",
     category: "Data Center",
     desc: "Clean, finish-grade interior panels for server halls and controlled-access spaces that need a durable, easy-to-maintain surface.",
-    img: placeholderImg,
+    img: dataCenterInteriorImg,
   },
   {
     name: "Benefits",
     category: "Data Center",
     desc: "Consistent thermal performance, fire-rated core options, and fast installation help keep critical environments stable and on schedule.",
-    img: placeholderImg,
+    img: dataCenterBenefitsImg,
   },
 ];
 
@@ -154,19 +160,19 @@ export const COLD_STORAGE_PANELS = [
     name: "Exterior Panels",
     category: "Cold Storage",
     desc: "Heavy-duty insulated exterior panels engineered to hold a tight thermal envelope for refrigerated and frozen storage facilities.",
-    img: placeholderImg,
+    img: coldStorageExteriorImg,
   },
   {
     name: "Interior Panels",
     category: "Cold Storage",
     desc: "Interior partition panels built for consistent temperature zones, with finishes suited to food-safety and sanitation requirements.",
-    img: placeholderImg,
+    img: coldStorageInteriorImg,
   },
   {
     name: "Benefits",
     category: "Cold Storage",
     desc: "Superior insulation values, moisture resistance, and low-maintenance surfaces keep cold storage facilities efficient year-round.",
-    img: placeholderImg,
+    img: coldStorageBenefitsImg,
   },
 ];
 

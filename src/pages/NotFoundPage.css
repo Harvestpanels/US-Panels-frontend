@@ -1,0 +1,20 @@
+.hp-notfound {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+}
+
+.hp-notfound__inner {
+  text-align: center;
+}
+
+.hp-notfound__inner h1 {
+  margin-bottom: 16px;
+}
+
+.hp-notfound__inner p {
+  font-size: 16px;
+  color: rgba(243, 241, 236, 0.75);
+  max-width: 480px;
+  margin: 0 auto 32px;
+}

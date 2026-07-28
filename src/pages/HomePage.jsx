@@ -14,6 +14,7 @@ import {
 import { PARALLAX_BG_URL, VIDEO_URL } from "../data/site";
 import { useHeroParallax } from "../hooks/useHeroParallax";
 import { useLightbox } from "../hooks/useLightbox";
+import { usePageMeta } from "../hooks/usePageMeta";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useToast } from "../hooks/useToast";
 import Nav from "../components/Nav";
@@ -28,6 +29,11 @@ import Lightbox from "../components/Lightbox";
 import Toast from "../components/Toast";
 
 function HomePage() {
+  usePageMeta({
+    title: "US Panels | Insulated Metal Panels & Doors",
+    description: "Global distributor of exterior Insulated Metal Panels and Doors for Industrial, Commercial, and Residential projects. Immediate availability, delivered anywhere in the U.S. within 48 hours.",
+  });
+
   const [menuOpen, setMenuOpen] = useState(false);
   const { registerReveal } = useRevealOnScroll();
   const { navRef, parallaxLayerRef, videoRef, parallaxRef, heroContentRef } = useHeroParallax();

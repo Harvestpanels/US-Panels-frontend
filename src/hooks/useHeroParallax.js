@@ -147,20 +147,29 @@ export function useHeroParallax() {
     // re-hides it after a short delay — but only if still scrolled past
     // the top by the time the delay elapses (the user may have scrolled
     // back to the top in the meantime, which must always win).
+    // Coalesced via rAF like onScroll above — native mousemove can fire far
+    // more often than the display refreshes, and this only ever needs to
+    // react once per frame to a threshold crossing, not on every raw event.
+    let mouseRaf = null;
     function onMouseMove(e) {
-      const menuIsOpen = navRef.current?.classList.contains("hp-nav--open");
-      if (menuIsOpen) return;
-      if (e.clientY <= 100) {
-        clearTimeout(hoverHideTimer);
-        navRef.current?.classList.remove("hp-nav--hidden");
-      } else if (window.scrollY >= 80) {
-        clearTimeout(hoverHideTimer);
-        hoverHideTimer = setTimeout(() => {
-          if (window.scrollY >= 80) {
-            navRef.current?.classList.add("hp-nav--hidden");
-          }
-        }, 1200);
-      }
+      if (mouseRaf) return;
+      const clientY = e.clientY;
+      mouseRaf = requestAnimationFrame(() => {
+        mouseRaf = null;
+        const menuIsOpen = navRef.current?.classList.contains("hp-nav--open");
+        if (menuIsOpen) return;
+        if (clientY <= 100) {
+          clearTimeout(hoverHideTimer);
+          navRef.current?.classList.remove("hp-nav--hidden");
+        } else if (window.scrollY >= 80) {
+          clearTimeout(hoverHideTimer);
+          hoverHideTimer = setTimeout(() => {
+            if (window.scrollY >= 80) {
+              navRef.current?.classList.add("hp-nav--hidden");
+            }
+          }, 1200);
+        }
+      });
     }
     window.addEventListener("mousemove", onMouseMove, { passive: true });
 
@@ -175,6 +184,7 @@ export function useHeroParallax() {
       window.removeEventListener("mousemove", onMouseMove);
       clearTimeout(hoverHideTimer);
       if (raf) cancelAnimationFrame(raf);
+      if (mouseRaf) cancelAnimationFrame(mouseRaf);
       video?.removeEventListener("seeked", onSeeked);
       video?.removeEventListener("canplay", unlockVideo);
     };

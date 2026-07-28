@@ -11,10 +11,16 @@
   overflow: hidden;
   border: 1px solid rgba(20, 30, 50, 0.12);
   cursor: pointer;
-  will-change: transform, opacity;
   transition:
     transform 0.45s cubic-bezier(0.16,1,0.3,1),
     opacity 0.45s cubic-bezier(0.16,1,0.3,1);
+}
+
+/* will-change scoped to only while actually transforming (hover, or a
+   sibling dimming during grid hover) rather than held permanently on
+   every card across every panel section on the page. */
+.hp-panel-grid:hover .hp-panel-card {
+  will-change: transform, opacity;
 }
 
 .hp-panel-card:nth-child(2) { transition-delay: 0.05s; }
@@ -37,16 +43,22 @@
 .hp-panel-card__img {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center;
-  will-change: transform;
-  transition: transform 0.55s cubic-bezier(0.16,1,0.3,1), filter 0.45s ease;
-  filter: grayscale(0.15) brightness(0.85);
+  overflow: hidden;
 }
 
-.hp-panel-card:hover .hp-panel-card__img {
+/* Real <img>, not a CSS background-image — enables native lazy-loading,
+   proper alt text for screen readers, and right-click-save/print. */
+.hp-panel-card__img-el {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.55s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hp-panel-card:hover .hp-panel-card__img-el {
   transform: scale(1.08);
-  filter: grayscale(0) brightness(1);
+  will-change: transform;
 }
 
 .hp-panel-card__label {
@@ -124,7 +136,7 @@
   /* Panel cards — no scale/dim sibling effect, desc always visible */
   .hp-panel-grid:hover .hp-panel-card:not(:hover) { opacity: 1; transform: none; }
   .hp-panel-card:hover { transform: none; }
-  .hp-panel-card:hover .hp-panel-card__img { transform: none; filter: grayscale(0.15) brightness(0.85); }
+  .hp-panel-card:hover .hp-panel-card__img-el { transform: none; }
   .hp-panel-card__label p { grid-template-rows: 1fr; opacity: 1; }
   .hp-panel-card:hover::after { opacity: 0; }
 }

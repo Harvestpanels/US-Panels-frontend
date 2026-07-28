@@ -1,15 +1,20 @@
 import { useEffect, useRef, useState } from "react";
+import "../styles/App.css";
 import "./ProductsPage.css";
 import logo from "../assets/images/us-panels-logo.png";
 import { PRODUCT_CATEGORIES } from "../data/products";
-import { CONTACT } from "../data/site";
 import { useCountUp } from "../hooks/useCountUp";
 import { useLightbox } from "../hooks/useLightbox";
 import { useNavScroll } from "../hooks/useNavScroll";
+import { usePageMeta } from "../hooks/usePageMeta";
+import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
+import { useToast } from "../hooks/useToast";
 import { scrollCenter } from "../utils/scroll";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import Lightbox from "../components/Lightbox";
+import Contact from "../components/Contact";
+import Toast from "../components/Toast";
 
 // Maps a product into the { src, title, category, desc } shape Lightbox
 // expects (the same shape the photo gallery already feeds it).
@@ -118,12 +123,15 @@ function ProductCard({ product, hidden, showCategory, onOpen }) {
         }
       }}
     >
-      <div
-        className="hp-product-card__img"
-        style={{ backgroundImage: `url(${product.img})` }}
-        role="img"
-        aria-label={product.name}
-      />
+      <div className="hp-product-card__img">
+        <img
+          src={product.img}
+          alt={product.name}
+          className="hp-product-card__img-el"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
       <div className="hp-product-card__glare" aria-hidden="true" />
       <div className="hp-product-card__body">
         <span className="hp-product-card__spec">
@@ -137,11 +145,18 @@ function ProductCard({ product, hidden, showCategory, onOpen }) {
 }
 
 export default function ProductsPage() {
+  usePageMeta({
+    title: "Products | US Panels",
+    description: "Browse our complete line of insulated wall panels, roof panels, fire-rated panels, cold storage panels, doors, and trim & hardware.",
+  });
+
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useNavScroll(menuOpen);
   const [query, setQuery] = useState("");
   const [activeCategoryId, setActiveCategoryId] = useState("all");
   const [pendingScrollId, setPendingScrollId] = useState(null);
+  const { registerReveal } = useRevealOnScroll();
+  const [toast, setToast] = useToast();
 
   // Clicking any product card opens a shared lightbox "album" scoped to
   // whichever list that card belongs to (its category's products when
@@ -154,7 +169,19 @@ export default function ProductsPage() {
     albumLightbox.openLightbox(index);
   }
 
-  const normalizedQuery = query.trim().toLowerCase();
+  // Debounced separately from `query` itself: the input needs to feel
+  // instant as you type, but the filter/cascade effect below re-runs a
+  // forced-reflow pass over every visible product card on every change to
+  // this value — doing that on every keystroke caused visible stutter
+  // while typing. Decoupling the two means typing stays snappy while the
+  // (more expensive) card re-filter settles ~180ms after you stop.
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query), 180);
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  const normalizedQuery = debouncedQuery.trim().toLowerCase();
   const isSearching = normalizedQuery !== "";
 
   // Clicking a category in the top nav needs to clear any active search or
@@ -266,7 +293,6 @@ export default function ProductsPage() {
         logoTo="/"
         links={productsNavLinks}
         ctaLabel="Request pricing"
-        ctaTo="/#contact"
       />
 
       <section className="hp-products-hero">
@@ -281,9 +307,7 @@ export default function ProductsPage() {
         </h1>
         <p className="hp-products-hero__sub hp-hero-fade" style={{ animationDelay: "0.45s" }}>
           Browse our complete line of insulated wall panels, roof panels,
-          fire-rated panels, cold storage panels, and doors. Have questions
-          about a specific spec or lead time?{" "}
-          <a href={`tel:${CONTACT.phoneHref}`}>Call {CONTACT.phone}</a>.
+          fire-rated panels, cold storage panels, and doors.
         </p>
       </section>
 
@@ -378,7 +402,11 @@ export default function ProductsPage() {
         ))}
       </div>
 
+      <Contact registerReveal={registerReveal} onToast={setToast} />
+
       <Footer logo={logo} />
+
+      <Toast toast={toast} onClose={() => setToast(null)} />
 
       {albumLightbox.lightboxOpen && (
         <Lightbox

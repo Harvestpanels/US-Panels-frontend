@@ -14,7 +14,15 @@ export default function PanelSection({ id, eyebrow, heading, description, panels
           <div className="hp-panel-grid">
             {panels.map((panel) => (
               <article className="hp-panel-card hp-reveal" key={panel.name} ref={registerReveal}>
-                <div className="hp-panel-card__img" style={{ backgroundImage: `url(${panel.img})` }} role="img" aria-label={panel.name} />
+                <div className="hp-panel-card__img">
+                  <img
+                    src={panel.img}
+                    alt={panel.name}
+                    className="hp-panel-card__img-el"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
                 <div className="hp-panel-card__label">
                   <span className="hp-panel-card__use">{panel.category}</span>
                   <h3>{panel.name}</h3>

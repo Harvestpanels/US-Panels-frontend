@@ -72,8 +72,17 @@ export default function Contact({ registerReveal, onToast }) {
               <label htmlFor="f-message">Message</label>
               <textarea id="f-message" name="message" rows={4} />
 
-              <label htmlFor="f-attachment" className="hp-contact__file">Attach floor plan for a quote</label>
-              <input id="f-attachment" type="file" name="attachment" accept=".pdf,.dwg,.png,.jpg,.jpeg" className="hp-file-input" />
+              <label htmlFor="f-attachment" className="hp-contact__file">Attach floor plan for a quote (max 10MB)</label>
+              <input
+                id="f-attachment"
+                type="file"
+                name="attachment"
+                accept=".pdf,.dwg,.png,.jpg,.jpeg"
+                className="hp-file-input"
+                aria-describedby={formErrors.attachment ? "f-attachment-err" : undefined}
+                aria-invalid={!!formErrors.attachment}
+              />
+              {formErrors.attachment && <span id="f-attachment-err" className="hp-field-error" role="alert">{formErrors.attachment}</span>}
 
               <button type="submit" className="hp-btn hp-btn--primary">Send message</button>
               <p className="hp-contact__legal">By submitting this form you agree to be contacted by US Panels regarding your inquiry.</p>
