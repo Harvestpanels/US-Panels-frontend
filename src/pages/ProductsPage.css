@@ -256,6 +256,14 @@
   border-color: rgba(243, 241, 236, 0.25);
 }
 
+/* Cards are role="button" (not a real <button>/<a>), so the global
+   a:focus-visible/button:focus-visible rule in App.css doesn't reach them
+   — same ring, applied explicitly here for keyboard users. */
+.hp-product-card:focus-visible {
+  outline: 2px solid #4a8fd6;
+  outline-offset: 3px;
+}
+
 .hp-products-grid:hover .hp-product-card:not(:hover) {
   opacity: 0.6;
   transform: scale(0.98);
@@ -307,7 +315,7 @@
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #c8262e;
+  color: #4a8fd6;
   margin-bottom: 8px;
 }
 

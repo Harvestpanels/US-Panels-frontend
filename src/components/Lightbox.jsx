@@ -73,7 +73,7 @@ export default function Lightbox({ images, index, onClose, onNext, onPrev }) {
       <figure className="hp-lightbox__figure">
         <img
           key={index}
-          src={`https:${item.src}`}
+          src={item.src}
           alt={item.title}
         />
         <span className="hp-lightbox__count">{index + 1} / {images.length}</span>

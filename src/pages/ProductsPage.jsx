@@ -4,10 +4,23 @@ import logo from "../assets/images/us-panels-logo.png";
 import { PRODUCT_CATEGORIES } from "../data/products";
 import { CONTACT } from "../data/site";
 import { useCountUp } from "../hooks/useCountUp";
+import { useLightbox } from "../hooks/useLightbox";
 import { useNavScroll } from "../hooks/useNavScroll";
 import { scrollCenter } from "../utils/scroll";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
+import Lightbox from "../components/Lightbox";
+
+// Maps a product into the { src, title, category, desc } shape Lightbox
+// expects (the same shape the photo gallery already feeds it).
+function toAlbumItem(product) {
+  return {
+    src: product.img,
+    title: product.name,
+    category: product.categoryName ? `${product.categoryName} · ${product.spec}` : product.spec,
+    desc: product.desc,
+  };
+}
 
 // Once the entrance animation finishes, swap it for a plain "done" class
 // that holds the final opacity. Just removing the animation class would
@@ -87,13 +100,23 @@ function handleCardMouseLeave(e) {
   card.style.setProperty("--tilt-y", "0deg");
 }
 
-function ProductCard({ product, hidden, showCategory }) {
+function ProductCard({ product, hidden, showCategory, onOpen }) {
   return (
     <article
       className={`hp-product-card hp-anim-item${hidden ? " hp-product-card--hidden" : ""}`}
       onMouseMove={handleCardMouseMove}
       onMouseLeave={handleCardMouseLeave}
       onAnimationEnd={clearAnimOnEnd}
+      onClick={onOpen}
+      role="button"
+      tabIndex={hidden ? -1 : 0}
+      aria-label={`View ${product.name}`}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen();
+        }
+      }}
     >
       <div
         className="hp-product-card__img"
@@ -119,6 +142,17 @@ export default function ProductsPage() {
   const [query, setQuery] = useState("");
   const [activeCategoryId, setActiveCategoryId] = useState("all");
   const [pendingScrollId, setPendingScrollId] = useState(null);
+
+  // Clicking any product card opens a shared lightbox "album" scoped to
+  // whichever list that card belongs to (its category's products when
+  // browsing, or the current search results when searching) — next/prev
+  // cycles through that same list, landing on the clicked card's position.
+  const [albumImages, setAlbumImages] = useState([]);
+  const albumLightbox = useLightbox(albumImages.length);
+  function openAlbum(images, index) {
+    setAlbumImages(images);
+    albumLightbox.openLightbox(index);
+  }
 
   const normalizedQuery = query.trim().toLowerCase();
   const isSearching = normalizedQuery !== "";
@@ -306,6 +340,9 @@ export default function ProductsPage() {
                 product={product}
                 hidden={!visibleSearchProducts.includes(product)}
                 showCategory
+                onOpen={() =>
+                  openAlbum(visibleSearchProducts.map(toAlbumItem), visibleSearchProducts.indexOf(product))
+                }
               />
             ))}
           </div>
@@ -327,11 +364,12 @@ export default function ProductsPage() {
                 {category.blurb}
               </p>
               <div className="hp-products-grid">
-                {category.products.map((product) => (
+                {category.products.map((product, i) => (
                   <ProductCard
                     key={`browse-${category.id}-${product.name}`}
                     product={product}
                     hidden={false}
+                    onOpen={() => openAlbum(category.products.map(toAlbumItem), i)}
                   />
                 ))}
               </div>
@@ -341,6 +379,16 @@ export default function ProductsPage() {
       </div>
 
       <Footer logo={logo} />
+
+      {albumLightbox.lightboxOpen && (
+        <Lightbox
+          images={albumImages}
+          index={albumLightbox.lightboxIndex}
+          onClose={albumLightbox.closeLightbox}
+          onNext={albumLightbox.lightboxNext}
+          onPrev={albumLightbox.lightboxPrev}
+        />
+      )}
     </div>
   );
 }

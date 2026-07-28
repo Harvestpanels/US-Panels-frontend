@@ -34,6 +34,12 @@ function HomePage() {
   const lightbox = useLightbox(GALLERY_IMAGES.length);
   const [toast, setToast] = useToast();
 
+  // Lightbox now takes a ready-to-use `src` (so it can also show local,
+  // already-resolved product images elsewhere) — gallery photos still come
+  // from wsimg as protocol-relative URLs, so the "https:" prefix Lightbox
+  // used to add internally now has to happen at the call site instead.
+  const galleryLightboxImages = GALLERY_IMAGES.map((img) => ({ ...img, src: `https:${img.src}` }));
+
   return (
     <div className="hp-app">
       <Nav menuOpen={menuOpen} setMenuOpen={setMenuOpen} navRef={navRef} logo={logo} />
@@ -128,7 +134,7 @@ function HomePage() {
 
       {lightbox.lightboxOpen && (
         <Lightbox
-          images={GALLERY_IMAGES}
+          images={galleryLightboxImages}
           index={lightbox.lightboxIndex}
           onClose={lightbox.closeLightbox}
           onNext={lightbox.lightboxNext}
