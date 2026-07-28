@@ -28,6 +28,7 @@ const PRODUCTS_NAV_SECTIONS = [
   { id: "mineral-wool-panels", label: "Fire-Rated" },
   { id: "cold-storage-panels", label: "Cold Storage" },
   { id: "doors", label: "Doors" },
+  { id: "trim-hardware", label: "Trim & Hardware" },
 ];
 
 const CATEGORY_FILTERS = [

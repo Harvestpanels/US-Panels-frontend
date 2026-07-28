@@ -5,9 +5,11 @@ import {
   BUILDING_ENVELOPE_PANELS,
   COLD_STORAGE_PANELS,
   DATA_CENTER_PANELS,
+  DOOR_PANELS,
   GALLERY_IMAGES,
   PEMB_PANELS,
   ROOF_PANELS,
+  TRIM_HARDWARE_PANELS,
 } from "../data/panels";
 import { PARALLAX_BG_URL, VIDEO_URL } from "../data/site";
 import { useHeroParallax } from "../hooks/useHeroParallax";
@@ -101,6 +103,22 @@ function HomePage() {
         heading="Complete metal building systems, frame to finish"
         description="Steel frame structures clad with insulated wall and roof panels, available in custom sizes, designs, and colors for any project."
         panels={PEMB_PANELS}
+        registerReveal={registerReveal}
+      />
+      <PanelSection
+        id="doors"
+        eyebrow="Doors"
+        heading="Insulated doors built to match your envelope"
+        description="High-speed, sliding, and personnel doors engineered for fast, secure access without breaking the thermal envelope around them."
+        panels={DOOR_PANELS}
+        registerReveal={registerReveal}
+      />
+      <PanelSection
+        id="trim-hardware"
+        eyebrow="Trim & hardware"
+        heading="The finishing details that complete every install"
+        description="Trim, fasteners, and sealants engineered specifically for insulated panel systems, keeping every seam clean and weather-tight."
+        panels={TRIM_HARDWARE_PANELS}
         registerReveal={registerReveal}
       />
       <Gallery images={GALLERY_IMAGES} registerReveal={registerReveal} onSelect={lightbox.openLightbox} />

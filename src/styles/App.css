@@ -189,6 +189,37 @@ h3 {
   margin: 0 0 14px;
 }
 
+/* Panel sections (Building Envelope, Roof Panels, Data Center, Cold
+   Storage, PEMB, Doors, Trim & Hardware): eyebrow scaled up to match the
+   heading below it, instead of the small label style Who We Are/Gallery/
+   FAQ/Contact use. */
+#panels .hp-section__eyebrow,
+#exterior .hp-section__eyebrow,
+#data-center .hp-section__eyebrow,
+#cold-storage .hp-section__eyebrow,
+#pemb .hp-section__eyebrow,
+#doors .hp-section__eyebrow,
+#trim-hardware .hp-section__eyebrow {
+  font-family: "Big Shoulders Display", sans-serif;
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  margin-bottom: 8px;
+}
+
+/* ...and the heading scales back down to read as a sub-headline under
+   that now-large eyebrow, instead of matching it in size. */
+#panels h2,
+#exterior h2,
+#data-center h2,
+#cold-storage h2,
+#pemb h2,
+#doors h2,
+#trim-hardware h2 {
+  font-size: clamp(20px, 2.5vw, 26px);
+}
+
 .hp-section h2 {
   font-size: clamp(32px, 5vw, 52px);
   margin-bottom: 56px;

@@ -206,3 +206,16 @@
 @media (max-width: 640px) {
   .hp-contact__form .hp-btn { align-self: stretch; justify-content: center; }
 }
+
+@media (max-width: 400px) {
+  /* The "no file chosen" label is rendered natively by the browser, not
+     styleable text — narrowing the button gives it enough room that it
+     stops getting truncated to "No fil...hosen" on the smallest screens. */
+  .hp-file-input { font-size: 12px; padding: 8px 10px; }
+  .hp-file-input::file-selector-button,
+  .hp-file-input::-webkit-file-upload-button {
+    margin-right: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+}

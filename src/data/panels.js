@@ -7,6 +7,9 @@ import roofResidentialImg from "../assets/images/Roof Panels/Residential.webp";
 // TODO: placeholder photo — swap each card's `img` for a real photo once provided.
 import placeholderImg from "../assets/images/US Panels Facility.webp";
 
+const slidingDoorImg =
+  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/37253940_l-5b6bb8e.webp/:/rs=w:1300,h:800";
+
 export const GALLERY_IMAGES = [
   {
     src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_0380.jpeg/:/rs=w:1300,h:800",
@@ -184,6 +187,49 @@ export const PEMB_PANELS = [
     name: "Custom Options",
     category: "Metal Building",
     desc: "Custom sizes, designs, and color options let every pre-engineered building match the look and footprint your project needs.",
+    img: placeholderImg,
+  },
+];
+
+export const DOOR_PANELS = [
+  {
+    name: "Hinge Cooler Doors",
+    category: "Doors",
+    desc: "Hinged insulated doors built for cold storage and cooler entries, sealing tight against the surrounding panel envelope.",
+    img: placeholderImg,
+  },
+  {
+    name: "Sliding Cooler Doors",
+    category: "Doors",
+    desc: "Heavy-duty insulated sliding doors built for consistent temperature control and secure cooler access.",
+    img: slidingDoorImg,
+  },
+  {
+    name: "Metal Doors",
+    category: "Doors",
+    desc: "Durable insulated metal doors matched to the thermal performance of the surrounding panel envelope.",
+    img: placeholderImg,
+  },
+];
+
+// TODO: every `img` below is a placeholder — swap for real photos one at a time.
+export const TRIM_HARDWARE_PANELS = [
+  {
+    name: "Corner Angles",
+    category: "Trim & Hardware",
+    desc: "Formed corner trim finished to match your panel color for a clean, weather-sealed edge at every outside and inside corner.",
+    img: placeholderImg,
+  },
+  {
+    name: "T-Bar",
+    category: "Trim & Hardware",
+    desc: "T-bar trim for clean, supported seams between panels, keeping every joint aligned and finished.",
+    img: placeholderImg,
+  },
+  {
+    name: "Miscellaneous",
+    category: "Trim & Hardware",
+    desc: "All-thread, unistrut, fasteners, and butyl sealant, the hardware that holds every panel system together.",
     img: placeholderImg,
   },
 ];

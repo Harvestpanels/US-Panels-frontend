@@ -30,6 +30,127 @@
   position: relative;
 }
 
+/* Plays on every mount (every page navigation), ~1.4s so it reads as a
+   deliberate transition:
+     1. Pill folds into a true circle (needs an actual `width` change —
+        a scaleX squeeze can't keep rounded corners circular at this
+        aspect ratio) and holds, logo fading in centered over it. The
+        pill is `position: fixed` with only a handful of children, so
+        this reflow stays local and cheap — it's not resizing anything
+        else on the page.
+     2. Pill widens back out while the logo — the same element, sliding
+        via `translateX` only (no `left`, so this part stays purely
+        compositor-driven) — moves from that centered spot to exactly
+        where the real logo (inside .hp-nav__inner) sits.
+     3. Once landed, it crossfades with the real logo/links/button
+        fading in underneath it at that same spot. Matched start time,
+        duration, and linear easing on both sides of the crossfade so
+        their opacities always sum to 1 — a real handoff, not two
+        independent fades that can both dip at once. */
+@keyframes hp-nav-fold-in {
+  /* 84px = the pill's own natural height (44px logo + 19px top/bottom
+     padding + 2px border — see .hp-nav__inner), so the folded circle is a
+     true circle (width === height) at exactly the expanded navbar's real
+     height throughout — it reads as the navbar itself collapsing and
+     expanding, not a differently-sized shape swapped in. */
+  0%   { width: 84px; height: 84px; border-radius: 50%; }
+  18%  { width: 84px; height: 84px; border-radius: 50%; }
+  100% { width: 100%; height: 84px; border-radius: 999px; }
+}
+
+/* No opacity ramp anywhere in here — the logo is visible at full opacity
+   from frame one, only its position (translateX) animates. It's hidden
+   at the very end via a hard, instant cut (steps(1, end) on that last
+   segment below) rather than any kind of fade. */
+@keyframes hp-nav-fold-logo {
+  0%   { opacity: 1; transform: translate(-50%, -50%) translateX(0); }
+  18%  { opacity: 1; transform: translate(-50%, -50%) translateX(0); }
+  /* -402px = pill center to the real logo's measured position (58px from
+     the pill's left edge, at the pill's capped max-width of 920px: half
+     of 920 is 460, so 460 - 58 = 402px to the left). This only needs to
+     be correct at the desktop widths where the full nav (links + button)
+     is actually showing — below that breakpoint the pill collapses to a
+     hamburger-only circle and this slide isn't visible anyway. */
+  88%  { opacity: 1; transform: translate(-50%, -50%) translateX(-402px); animation-timing-function: steps(1, end); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translateX(-402px); }
+}
+
+@keyframes hp-nav-content-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* An instant snap, not a fade — held invisible at 0 until the very last
+   moment, then jumps straight to fully visible. Used for the real logo
+   specifically (see .hp-nav__logo-slot below): if it faded in like the
+   links/button do, that fade would compound with the fold-logo overlay's
+   own fade-out (nested opacity always multiplies), producing a second,
+   subtler fade stacked on top of the first — which is what read as a
+   flicker. Snapping it in avoids that entirely. */
+@keyframes hp-nav-logo-in {
+  0%, 99% { opacity: 0; }
+  100%    { opacity: 1; }
+}
+
+.hp-nav__fold-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  animation: hp-nav-fold-logo 1.6s cubic-bezier(0.45,0,0.15,1) both;
+}
+
+/* Matches .hp-logo__img exactly, so the logo doesn't change size when the
+   fold overlay hands off to the real nav logo underneath it. */
+.hp-nav__fold-logo img {
+  height: 44px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.35));
+}
+
+@media (max-width: 400px) {
+  .hp-nav__fold-logo img { height: 28px; }
+}
+
+.hp-nav__pill--fold {
+  animation: hp-nav-fold-in 1.6s cubic-bezier(0.45,0,0.15,1) both;
+}
+
+.hp-nav__pill--fold .hp-nav__inner-content {
+  /* 1.6s * 88% = 1.408s, duration 1.6s * 12% = 0.192s — matches the
+     fold-logo's fade-out window (see hp-nav-fold-logo) exactly. */
+  animation: hp-nav-content-in 0.192s linear 1.408s both;
+}
+
+.hp-nav__pill--fold .hp-nav__logo-slot {
+  /* Snaps to visible at the same 1.408s mark the crossfade above starts
+     — i.e. right as the fold-logo overlay begins its own fade-out — so
+     by the time the overlay reaches opacity 0, the real logo is already
+     solidly at opacity 1 underneath it, not still fading in. */
+  animation: hp-nav-logo-in 0.192s steps(1, end) 1.408s both;
+}
+
+/* Below this breakpoint the nav is always a small 52px hamburger-only
+   circle (see the max-width: 1024px block below) — the fold/slide
+   transition is a desktop-only flourish and has no sensible "expanded"
+   state to land in on mobile, so it's switched off entirely here. */
+@media (max-width: 1024px) {
+  .hp-nav__pill--fold { animation: none; }
+  .hp-nav__pill--fold .hp-nav__inner-content { animation: none; opacity: 1; }
+  .hp-nav__pill--fold .hp-nav__logo-slot { animation: none; opacity: 1; }
+  .hp-nav__fold-logo { animation: none; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-nav__pill--fold { animation: none; }
+  .hp-nav__pill--fold .hp-nav__inner-content { animation: none; opacity: 1; }
+  .hp-nav__pill--fold .hp-nav__logo-slot { animation: none; opacity: 1; }
+  .hp-nav__fold-logo { animation: none; opacity: 0; }
+}
+
 .hp-nav__pill::before {
   content: "";
   position: absolute;
@@ -64,14 +185,37 @@
 .hp-nav--solid .hp-nav__pill::before { opacity: 0; }
 .hp-nav--solid .hp-nav__pill::after  { opacity: 1; }
 
-/* Top bar row */
+/* Top bar row — logo-slot and inner-content are the two grid columns;
+   inner-content arranges links/cta/hamburger itself via flex, so the
+   overall visual layout matches the original 4-column grid exactly. */
 .hp-nav__inner {
-  padding: 10px 14px 10px 22px;
+  /* Right padding (32px) is a bit more than the left (22px) — on desktop
+     the hamburger is hidden, so "Get a quote" is the last item, and the
+     extra room keeps it from reading as jammed into the pill's corner.
+     Top/bottom padding (19px) brings the pill's natural height up to
+     84px, matching the folded circle's size (see hp-nav-fold-in). */
+  padding: 19px 32px 19px 22px;
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
+  grid-template-columns: auto 1fr;
   align-items: center;
   gap: 36px;
   position: relative;
+}
+
+.hp-nav__logo-slot {
+  display: flex;
+  align-items: center;
+}
+
+.hp-nav__inner-content {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  min-width: 0;
+}
+
+.hp-nav__inner-content .hp-nav__links {
+  flex: 1;
 }
 
 .hp-nav__links {
@@ -147,52 +291,45 @@
   transform: scale(0.94);
 }
 
-.hp-nav__hamburger-icon {
-  width: 46px;
-  height: auto;
-  object-fit: contain;
-  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1), filter 0.25s ease;
-}
-
-.hp-nav__hamburger:hover .hp-nav__hamburger-icon {
-  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.4));
-}
-
-.hp-nav__hamburger.is-open .hp-nav__hamburger-icon {
-  opacity: 0;
-  transform: scale(0.5) rotate(45deg);
-}
-
-/* X built from two crossed bars, shown only while the menu is open */
-.hp-nav__hamburger-close {
-  position: absolute;
-  inset: 0;
-  margin: auto;
+/* Classic three-bar icon, morphing into an X when the menu is open. */
+.hp-nav__hamburger-bars {
+  position: relative;
+  display: block;
   width: 22px;
-  height: 22px;
-  opacity: 0;
-  transform: scale(0.5) rotate(-45deg);
-  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
-  pointer-events: none;
+  height: 16px;
 }
 
-.hp-nav__hamburger.is-open .hp-nav__hamburger-close {
-  opacity: 1;
-  transform: scale(1) rotate(0deg);
-}
-
-.hp-nav__hamburger-close span {
+.hp-nav__hamburger-bars span {
   position: absolute;
-  top: 50%;
   left: 0;
   width: 100%;
   height: 2px;
-  background: #14213a;
   border-radius: 2px;
+  background: #14213a;
+  transition:
+    top 0.28s cubic-bezier(0.16,1,0.3,1),
+    transform 0.28s cubic-bezier(0.16,1,0.3,1),
+    opacity 0.2s ease;
 }
 
-.hp-nav__hamburger-close span:first-child { transform: translateY(-50%) rotate(45deg); }
-.hp-nav__hamburger-close span:last-child { transform: translateY(-50%) rotate(-45deg); }
+.hp-nav__hamburger-bars span:nth-child(1) { top: 0; }
+.hp-nav__hamburger-bars span:nth-child(2) { top: 7px; }
+.hp-nav__hamburger-bars span:nth-child(3) { top: 14px; }
+
+.hp-nav__hamburger.is-open .hp-nav__hamburger-bars span:nth-child(1) {
+  top: 7px;
+  transform: rotate(45deg);
+}
+
+.hp-nav__hamburger.is-open .hp-nav__hamburger-bars span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hp-nav__hamburger.is-open .hp-nav__hamburger-bars span:nth-child(3) {
+  top: 7px;
+  transform: rotate(-45deg);
+}
 
 /* Mobile dropdown panel */
 .hp-nav__mobile {
@@ -241,6 +378,13 @@
   /* Position nav to the right */
   .hp-nav { justify-content: flex-end; padding: 0 20px; }
 
+  /* The auto-hide-on-scroll-down behavior relies on hovering near the top
+     of the screen to bring the nav back — there's no hover on touch
+     devices, so scrolling down on mobile would otherwise strand the
+     hamburger button off-screen with no way to reopen the menu. Keep it
+     pinned in place at this breakpoint instead. */
+  .hp-nav--hidden { transform: none; }
+
   /* Collapsed: circle button only */
   .hp-nav__pill {
     width: 52px !important;
@@ -260,11 +404,6 @@
   }
 
   .hp-nav:not(.hp-nav--open) .hp-nav__pill:active { transform: scale(0.96); }
-
-  /* Hovering the hamburger scales the whole visible circle, not just the icon inside it */
-  .hp-nav:not(.hp-nav--open) .hp-nav__pill:has(.hp-nav__hamburger:hover) {
-    transform: scale(1.1);
-  }
 
   /* Expanded: full-width dropdown card */
   .hp-nav--open .hp-nav__pill {
