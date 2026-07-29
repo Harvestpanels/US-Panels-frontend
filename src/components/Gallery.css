@@ -179,6 +179,10 @@
 
 @media (max-width: 640px) {
   .hp-gallery-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+  /* The column layout above left-aligns everything by default — keep the
+     prev/next buttons on the right, matching where they sit on desktop,
+     instead of falling in line with the left-aligned text. */
+  .hp-gallery-header__nav { align-self: flex-end; }
   .hp-gallery-card__caption { font-size: 15px; }
 }
 
