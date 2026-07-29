@@ -8,6 +8,11 @@
   to   { opacity: 1; transform: scale(1); }
 }
 
+@keyframes hp-lightbox-img-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 .hp-lightbox {
   position: fixed;
   inset: 0;
@@ -49,6 +54,10 @@
      touch handling, which would otherwise fight with (or double up on)
      the custom gesture logic. */
   touch-action: none;
+  /* ZoomableImage is remounted fresh on every next/prev (keyed by index
+     in Lightbox.jsx), so this replays as a smooth fade-in on every photo
+     switch, not just when the lightbox first opens. */
+  animation: hp-lightbox-img-in 0.35s ease both;
 }
 
 /* Caption sits directly over the photo, matching the gallery card format */
