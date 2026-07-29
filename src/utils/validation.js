@@ -3,7 +3,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 // Most mail-relay/upload backends reject attachments well before 25MB;
 // capped lower here so the visitor finds out immediately instead of after
 // a failed submission.
-export const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
 
 export function validateForm(data) {
   const errors = {};

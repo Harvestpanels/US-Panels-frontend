@@ -77,6 +77,13 @@ h3 {
   filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.4));
 }
 
+/* Press feedback on click/tap, matching the scale-down other buttons use
+   (e.g. .hp-btn--primary, .hp-gallery-nav) instead of the logo being the
+   only clickable element on the site with no active-state response. */
+.hp-logo:active .hp-logo__img {
+  transform: scale(0.95);
+}
+
 .hp-logo__img {
   height: 44px;
   width: auto;

@@ -195,11 +195,14 @@ export default function ProductsPage() {
     setPendingScrollId(id);
   }
 
-  const productsNavLinks = PRODUCTS_NAV_SECTIONS.map((section) => ({
-    id: section.id,
-    label: section.label,
-    onClick: () => handleNavSectionClick(section.id),
-  }));
+  const productsNavLinks = [
+    { to: "/", label: "Home" },
+    ...PRODUCTS_NAV_SECTIONS.map((section) => ({
+      id: section.id,
+      label: section.label,
+      onClick: () => handleNavSectionClick(section.id),
+    })),
+  ];
 
   useEffect(() => {
     if (!pendingScrollId) return;
@@ -290,7 +293,6 @@ export default function ProductsPage() {
         setMenuOpen={setMenuOpen}
         navRef={navRef}
         logo={logo}
-        logoTo="/"
         links={productsNavLinks}
         ctaLabel="Request pricing"
       />

@@ -292,12 +292,6 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.55s cubic-bezier(0.16,1,0.3,1);
-}
-
-.hp-product-card:hover .hp-product-card__img-el {
-  transform: scale(1.06);
-  will-change: transform;
 }
 
 .hp-product-card--hidden {
@@ -357,12 +351,14 @@
   .hp-products-category { padding: 72px 0; }
   .hp-products-category__inner { padding: 0 20px; }
   .hp-products-grid { grid-template-columns: 1fr; }
+  /* Taller tap target — at the base 8px vertical padding these sat around
+     34px tall, under the ~40-44px comfortable touch-target guideline. */
+  .hp-products-filter__chip { padding: 13px 16px; }
 }
 
 @media (hover: none) {
   .hp-products-grid:hover .hp-product-card:not(:hover) { opacity: 1; transform: none; }
   .hp-product-card:hover { transform: none; }
-  .hp-product-card:hover .hp-product-card__img-el { transform: none; }
   .hp-product-card:hover .hp-product-card__glare { opacity: 0; }
 }
 

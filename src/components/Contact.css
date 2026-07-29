@@ -185,7 +185,7 @@
 
 .hp-form-success__title {
   font-family: "Big Shoulders Display", sans-serif;
-  font-size: 32px;
+  font-size: clamp(24px, 6vw, 32px);
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.01em;
