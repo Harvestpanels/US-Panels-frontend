@@ -70,6 +70,17 @@
   color: rgba(20, 30, 50, 0.45);
 }
 
+.hp-footer__legal p {
+  margin: 0;
+}
+
+/* Real spacing between the description and the copyright line instead of
+   relying on a <br> plus line-height alone, which read as cramped once the
+   description wraps to several lines on mobile. */
+.hp-footer__legal p + p {
+  margin-top: 10px;
+}
+
 @media (max-width: 1024px) {
   .hp-footer__inner { padding: 0 24px; gap: 20px; }
   .hp-footer__legal { padding: 20px 24px 0; }

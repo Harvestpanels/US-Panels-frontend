@@ -33,11 +33,12 @@ export default function Footer({ logo }) {
           </a>
         </div>
       </div>
-      <p className="hp-footer__legal">
-        US Panels manufactures and distributes insulated metal wall and roof panels and doors — including PIR, PUR, and EPS core options — for industrial, commercial, and residential building envelopes, based in Piedmont, Oklahoma.
-        <br />
-        &copy; {CURRENT_YEAR} US Panels - All Rights Reserved. A Globus Ventures Company.
-      </p>
+      <div className="hp-footer__legal">
+        <p>
+          US Panels manufactures and distributes insulated metal wall and roof panels and doors — including PIR, PUR, and EPS core options — for industrial, commercial, and residential building envelopes, based in Piedmont, Oklahoma.
+        </p>
+        <p>&copy; {CURRENT_YEAR} US Panels - All Rights Reserved. A Globus Ventures Company.</p>
+      </div>
     </footer>
   );
 }

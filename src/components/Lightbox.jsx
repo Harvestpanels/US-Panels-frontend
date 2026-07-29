@@ -5,18 +5,19 @@ const MIN_ZOOM = 1;
 const MAX_ZOOM = 4;
 const DOUBLE_TAP_ZOOM = 2.5;
 const DOUBLE_TAP_WINDOW_MS = 300;
+const SWIPE_THRESHOLD_PX = 40;
 
 function distanceBetween(touches) {
   const [a, b] = touches;
   return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
 }
 
-// Pinch-to-zoom and double-tap-to-zoom on the photo (touch devices — desktop
-// pointers have no pinch gesture and the image already displays large, so
-// this only wires up touch handlers). Mounted fresh per photo (keyed by
-// index in the parent), so zoom/pan naturally start at their defaults for
-// every new image instead of needing an effect to reset them.
-function ZoomableImage({ src, alt }) {
+// Pinch-to-zoom, double-tap-to-zoom, and swipe-to-navigate on the photo
+// (touch devices — desktop pointers have no pinch/swipe gesture and already
+// have arrow buttons/arrow keys). Mounted fresh per photo (keyed by index
+// in the parent), so zoom/pan naturally start at their defaults for every
+// new image instead of needing an effect to reset them.
+function ZoomableImage({ src, alt, onNext, onPrev }) {
   const [zoom, setZoom] = useState(MIN_ZOOM);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   // Drives the transition toggle in render, so it has to be state (not a
@@ -48,6 +49,17 @@ function ZoomableImage({ src, alt }) {
         startPan: pan,
         startTouch: { x: e.touches[0].clientX, y: e.touches[0].clientY },
       };
+    } else if (e.touches.length === 1) {
+      // Not zoomed in — this single finger might turn into a swipe to the
+      // next/previous photo (decided in handleTouchMove once its direction
+      // is clear) or just end up being a tap/double-tap.
+      gestureRef.current = {
+        mode: "swipe-candidate",
+        startDist: 0,
+        startZoom: zoomLiveRef.current,
+        startPan: pan,
+        startTouch: { x: e.touches[0].clientX, y: e.touches[0].clientY },
+      };
     }
   }
 
@@ -64,10 +76,20 @@ function ZoomableImage({ src, alt }) {
       const dx = e.touches[0].clientX - gesture.startTouch.x;
       const dy = e.touches[0].clientY - gesture.startTouch.y;
       setPan({ x: gesture.startPan.x + dx, y: gesture.startPan.y + dy });
+    } else if (gesture.mode === "swipe-candidate" && e.touches.length === 1) {
+      const dx = e.touches[0].clientX - gesture.startTouch.x;
+      const dy = e.touches[0].clientY - gesture.startTouch.y;
+      // Once it's clearly more horizontal than vertical, claim the gesture
+      // (block page scroll) — same disambiguation the gallery carousel
+      // uses, so an intentional vertical scroll starting on the photo
+      // still works normally instead of being hijacked.
+      if (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) e.preventDefault();
     }
   }
 
   function handleTouchEnd(e) {
+    const gesture = gestureRef.current;
+    const wasSwipeCandidate = gesture.mode === "swipe-candidate";
     gestureRef.current.mode = null;
     setIsGesturing(false);
     // Snap back to the base frame instead of leaving the photo stranded
@@ -76,6 +98,16 @@ function ZoomableImage({ src, alt }) {
       zoomLiveRef.current = MIN_ZOOM;
       setZoom(MIN_ZOOM);
       setPan({ x: 0, y: 0 });
+    }
+
+    if (wasSwipeCandidate && e.changedTouches.length === 1) {
+      const dx = e.changedTouches[0].clientX - gesture.startTouch.x;
+      const dy = e.changedTouches[0].clientY - gesture.startTouch.y;
+      if (Math.abs(dx) > SWIPE_THRESHOLD_PX && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) onNext();
+        else onPrev();
+        return;
+      }
     }
 
     if (e.touches.length === 0) {
@@ -181,7 +213,7 @@ export default function Lightbox({ images, index, onClose, onNext, onPrev }) {
       </button>
 
       <figure className="hp-lightbox__figure">
-        <ZoomableImage key={index} src={item.src} alt={item.title} />
+        <ZoomableImage key={index} src={item.src} alt={item.title} onNext={onNext} onPrev={onPrev} />
         <span className="hp-lightbox__count">{index + 1} / {images.length}</span>
         <figcaption>
           <span className="hp-lightbox__use">{item.category}</span>

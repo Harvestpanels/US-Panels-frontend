@@ -120,8 +120,12 @@
 }
 
 @media (max-width: 1024px) {
-  /* 2 columns would orphan the 3rd card with a lopsided gap — go straight to 1 column */
-  .hp-panel-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+  /* 2 columns would orphan the 3rd card with a lopsided gap — go straight to
+     1 column. margin: 0 auto here was a bug: the shorthand's "0" zeroed out
+     the base rule's 24px top margin (only horizontal centering was
+     intended), leaving the image grid touching the description text right
+     above it with no gap at all. */
+  .hp-panel-grid { grid-template-columns: 1fr; max-width: 480px; margin: 32px auto 0; }
 }
 
 @media (max-width: 640px) {

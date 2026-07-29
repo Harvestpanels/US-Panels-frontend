@@ -1,5 +1,10 @@
 import "./Gallery.css";
+import { useRef } from "react";
 import { useGalleryCarousel } from "../hooks/useGalleryCarousel";
+
+// Below this, swiping past the last card's edge should feel like there's
+// somewhere further to go — a real, physical drag rather than a snap.
+const SWIPE_THRESHOLD_PX = 40;
 
 export default function Gallery({ images, registerReveal, onSelect }) {
   const {
@@ -11,6 +16,41 @@ export default function Gallery({ images, registerReveal, onSelect }) {
     galleryNext,
     galleryPrev,
   } = useGalleryCarousel(images);
+
+  // Touch swipe on the track (mobile has no other way to advance besides
+  // the small prev/next buttons up in the header — a horizontally-sliding
+  // carousel with no swipe support reads as broken on a touch device,
+  // where swiping is the expected gesture). `intent` starts null each
+  // touch and gets decided on the first move past a few px: once it's
+  // "horizontal", the gesture is treated as ours and page scroll is
+  // suppressed; once "vertical", we back off entirely and let the page
+  // scroll normally, matching how native carousels disambiguate the two.
+  const touchRef = useRef({ x: 0, y: 0, intent: null });
+
+  function handleTouchStart(e) {
+    const t = e.touches[0];
+    touchRef.current = { x: t.clientX, y: t.clientY, intent: null };
+  }
+
+  function handleTouchMove(e) {
+    const state = touchRef.current;
+    const t = e.touches[0];
+    const dx = t.clientX - state.x;
+    const dy = t.clientY - state.y;
+
+    if (state.intent === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+      state.intent = Math.abs(dx) > Math.abs(dy) ? "horizontal" : "vertical";
+    }
+    if (state.intent === "horizontal") e.preventDefault();
+  }
+
+  function handleTouchEnd(e) {
+    const state = touchRef.current;
+    if (state.intent !== "horizontal") return;
+    const dx = e.changedTouches[0].clientX - state.x;
+    if (dx <= -SWIPE_THRESHOLD_PX) galleryNext();
+    else if (dx >= SWIPE_THRESHOLD_PX) galleryPrev();
+  }
 
   return (
     <section className="hp-section hp-section--gallery" id="gallery">
@@ -48,7 +88,13 @@ export default function Gallery({ images, registerReveal, onSelect }) {
             </div>
           </div>
 
-          <div className="hp-gallery-viewport hp-reveal" ref={(el) => { galleryViewportRef.current = el; registerReveal(el); }}>
+          <div
+            className="hp-gallery-viewport hp-reveal"
+            ref={(el) => { galleryViewportRef.current = el; registerReveal(el); }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <div
               className="hp-gallery-track"
               style={{
