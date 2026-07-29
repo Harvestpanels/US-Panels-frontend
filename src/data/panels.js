@@ -4,17 +4,21 @@ import buildingResidentialImg from "../assets/images/Building Envelope/Residenti
 import roofCommercialImg from "../assets/images/Roof Panels/Commercial.webp";
 import roofIndustrialImg from "../assets/images/Roof Panels/Industrial.webp";
 import roofResidentialImg from "../assets/images/Roof Panels/Residential.webp";
-// TODO: placeholder photo — swap each card's `img` for a real photo once provided.
-import placeholderImg from "../assets/images/US Panels Facility.webp";
 import dataCenterExteriorImg from "../assets/images/Sections/Data Centers/Data Centers -  Exterior Panels.png";
 import dataCenterInteriorImg from "../assets/images/Sections/Data Centers/Data Centers - Interior Panels.png";
 import dataCenterBenefitsImg from "../assets/images/Sections/Data Centers/Data Centers - Benefits.png";
 import coldStorageExteriorImg from "../assets/images/Sections/Cold Storage/Cold Storage - Exterior Panels.png";
 import coldStorageInteriorImg from "../assets/images/Sections/Cold Storage/Cold Storage - Interior Panels.png";
 import coldStorageBenefitsImg from "../assets/images/Sections/Cold Storage/Cold Storage - Benefits.png";
-
-const slidingDoorImg =
-  "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/37253940_l-5b6bb8e.webp/:/rs=w:1300,h:800";
+import pembFrameStructureImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Frame & Structure.png";
+import pembWallRoofImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Wall & Roof Panels.png";
+import pembCustomOptionsImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Custom Options.png";
+import hingeCoolerDoorImg from "../assets/images/Sections/Doors/Doors - Hinge Cooler Doors.png";
+import metalDoorImg from "../assets/images/Sections/Doors/Doors - Metal Doors.png";
+import slidingCoolerDoorImg from "../assets/images/Sections/Doors/Doors - Sliding Cooler Doors.png";
+import trimCornerAnglesImg from "../assets/images/Sections/Trim & Hardware/Trim & Hardware - Corner Angles.png";
+import trimTBarImg from "../assets/images/Sections/Trim & Hardware/Trim & Hardware - T Bar.png";
+import trimMiscellaneousImg from "../assets/images/Sections/Trim & Hardware/Trim & Hardware - Miscellaneous.png";
 
 export const GALLERY_IMAGES = [
   {
@@ -181,19 +185,19 @@ export const PEMB_PANELS = [
     name: "Frame & Structure",
     category: "Metal Building",
     desc: "Pre-engineered steel frame systems designed for fast erection and a strong, code-compliant structural foundation.",
-    img: placeholderImg,
+    img: pembFrameStructureImg,
   },
   {
     name: "Wall & Roof Panels",
     category: "Metal Building",
     desc: "Insulated wall and roof panel systems that clad the structure for a complete, weather-tight building envelope.",
-    img: placeholderImg,
+    img: pembWallRoofImg,
   },
   {
     name: "Custom Options",
     category: "Metal Building",
     desc: "Custom sizes, designs, and color options let every pre-engineered building match the look and footprint your project needs.",
-    img: placeholderImg,
+    img: pembCustomOptionsImg,
   },
 ];
 
@@ -202,19 +206,19 @@ export const DOOR_PANELS = [
     name: "Hinge Cooler Doors",
     category: "Doors",
     desc: "Hinged insulated doors built for cold storage and cooler entries, sealing tight against the surrounding panel envelope.",
-    img: placeholderImg,
+    img: hingeCoolerDoorImg,
   },
   {
     name: "Sliding Cooler Doors",
     category: "Doors",
     desc: "Heavy-duty insulated sliding doors built for consistent temperature control and secure cooler access.",
-    img: slidingDoorImg,
+    img: slidingCoolerDoorImg,
   },
   {
     name: "Metal Doors",
     category: "Doors",
     desc: "Durable insulated metal doors matched to the thermal performance of the surrounding panel envelope.",
-    img: placeholderImg,
+    img: metalDoorImg,
   },
 ];
 
@@ -224,18 +228,18 @@ export const TRIM_HARDWARE_PANELS = [
     name: "Corner Angles",
     category: "Trim & Hardware",
     desc: "Formed corner trim finished to match your panel color for a clean, weather-sealed edge at every outside and inside corner.",
-    img: placeholderImg,
+    img: trimCornerAnglesImg,
   },
   {
     name: "T-Bar",
     category: "Trim & Hardware",
     desc: "T-bar trim for clean, supported seams between panels, keeping every joint aligned and finished.",
-    img: placeholderImg,
+    img: trimTBarImg,
   },
   {
     name: "Miscellaneous",
     category: "Trim & Hardware",
     desc: "All-thread, unistrut, fasteners, and butyl sealant, the hardware that holds every panel system together.",
-    img: placeholderImg,
+    img: trimMiscellaneousImg,
   },
 ];

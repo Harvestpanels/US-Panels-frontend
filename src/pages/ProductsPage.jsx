@@ -8,6 +8,7 @@ import { useLightbox } from "../hooks/useLightbox";
 import { useNavScroll } from "../hooks/useNavScroll";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
+import { useScrollSpy } from "../hooks/useScrollSpy";
 import { useToast } from "../hooks/useToast";
 import { scrollCenter, scrollToTop } from "../utils/scroll";
 import Nav from "../components/Nav";
@@ -48,6 +49,8 @@ const PRODUCTS_NAV_SECTIONS = [
   { id: "doors", label: "Doors" },
   { id: "trim-hardware", label: "Trim & Hardware" },
 ];
+
+const PRODUCTS_SCROLL_SPY_IDS = [...PRODUCTS_NAV_SECTIONS.map((s) => s.id), "contact"];
 
 const CATEGORY_FILTERS = [
   { id: "all", label: "All products" },
@@ -157,6 +160,7 @@ export default function ProductsPage() {
   const [pendingScrollId, setPendingScrollId] = useState(null);
   const { registerReveal } = useRevealOnScroll();
   const [toast, setToast] = useToast();
+  const activeSectionId = useScrollSpy(PRODUCTS_SCROLL_SPY_IDS);
 
   // Clicking any product card opens a shared lightbox "album" scoped to
   // whichever list that card belongs to (its category's products when
@@ -205,29 +209,32 @@ export default function ProductsPage() {
     { id: "contact", label: "Contact Us" },
   ];
 
-  // Same collapsed-dropdown pattern as the homepage nav — a "Menu" popover
-  // for site-wide navigation, a "Categories" popover grouping every product
-  // section, and an "Inquiry" popover for Contact Us — instead of a long
-  // flat row of links. Mobile still uses the flat `productsNavLinks` list
-  // above.
+  // Plain top-level nav links, not tucked inside a dropdown — "Products"
+  // scrolls to top rather than navigating (this page already is /products).
+  const productsTopLinks = [
+    { to: "/", label: "Home" },
+    { id: "products-top", label: "Products", onClick: scrollToTop },
+  ];
+
+  // Same collapsed-dropdown pattern as the homepage nav — a "Categories"
+  // popover grouping every product section, and an "Inquiry" popover for
+  // Contact Us — instead of a long flat row of links. Mobile still uses the
+  // flat `productsNavLinks` list above.
   const productsNavDropdowns = [
-    {
-      key: "menu",
-      label: "Menu",
-      items: [
-        { label: "Home", to: "/" },
-        { label: "Products", onClick: scrollToTop },
-      ],
-    },
     {
       key: "categories",
       label: "Categories",
       items: PRODUCTS_NAV_SECTIONS.map((section) => ({
         label: section.label,
         onClick: () => handleNavSectionClick(section.id),
+        active: section.id === activeSectionId,
       })),
     },
-    { key: "inquiry", label: "Inquiry", items: [{ label: "Contact Us", onClick: () => scrollCenter("contact") }] },
+    {
+      key: "inquiry",
+      label: "Inquiry",
+      items: [{ label: "Contact Us", onClick: () => scrollCenter("contact"), active: activeSectionId === "contact" }],
+    },
   ];
 
   useEffect(() => {
@@ -321,7 +328,7 @@ export default function ProductsPage() {
         logo={logo}
         links={productsNavLinks}
         dropdowns={productsNavDropdowns}
-        desktopLinks={[]}
+        desktopLinks={productsTopLinks}
         ctaLabel="Request pricing"
       />
 

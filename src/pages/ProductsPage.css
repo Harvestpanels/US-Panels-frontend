@@ -252,9 +252,13 @@
 /* will-change scoped to only while a card is actually transforming —
    entrance animation (.hp-filter-anim) or hover/group-hover — rather than
    held permanently on every card in the grid (dozens at once), which
-   would otherwise reserve a compositor layer for each indefinitely. */
+   would otherwise reserve a compositor layer for each indefinitely.
+   `:has(.hp-product-card:hover)`, not a plain `:hover` on the grid itself
+   — the grid's own hoverable area includes its gaps/padding between cards,
+   so a plain `:hover` here would also match while the cursor sits in a gap
+   and no card is actually hovered. */
 .hp-filter-anim,
-.hp-products-grid:hover .hp-product-card {
+.hp-products-grid:has(.hp-product-card:hover) .hp-product-card {
   will-change: transform, opacity;
 }
 
@@ -272,7 +276,12 @@
   outline-offset: 3px;
 }
 
-.hp-products-grid:hover .hp-product-card:not(:hover) {
+/* :has(.hp-product-card:hover), not a plain :hover on the grid — see the
+   will-change comment above. Without it, moving the cursor into a gap
+   between cards (still inside the grid's own rectangular hover area) dims
+   *every* card at once, with none left highlighted, since none of them
+   individually match :hover. */
+.hp-products-grid:has(.hp-product-card:hover) .hp-product-card:not(:hover) {
   opacity: 0.6;
   transform: scale(0.98);
 }
@@ -357,7 +366,7 @@
 }
 
 @media (hover: none) {
-  .hp-products-grid:hover .hp-product-card:not(:hover) { opacity: 1; transform: none; }
+  .hp-products-grid:has(.hp-product-card:hover) .hp-product-card:not(:hover) { opacity: 1; transform: none; }
   .hp-product-card:hover { transform: none; }
   .hp-product-card:hover .hp-product-card__glare { opacity: 0; }
 }

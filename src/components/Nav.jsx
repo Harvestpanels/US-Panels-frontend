@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import "./Nav.css";
@@ -39,6 +39,22 @@ function NavDropdown({ label, items, onOpenChange }) {
   // state first, then flipping this on (via rAF below), gives it something
   // to transition.
   const [visualOpen, setVisualOpen] = useState(false);
+  // True from the moment the entrance animation starts through the whole
+  // closing transition — only reset at the very start of the *next* open.
+  // Without this, items snapped to invisible the instant closing began: the
+  // staggered entrance (.hp-nav__menu-item-in) only applies while the panel
+  // has .is-open, so the moment that class is removed the animation stops
+  // matching and the item's opacity falls back to its base rule — and CSS
+  // transitions do not smoothly animate away from a value that was being
+  // driven by a now-inapplicable animation (verified empirically: it's an
+  // instant jump in Chromium, not a transition), so a plain `transition:
+  // opacity` on the base rule didn't fix it. Instead, once an item has
+  // actually entered, its CSS fallback becomes opacity: 1 instead of 0 (see
+  // .hp-nav__menu-panel.has-entered in Nav.css) — closing then just relies
+  // on the panel's own opacity fading out to visually take the items with
+  // it (nested opacity is multiplicative), rather than each item needing
+  // its own independent, and in practice unreliable, exit transition.
+  const [hasEntered, setHasEntered] = useState(false);
   const [panelPos, setPanelPos] = useState(null);
   const wrapRef = useRef(null);
   const triggerRef = useRef(null);
@@ -62,8 +78,12 @@ function NavDropdown({ label, items, onOpenChange }) {
   // here rather than in a useEffect body.
   if (open !== prevOpen) {
     setPrevOpen(open);
-    if (open) setMounted(true);
-    else setVisualOpen(false);
+    if (open) {
+      setMounted(true);
+      setHasEntered(false);
+    } else {
+      setVisualOpen(false);
+    }
   }
 
   useEffect(() => {
@@ -74,7 +94,10 @@ function NavDropdown({ label, items, onOpenChange }) {
   // the CSS transition has a closed starting point to animate from.
   useEffect(() => {
     if (!open) return;
-    const raf = requestAnimationFrame(() => setVisualOpen(true));
+    const raf = requestAnimationFrame(() => {
+      setVisualOpen(true);
+      setHasEntered(true);
+    });
     return () => cancelAnimationFrame(raf);
   }, [open]);
 
@@ -157,7 +180,7 @@ function NavDropdown({ label, items, onOpenChange }) {
         createPortal(
           <div
             ref={panelRef}
-            className={`hp-nav__menu-panel${visualOpen ? " is-open" : ""}`}
+            className={`hp-nav__menu-panel${visualOpen ? " is-open" : ""}${hasEntered ? " has-entered" : ""}`}
             style={{ top: panelPos.top, left: panelPos.left }}
             onKeyDown={(e) => {
               const els = Array.from(panelRef.current?.querySelectorAll(".hp-nav__menu-item") ?? []);
@@ -180,14 +203,19 @@ function NavDropdown({ label, items, onOpenChange }) {
           >
             {items.map((item) =>
               item.to ? (
-                <Link key={item.label} to={item.to} className="hp-nav__menu-item" onClick={() => setOpen(false)}>
+                <Link
+                  key={item.label}
+                  to={item.to}
+                  className={`hp-nav__menu-item${item.active ? " is-current" : ""}`}
+                  onClick={() => setOpen(false)}
+                >
                   {item.label}
                 </Link>
               ) : (
                 <button
                   key={item.label}
                   type="button"
-                  className="hp-nav__menu-item"
+                  className={`hp-nav__menu-item${item.active ? " is-current" : ""}`}
                   onClick={() => { item.onClick(); setOpen(false); }}
                 >
                   {item.label}
@@ -245,7 +273,7 @@ function MobileDropdownGroup({ label, items, navigate, onNavigate, tabIndex }) {
               <Link
                 key={item.label}
                 to={item.to}
-                className="hp-nav__mobile-group-item"
+                className={`hp-nav__mobile-group-item${item.active ? " is-current" : ""}`}
                 tabIndex={tabIndex}
                 onClick={(e) => {
                   e.preventDefault();
@@ -259,7 +287,7 @@ function MobileDropdownGroup({ label, items, navigate, onNavigate, tabIndex }) {
               <button
                 key={item.label}
                 type="button"
-                className="hp-nav__mobile-group-item"
+                className={`hp-nav__mobile-group-item${item.active ? " is-current" : ""}`}
                 tabIndex={tabIndex}
                 onClick={() => { item.onClick(); onNavigate(); }}
               >
@@ -307,6 +335,14 @@ export default function Nav({
   // unmounted (not just hidden) once it does — so no later viewport change
   // can resurrect either one.
   const [folding, setFolding] = useState(true);
+  // How far the fold overlay's logo needs to slide (translateX) to land
+  // exactly on the real logo underneath it — see the layout effect below.
+  // Recomputed on window resize too, so the fold/slide sequence (which can
+  // still be mid-flight while a user drags a desktop window's edge) always
+  // targets the logo's actual current position rather than a value baked
+  // in for whatever width the page happened to load at.
+  const [foldSlideX, setFoldSlideX] = useState(null);
+  const logoSlotRef = useRef(null);
   const navigate = useNavigate();
   // Tracks which desktop dropdowns are currently open, toggled straight onto
   // the nav's own DOM node rather than through React state, since
@@ -336,24 +372,82 @@ export default function Nav({
   useEffect(() => {
     const el = mobileInnerRef.current;
     if (!el) return;
-    // Capped to 85% of the viewport (with the panel scrolling internally
-    // past that, see .hp-nav__mobile.is-open in Nav.css) — on a short
-    // phone screen, every group expanded at once could otherwise ask for
-    // more height than the viewport even has.
-    const measure = () => setMobileMaxHeight(Math.min(el.scrollHeight, window.innerHeight * 0.85));
+    // A flat "85% of the viewport" cap on just this scrollable panel was
+    // its own bug: the *pill* holding it also has the header row (logo +
+    // close button) above this panel, so header + 85vh of panel could
+    // still add up to more than 100vh — pushing the very bottom of the
+    // menu (the "Get a quote" CTA) past the bottom of the screen with no
+    // way to reach it, since the whole nav is `position: fixed` and
+    // doesn't scroll with the page. Measuring the header's real height and
+    // the pill's real top offset and capping to whatever's actually left
+    // in the viewport (minus a small bottom margin) guarantees the whole
+    // pill — header and all — always fits on screen, on any device.
+    const measure = () => {
+      const navTop = navRef.current?.getBoundingClientRect().top ?? 0;
+      const headerHeight = navRef.current?.querySelector(".hp-nav__inner")?.getBoundingClientRect().height ?? 0;
+      const bottomMargin = 16;
+      const available = window.innerHeight - navTop - headerHeight - bottomMargin;
+      setMobileMaxHeight(Math.max(0, Math.min(el.scrollHeight, available)));
+    };
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     window.addEventListener("resize", measure);
+    measure();
     return () => {
       ro.disconnect();
       window.removeEventListener("resize", measure);
     };
-  }, []);
+    // Re-measured on menuOpen too: the header row's own height/padding
+    // changes between closed and open (see .hp-nav--open .hp-nav__inner in
+    // Nav.css), which shifts how much room is actually left for the panel.
+  }, [navRef, menuOpen]);
 
   useEffect(() => {
     const timer = setTimeout(() => setFolding(false), FOLD_ANIMATION_MS);
     return () => clearTimeout(timer);
   }, []);
+
+  // The fold overlay's slide distance (the -402px in hp-nav-fold-logo,
+  // Nav.css) was a hardcoded constant tuned for one specific pill width —
+  // correct at any width where the pill has reached its 920px cap, but
+  // that's an assumption baked into the number rather than something the
+  // animation actually adapts to. Computing it instead makes the animation
+  // land on the real logo at whatever width the pill actually settles at,
+  // so it can't visually drift out of sync if that assumption ever stops
+  // holding (a breakpoint changes, the cap changes, a window is resized
+  // mid-animation, etc.) — "responsive" in the sense of tracking real
+  // layout, not a viewport-width media query.
+  //
+  // This does *not* measure the real logo's live position directly: this
+  // effect runs synchronously before the first paint, which is exactly
+  // when the fold animation's own 0% keyframe (pill collapsed to an 84px
+  // circle) is already in effect. The logo sits inside that same animating
+  // pill, so measuring it at this instant would capture its position
+  // within the collapsed circle, not its final expanded position — the
+  // wrong number entirely. Instead this computes the pill's eventual
+  // settled width analytically (from the nav's own non-animating box,
+  // min'd against the 920px cap) and combines it with the logo's intrinsic
+  // rendered width, which — being a grid `auto` column — lays out at its
+  // natural size regardless of how narrow the (currently clipped) pill is
+  // at this moment.
+  useLayoutEffect(() => {
+    const nav = navRef.current;
+    const logoSlot = logoSlotRef.current;
+    const inner = nav?.querySelector(".hp-nav__inner");
+    if (!nav || !logoSlot || !inner) return;
+    const measure = () => {
+      const navStyle = getComputedStyle(nav);
+      const navPadding = parseFloat(navStyle.paddingLeft) + parseFloat(navStyle.paddingRight);
+      const pillFinalWidth = Math.min(920, nav.getBoundingClientRect().width - navPadding);
+      const innerPaddingLeft = parseFloat(getComputedStyle(inner).paddingLeft) || 0;
+      const logoWidth = logoSlot.getBoundingClientRect().width;
+      if (pillFinalWidth <= 0 || logoWidth === 0) return;
+      setFoldSlideX(innerPaddingLeft + logoWidth / 2 - pillFinalWidth / 2);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [navRef]);
 
   const logoEl = logoTo ? (
     <Link to={logoTo} className="hp-logo" aria-label="US Panels — home">
@@ -438,7 +532,11 @@ export default function Nav({
           Unmounted entirely once `folding` goes false (not just hidden),
           so it can never replay from a later viewport change. */}
       {folding && (
-        <div className="hp-nav__fold-logo" aria-hidden="true">
+        <div
+          className="hp-nav__fold-logo"
+          aria-hidden="true"
+          style={foldSlideX !== null ? { "--fold-slide-x": `${foldSlideX}px` } : undefined}
+        >
           <img src={logo} alt="" />
         </div>
       )}
@@ -463,9 +561,10 @@ export default function Nav({
               gets its own instant reveal instead (see .hp-nav__logo-slot
               in Nav.css), snapping to visible in sync with the overlay
               disappearing rather than fading in underneath it. */}
-          <div className="hp-nav__logo-slot">{logoEl}</div>
+          <div className="hp-nav__logo-slot" ref={logoSlotRef}>{logoEl}</div>
           <div className="hp-nav__inner-content">
             <div className="hp-nav__links">
+              {(desktopLinks ?? links).map((link) => renderLink(link))}
               {dropdowns.map((dropdown) => (
                 <NavDropdown
                   key={dropdown.key}
@@ -474,7 +573,6 @@ export default function Nav({
                   onOpenChange={(isOpen) => handleDropdownOpenChange(dropdown.key, isOpen)}
                 />
               ))}
-              {(desktopLinks ?? links).map((link) => renderLink(link))}
             </div>
             {desktopCta}
             <button
@@ -491,11 +589,11 @@ export default function Nav({
             </button>
           </div>
         </div>
-        {/* Mobile dropdown — same Menu/Overview/Inquiry (or Menu/Categories/
-            Inquiry) grouping as desktop when `dropdowns` is supplied,
-            rendered as inline accordions instead of floating popovers;
-            falls back to the flat `links` list for pages that don't use
-            dropdowns (e.g. the 404 page). */}
+        {/* Mobile dropdown — same plain top-level links (Home/Products) plus
+            Overview/Categories/Inquiry grouping as desktop when `dropdowns`
+            is supplied, rendered as inline accordions instead of floating
+            popovers; falls back to the flat `links` list for pages that
+            don't use dropdowns at all (e.g. the 404 page). */}
         <div
           className={`hp-nav__mobile${menuOpen ? " is-open" : ""}`}
           aria-hidden={!menuOpen}
@@ -503,16 +601,23 @@ export default function Nav({
         >
           <div ref={mobileInnerRef}>
             {dropdowns.length > 0
-              ? dropdowns.map((dropdown) => (
-                  <MobileDropdownGroup
-                    key={dropdown.key}
-                    label={dropdown.label}
-                    items={dropdown.items}
-                    navigate={navigate}
-                    onNavigate={() => setMenuOpen(false)}
-                    tabIndex={menuOpen ? 0 : -1}
-                  />
-                ))
+              ? (
+                  <>
+                    {(desktopLinks ?? []).map((link) =>
+                      renderLink(link, { tabIndex: menuOpen ? 0 : -1, onNavigate: () => setMenuOpen(false) })
+                    )}
+                    {dropdowns.map((dropdown) => (
+                      <MobileDropdownGroup
+                        key={dropdown.key}
+                        label={dropdown.label}
+                        items={dropdown.items}
+                        navigate={navigate}
+                        onNavigate={() => setMenuOpen(false)}
+                        tabIndex={menuOpen ? 0 : -1}
+                      />
+                    ))}
+                  </>
+                )
               : links.map((link) =>
                   renderLink(link, { tabIndex: menuOpen ? 0 : -1, onNavigate: () => setMenuOpen(false) })
                 )}

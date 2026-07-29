@@ -16,6 +16,7 @@ import { useHeroParallax } from "../hooks/useHeroParallax";
 import { useLightbox } from "../hooks/useLightbox";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
+import { useScrollSpy } from "../hooks/useScrollSpy";
 import { useToast } from "../hooks/useToast";
 import { scrollCenter, scrollToTop } from "../utils/scroll";
 import Nav from "../components/Nav";
@@ -29,35 +30,37 @@ import Footer from "../components/Footer";
 import Lightbox from "../components/Lightbox";
 import Toast from "../components/Toast";
 
-const MENU_DROPDOWN_ITEMS = [
-  { label: "Home", onClick: scrollToTop },
-  { label: "Products", to: "/products" },
+// Plain top-level nav links, not tucked inside a dropdown — "Home" scrolls
+// to top rather than navigating (this page already is "/").
+const HOME_TOP_LINKS = [
+  { id: "top", label: "Home", onClick: scrollToTop },
+  { to: "/products", label: "Products" },
 ];
 
 // Every scrollable section on the homepage, top to bottom — Who We Are
 // through Photo Gallery (Welcome/the hero is reachable via Menu > Home).
-const OVERVIEW_DROPDOWN_ITEMS = [
-  { label: "Who We Are", onClick: () => scrollCenter("why") },
-  { label: "Building Envelope", onClick: () => scrollCenter("panels") },
-  { label: "Roof Panels", onClick: () => scrollCenter("exterior") },
-  { label: "Data Centers", onClick: () => scrollCenter("data-center") },
-  { label: "Cold Storage", onClick: () => scrollCenter("cold-storage") },
-  { label: "Pre-Engineered Metal Buildings", onClick: () => scrollCenter("pemb") },
-  { label: "Doors", onClick: () => scrollCenter("doors") },
-  { label: "Trim & Hardware", onClick: () => scrollCenter("trim-hardware") },
-  { label: "Photo Gallery", onClick: () => scrollCenter("gallery") },
+// `id` doubles as the section id both for scrolling to it and for
+// useScrollSpy to know which item to highlight as "current" — kept as a
+// stable module-level array (not rebuilt every render) since it's also the
+// scroll spy hook's dependency list.
+const OVERVIEW_SECTIONS = [
+  { id: "why", label: "Who We Are" },
+  { id: "panels", label: "Building Envelope" },
+  { id: "exterior", label: "Roof Panels" },
+  { id: "data-center", label: "Data Centers" },
+  { id: "cold-storage", label: "Cold Storage" },
+  { id: "pemb", label: "Pre-Engineered Metal Buildings" },
+  { id: "doors", label: "Doors" },
+  { id: "trim-hardware", label: "Trim & Hardware" },
+  { id: "gallery", label: "Photo Gallery" },
 ];
 
-const INQUIRY_DROPDOWN_ITEMS = [
-  { label: "FAQ", onClick: () => scrollCenter("faq") },
-  { label: "Contact Us", onClick: () => scrollCenter("contact") },
+const INQUIRY_SECTIONS = [
+  { id: "faq", label: "FAQ" },
+  { id: "contact", label: "Contact Us" },
 ];
 
-const HOME_NAV_DROPDOWNS = [
-  { key: "menu", label: "Menu", items: MENU_DROPDOWN_ITEMS },
-  { key: "overview", label: "Overview", items: OVERVIEW_DROPDOWN_ITEMS },
-  { key: "inquiry", label: "Inquiry", items: INQUIRY_DROPDOWN_ITEMS },
-];
+const SCROLL_SPY_IDS = [...OVERVIEW_SECTIONS, ...INQUIRY_SECTIONS].map((s) => s.id);
 
 function HomePage() {
   usePageMeta({
@@ -70,6 +73,28 @@ function HomePage() {
   const { navRef, parallaxLayerRef, videoRef, parallaxRef, heroContentRef } = useHeroParallax();
   const lightbox = useLightbox(GALLERY_IMAGES.length);
   const [toast, setToast] = useToast();
+  const activeSectionId = useScrollSpy(SCROLL_SPY_IDS);
+
+  const homeNavDropdowns = [
+    {
+      key: "overview",
+      label: "Overview",
+      items: OVERVIEW_SECTIONS.map((s) => ({
+        label: s.label,
+        onClick: () => scrollCenter(s.id),
+        active: s.id === activeSectionId,
+      })),
+    },
+    {
+      key: "inquiry",
+      label: "Inquiry",
+      items: INQUIRY_SECTIONS.map((s) => ({
+        label: s.label,
+        onClick: () => scrollCenter(s.id),
+        active: s.id === activeSectionId,
+      })),
+    },
+  ];
 
   // Lightbox now takes a ready-to-use `src` (so it can also show local,
   // already-resolved product images elsewhere) — gallery photos still come
@@ -84,8 +109,8 @@ function HomePage() {
         setMenuOpen={setMenuOpen}
         navRef={navRef}
         logo={logo}
-        dropdowns={HOME_NAV_DROPDOWNS}
-        desktopLinks={[]}
+        dropdowns={homeNavDropdowns}
+        desktopLinks={HOME_TOP_LINKS}
       />
 
       {/* ===== FIXED VIDEO BACKGROUND ===== */}
