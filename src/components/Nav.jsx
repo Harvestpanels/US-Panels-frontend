@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Nav.css";
 import { navClick, scrollToTop } from "../utils/scroll";
+
+// Matches the mobile dropdown's own max-height collapse duration (see
+// .hp-nav__mobile in Nav.css) — the same delay navClick already uses for
+// anchor links from the mobile menu.
+const MOBILE_MENU_CLOSE_MS = 380;
 
 // Total length of the hp-nav-fold-in animation (see Nav.css) plus a small
 // buffer.
@@ -42,6 +47,7 @@ export default function Nav({
   // unmounted (not just hidden) once it does — so no later viewport change
   // can resurrect either one.
   const [folding, setFolding] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => setFolding(false), FOLD_ANIMATION_MS);
@@ -60,7 +66,25 @@ export default function Nav({
 
   const renderLink = (link, { onNavigate, ...extraProps } = {}) => {
     if (link.to) {
-      return <Link key={link.to} to={link.to} onClick={onNavigate} {...extraProps}>{link.label}</Link>;
+      // From the mobile dropdown (onNavigate present), route changes used
+      // to fire immediately on click — the whole Nav (and the mobile menu
+      // with it) would unmount mid-way through its own 0.38s close
+      // animation, cutting it off abruptly instead of letting it finish
+      // like anchor-link clicks already do (see navClick's matching
+      // delay). Desktop links have no menu to close, so they keep
+      // navigating immediately.
+      const handleClick = onNavigate
+        ? (e) => {
+            e.preventDefault();
+            onNavigate();
+            setTimeout(() => navigate(link.to), MOBILE_MENU_CLOSE_MS);
+          }
+        : undefined;
+      return (
+        <Link key={link.to} to={link.to} onClick={handleClick} {...extraProps}>
+          {link.label}
+        </Link>
+      );
     }
     // `onClick`, when given, fully replaces the default anchor-scroll
     // (e.g. a page with filterable sections needs to clear its filters
