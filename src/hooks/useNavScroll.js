@@ -19,7 +19,12 @@ export function useNavScroll(menuOpen) {
 
         navRef.current?.classList.toggle("hp-nav--solid", y > vh * 0.4);
 
-        if (!menuOpen) {
+        // Also held visible while a desktop Menu/Categories dropdown is
+        // open — those popups are anchored to the nav, so hiding the nav
+        // out from under an open one would strand it (see Nav.jsx's
+        // hp-nav--dropdown-open toggling).
+        const dropdownOpen = navRef.current?.classList.contains("hp-nav--dropdown-open");
+        if (!menuOpen && !dropdownOpen) {
           if (y < 80) {
             clearTimeout(hoverHideTimer);
             navRef.current?.classList.remove("hp-nav--hidden");
@@ -32,7 +37,7 @@ export function useNavScroll(menuOpen) {
     }
 
     function onMouseMove(e) {
-      if (menuOpen) return;
+      if (menuOpen || navRef.current?.classList.contains("hp-nav--dropdown-open")) return;
       if (e.clientY <= 100) {
         clearTimeout(hoverHideTimer);
         navRef.current?.classList.remove("hp-nav--hidden");

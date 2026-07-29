@@ -98,8 +98,14 @@ export function useHeroParallax() {
         navRef.current?.classList.toggle("hp-nav--solid", y > vh * 0.4);
 
         // Hide nav once scrolled past the top; only hovering near the top
-        // (see onMouseMove below) or scrolling back to the very top reveals it.
-        const menuIsOpen = navRef.current?.classList.contains("hp-nav--open");
+        // (see onMouseMove below) or scrolling back to the very top reveals
+        // it. Also held visible while the mobile menu or a desktop
+        // Menu/Overview/Inquiry dropdown is open — those popups are
+        // positioned relative to the nav (or portaled but anchored to it),
+        // so hiding the nav out from under an open one would strand it.
+        const menuIsOpen =
+          navRef.current?.classList.contains("hp-nav--open") ||
+          navRef.current?.classList.contains("hp-nav--dropdown-open");
         if (!menuIsOpen) {
           if (y < 80) {
             clearTimeout(hoverHideTimer);
@@ -156,7 +162,9 @@ export function useHeroParallax() {
       const clientY = e.clientY;
       mouseRaf = requestAnimationFrame(() => {
         mouseRaf = null;
-        const menuIsOpen = navRef.current?.classList.contains("hp-nav--open");
+        const menuIsOpen =
+          navRef.current?.classList.contains("hp-nav--open") ||
+          navRef.current?.classList.contains("hp-nav--dropdown-open");
         if (menuIsOpen) return;
         if (clientY <= 100) {
           clearTimeout(hoverHideTimer);

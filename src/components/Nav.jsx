@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import "./Nav.css";
 import { navClick, scrollToTop } from "../utils/scroll";
@@ -18,8 +19,259 @@ const HOME_NAV_LINKS = [
   { id: "panels", label: "Overview" },
   { id: "gallery", label: "Gallery" },
   { id: "faq", label: "FAQ" },
-  { id: "contact", label: "Contact" },
+  { id: "contact", label: "Contact Us" },
 ];
+
+// Matches the panel's own transition duration in Nav.css — the panel stays
+// mounted this long after `open` goes false so its fade/slide-out can
+// actually play instead of just vanishing on the closing click.
+const PANEL_CLOSE_MS = 160;
+
+function NavDropdown({ label, items, onOpenChange }) {
+  const [open, setOpen] = useState(false);
+  const [prevOpen, setPrevOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  // Trails `open` by one frame on the way in (and matches it instantly on
+  // the way out) — this is what the panel's `.is-open` class is actually
+  // keyed off. Mounting straight into `.is-open` would mean its very first
+  // paint already has the open transform/opacity, so the CSS transition
+  // would have nothing to animate from; painting one frame in the closed
+  // state first, then flipping this on (via rAF below), gives it something
+  // to transition.
+  const [visualOpen, setVisualOpen] = useState(false);
+  const [panelPos, setPanelPos] = useState(null);
+  const wrapRef = useRef(null);
+  const triggerRef = useRef(null);
+  const panelRef = useRef(null);
+  // Set by the trigger's own ArrowDown/ArrowUp handler (below) when the
+  // menu isn't open yet — read once the panel finishes mounting so opening
+  // via the keyboard lands focus on the first (or last) item, same as any
+  // native <select>/ARIA menu.
+  const pendingFocusRef = useRef(null);
+
+  function focusItem(position) {
+    const els = Array.from(panelRef.current?.querySelectorAll(".hp-nav__menu-item") ?? []);
+    if (!els.length) return;
+    els[position === "last" ? els.length - 1 : 0].focus();
+  }
+
+  // React-Compiler-compliant "adjust state during render" alternative to a
+  // setState-on-mount effect (see react-hooks/set-state-in-effect):
+  // mounting and starting the close-transition both need to happen the
+  // instant `open` changes, not after an effect pass, so they're derived
+  // here rather than in a useEffect body.
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) setMounted(true);
+    else setVisualOpen(false);
+  }
+
+  useEffect(() => {
+    onOpenChange?.(open);
+  }, [open, onOpenChange]);
+
+  // Flips the panel into its visible state one frame after mounting, so
+  // the CSS transition has a closed starting point to animate from.
+  useEffect(() => {
+    if (!open) return;
+    const raf = requestAnimationFrame(() => setVisualOpen(true));
+    return () => cancelAnimationFrame(raf);
+  }, [open]);
+
+  // Lands focus on the first/last item after a keyboard-triggered open
+  // (ArrowDown/ArrowUp on the trigger — see pendingFocusRef below). Keyed
+  // on `panelPos` rather than `open`/`mounted`: the portal's items don't
+  // actually exist in the DOM until the position effect below has measured
+  // the trigger and set panelPos (mounting the panel is otherwise gated on
+  // `mounted && panelPos` together) — focusing any earlier just finds
+  // nothing to focus.
+  useEffect(() => {
+    if (!panelPos || !pendingFocusRef.current) return;
+    focusItem(pendingFocusRef.current);
+    pendingFocusRef.current = null;
+  }, [panelPos]);
+
+  // Keeps the panel in the DOM for a beat after `open` flips false, so the
+  // CSS close transition (see .hp-nav__menu-panel losing .is-open) can run
+  // instead of the panel just disappearing on the closing click.
+  useEffect(() => {
+    if (open || !mounted) return;
+    const timer = setTimeout(() => setMounted(false), PANEL_CLOSE_MS);
+    return () => clearTimeout(timer);
+  }, [open, mounted]);
+
+  useEffect(() => {
+    if (!open) return;
+    const updatePos = () => {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      if (rect) setPanelPos({ top: rect.bottom + 14, left: rect.left + rect.width / 2 });
+    };
+    updatePos();
+    const handleOutside = (e) => {
+      if (wrapRef.current?.contains(e.target) || panelRef.current?.contains(e.target)) return;
+      setOpen(false);
+    };
+    const handleKey = (e) => {
+      if (e.key !== "Escape") return;
+      setOpen(false);
+      // Native <select>/ARIA-menu convention: closing via Escape returns
+      // focus to what opened the menu, rather than leaving it stranded on
+      // an item that's about to unmount.
+      triggerRef.current?.focus();
+    };
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("keydown", handleKey);
+    window.addEventListener("resize", updatePos);
+    window.addEventListener("scroll", updatePos, true);
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("keydown", handleKey);
+      window.removeEventListener("resize", updatePos);
+      window.removeEventListener("scroll", updatePos, true);
+    };
+  }, [open]);
+
+  return (
+    <div className="hp-nav__menu-dropdown" ref={wrapRef}>
+      <button
+        ref={triggerRef}
+        type="button"
+        className={`hp-nav__menu-trigger${open ? " is-active" : ""}`}
+        aria-haspopup="true"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        onKeyDown={(e) => {
+          if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+          e.preventDefault();
+          const position = e.key === "ArrowDown" ? "first" : "last";
+          if (open) focusItem(position);
+          else {
+            pendingFocusRef.current = position;
+            setOpen(true);
+          }
+        }}
+      >
+        {label}
+      </button>
+      {mounted && panelPos &&
+        createPortal(
+          <div
+            ref={panelRef}
+            className={`hp-nav__menu-panel${visualOpen ? " is-open" : ""}`}
+            style={{ top: panelPos.top, left: panelPos.left }}
+            onKeyDown={(e) => {
+              const els = Array.from(panelRef.current?.querySelectorAll(".hp-nav__menu-item") ?? []);
+              if (!els.length) return;
+              const idx = els.indexOf(document.activeElement);
+              if (e.key === "ArrowDown") {
+                e.preventDefault();
+                els[(idx + 1) % els.length].focus();
+              } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                els[(idx - 1 + els.length) % els.length].focus();
+              } else if (e.key === "Home") {
+                e.preventDefault();
+                els[0].focus();
+              } else if (e.key === "End") {
+                e.preventDefault();
+                els[els.length - 1].focus();
+              }
+            }}
+          >
+            {items.map((item) =>
+              item.to ? (
+                <Link key={item.label} to={item.to} className="hp-nav__menu-item" onClick={() => setOpen(false)}>
+                  {item.label}
+                </Link>
+              ) : (
+                <button
+                  key={item.label}
+                  type="button"
+                  className="hp-nav__menu-item"
+                  onClick={() => { item.onClick(); setOpen(false); }}
+                >
+                  {item.label}
+                </button>
+              )
+            )}
+          </div>,
+          document.body
+        )}
+    </div>
+  );
+}
+
+// Mobile equivalent of NavDropdown: instead of a floating popover (there's
+// nowhere sensible to float one on a narrow screen), each group is an
+// inline accordion — tap the label, its items expand right underneath it
+// within the mobile panel. Independent open state per group (not
+// accordion-exclusive), each with its own measured max-height so the
+// expand/collapse transition tracks that group's real item count rather
+// than a guessed constant.
+function MobileDropdownGroup({ label, items, navigate, onNavigate, tabIndex }) {
+  const [expanded, setExpanded] = useState(false);
+  const innerRef = useRef(null);
+  const [innerHeight, setInnerHeight] = useState(0);
+
+  useEffect(() => {
+    const el = innerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setInnerHeight(el.scrollHeight));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div className="hp-nav__mobile-group">
+      <button
+        type="button"
+        className={`hp-nav__mobile-group-toggle${expanded ? " is-expanded" : ""}`}
+        aria-expanded={expanded}
+        tabIndex={tabIndex}
+        onClick={() => setExpanded((e) => !e)}
+      >
+        {label}
+        <svg className="hp-nav__mobile-group-chevron" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
+          <path d="M3 5l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      <div
+        className={`hp-nav__mobile-group-panel${expanded ? " is-open" : ""}`}
+        style={{ maxHeight: expanded ? innerHeight : 0 }}
+      >
+        <div ref={innerRef}>
+          {items.map((item) =>
+            item.to ? (
+              <Link
+                key={item.label}
+                to={item.to}
+                className="hp-nav__mobile-group-item"
+                tabIndex={tabIndex}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigate();
+                  setTimeout(() => navigate(item.to), MOBILE_MENU_CLOSE_MS);
+                }}
+              >
+                {item.label}
+              </Link>
+            ) : (
+              <button
+                key={item.label}
+                type="button"
+                className="hp-nav__mobile-group-item"
+                tabIndex={tabIndex}
+                onClick={() => { item.onClick(); onNavigate(); }}
+              >
+                {item.label}
+              </button>
+            )
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Nav({
   menuOpen,
@@ -27,10 +279,18 @@ export default function Nav({
   navRef,
   logo,
   links = HOME_NAV_LINKS,
+  // Desktop-only override for `links` — pages that group everything into
+  // `dropdowns` (see below) pass an empty array here so the flat list only
+  // shows up in the mobile dropdown, which has no room for nested menus.
+  desktopLinks,
   logoTo,
   ctaLabel = "Get a quote",
   ctaHref = "#contact",
   ctaTo,
+  // Desktop-only popover menus, e.g. [{ key, label, items }] — same shape
+  // NavDropdown takes. Mobile always uses the flat `links` list instead,
+  // since a dropdown nested inside the mobile dropdown is awkward UX.
+  dropdowns = [],
 }) {
   // Plays once per mount (every page navigation), then goes away for good.
   // Driven by React state rather than a CSS class alone: the mobile
@@ -48,6 +308,47 @@ export default function Nav({
   // can resurrect either one.
   const [folding, setFolding] = useState(true);
   const navigate = useNavigate();
+  // Tracks which desktop dropdowns are currently open, toggled straight onto
+  // the nav's own DOM node rather than through React state, since
+  // useHeroParallax's scroll/hover auto-hide logic reads this class
+  // directly and doesn't need a re-render here to do it. A Set keyed by key
+  // (rather than a plain increment/decrement counter) makes add/delete
+  // idempotent, so it stays correct even though each NavDropdown's effect
+  // re-fires on every Nav re-render (its onOpenChange prop is a fresh
+  // function identity each time).
+  const openDropdownsRef = useRef(new Set());
+  const handleDropdownOpenChange = (key, isOpen) => {
+    const open = openDropdownsRef.current;
+    if (isOpen) open.add(key);
+    else open.delete(key);
+    navRef.current?.classList.toggle("hp-nav--dropdown-open", open.size > 0);
+  };
+
+  // The mobile panel's open height used to be a flat guessed constant
+  // (420px), which worked for a short flat link list but silently clips
+  // content now that groups can expand inline underneath it (e.g. Overview
+  // has 9 items — several groups open at once easily exceeds 420px).
+  // Measuring the actual content and animating toward that instead keeps
+  // the collapse/expand transition smooth at any content height, on any
+  // screen size, and self-adjusts as groups inside it expand/collapse.
+  const mobileInnerRef = useRef(null);
+  const [mobileMaxHeight, setMobileMaxHeight] = useState(0);
+  useEffect(() => {
+    const el = mobileInnerRef.current;
+    if (!el) return;
+    // Capped to 85% of the viewport (with the panel scrolling internally
+    // past that, see .hp-nav__mobile.is-open in Nav.css) — on a short
+    // phone screen, every group expanded at once could otherwise ask for
+    // more height than the viewport even has.
+    const measure = () => setMobileMaxHeight(Math.min(el.scrollHeight, window.innerHeight * 0.85));
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    window.addEventListener("resize", measure);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => setFolding(false), FOLD_ANIMATION_MS);
@@ -165,7 +466,15 @@ export default function Nav({
           <div className="hp-nav__logo-slot">{logoEl}</div>
           <div className="hp-nav__inner-content">
             <div className="hp-nav__links">
-              {links.map((link) => renderLink(link))}
+              {dropdowns.map((dropdown) => (
+                <NavDropdown
+                  key={dropdown.key}
+                  label={dropdown.label}
+                  items={dropdown.items}
+                  onOpenChange={(isOpen) => handleDropdownOpenChange(dropdown.key, isOpen)}
+                />
+              ))}
+              {(desktopLinks ?? links).map((link) => renderLink(link))}
             </div>
             {desktopCta}
             <button
@@ -182,12 +491,33 @@ export default function Nav({
             </button>
           </div>
         </div>
-        {/* Mobile dropdown */}
-        <div className={`hp-nav__mobile${menuOpen ? " is-open" : ""}`} aria-hidden={!menuOpen}>
-          {links.map((link) =>
-            renderLink(link, { tabIndex: menuOpen ? 0 : -1, onNavigate: () => setMenuOpen(false) })
-          )}
-          {mobileCta}
+        {/* Mobile dropdown — same Menu/Overview/Inquiry (or Menu/Categories/
+            Inquiry) grouping as desktop when `dropdowns` is supplied,
+            rendered as inline accordions instead of floating popovers;
+            falls back to the flat `links` list for pages that don't use
+            dropdowns (e.g. the 404 page). */}
+        <div
+          className={`hp-nav__mobile${menuOpen ? " is-open" : ""}`}
+          aria-hidden={!menuOpen}
+          style={{ maxHeight: menuOpen ? mobileMaxHeight : 0 }}
+        >
+          <div ref={mobileInnerRef}>
+            {dropdowns.length > 0
+              ? dropdowns.map((dropdown) => (
+                  <MobileDropdownGroup
+                    key={dropdown.key}
+                    label={dropdown.label}
+                    items={dropdown.items}
+                    navigate={navigate}
+                    onNavigate={() => setMenuOpen(false)}
+                    tabIndex={menuOpen ? 0 : -1}
+                  />
+                ))
+              : links.map((link) =>
+                  renderLink(link, { tabIndex: menuOpen ? 0 : -1, onNavigate: () => setMenuOpen(false) })
+                )}
+            {mobileCta}
+          </div>
         </div>
       </div>
     </nav>

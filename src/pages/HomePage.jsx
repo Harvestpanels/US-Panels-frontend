@@ -17,6 +17,7 @@ import { useLightbox } from "../hooks/useLightbox";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useToast } from "../hooks/useToast";
+import { scrollCenter, scrollToTop } from "../utils/scroll";
 import Nav from "../components/Nav";
 import Hero from "../components/Hero";
 import WhoWeAre from "../components/WhoWeAre";
@@ -27,6 +28,36 @@ import Contact from "../components/Contact";
 import Footer from "../components/Footer";
 import Lightbox from "../components/Lightbox";
 import Toast from "../components/Toast";
+
+const MENU_DROPDOWN_ITEMS = [
+  { label: "Home", onClick: scrollToTop },
+  { label: "Products", to: "/products" },
+];
+
+// Every scrollable section on the homepage, top to bottom — Who We Are
+// through Photo Gallery (Welcome/the hero is reachable via Menu > Home).
+const OVERVIEW_DROPDOWN_ITEMS = [
+  { label: "Who We Are", onClick: () => scrollCenter("why") },
+  { label: "Building Envelope", onClick: () => scrollCenter("panels") },
+  { label: "Roof Panels", onClick: () => scrollCenter("exterior") },
+  { label: "Data Centers", onClick: () => scrollCenter("data-center") },
+  { label: "Cold Storage", onClick: () => scrollCenter("cold-storage") },
+  { label: "Pre-Engineered Metal Buildings", onClick: () => scrollCenter("pemb") },
+  { label: "Doors", onClick: () => scrollCenter("doors") },
+  { label: "Trim & Hardware", onClick: () => scrollCenter("trim-hardware") },
+  { label: "Photo Gallery", onClick: () => scrollCenter("gallery") },
+];
+
+const INQUIRY_DROPDOWN_ITEMS = [
+  { label: "FAQ", onClick: () => scrollCenter("faq") },
+  { label: "Contact Us", onClick: () => scrollCenter("contact") },
+];
+
+const HOME_NAV_DROPDOWNS = [
+  { key: "menu", label: "Menu", items: MENU_DROPDOWN_ITEMS },
+  { key: "overview", label: "Overview", items: OVERVIEW_DROPDOWN_ITEMS },
+  { key: "inquiry", label: "Inquiry", items: INQUIRY_DROPDOWN_ITEMS },
+];
 
 function HomePage() {
   usePageMeta({
@@ -48,7 +79,14 @@ function HomePage() {
 
   return (
     <div className="hp-app">
-      <Nav menuOpen={menuOpen} setMenuOpen={setMenuOpen} navRef={navRef} logo={logo} />
+      <Nav
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        navRef={navRef}
+        logo={logo}
+        dropdowns={HOME_NAV_DROPDOWNS}
+        desktopLinks={[]}
+      />
 
       {/* ===== FIXED VIDEO BACKGROUND ===== */}
       <div className="hp-bgvideo-layer" aria-hidden="true">

@@ -9,7 +9,7 @@ import { useNavScroll } from "../hooks/useNavScroll";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useToast } from "../hooks/useToast";
-import { scrollCenter } from "../utils/scroll";
+import { scrollCenter, scrollToTop } from "../utils/scroll";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import Lightbox from "../components/Lightbox";
@@ -202,6 +202,32 @@ export default function ProductsPage() {
       label: section.label,
       onClick: () => handleNavSectionClick(section.id),
     })),
+    { id: "contact", label: "Contact Us" },
+  ];
+
+  // Same collapsed-dropdown pattern as the homepage nav — a "Menu" popover
+  // for site-wide navigation, a "Categories" popover grouping every product
+  // section, and an "Inquiry" popover for Contact Us — instead of a long
+  // flat row of links. Mobile still uses the flat `productsNavLinks` list
+  // above.
+  const productsNavDropdowns = [
+    {
+      key: "menu",
+      label: "Menu",
+      items: [
+        { label: "Home", to: "/" },
+        { label: "Products", onClick: scrollToTop },
+      ],
+    },
+    {
+      key: "categories",
+      label: "Categories",
+      items: PRODUCTS_NAV_SECTIONS.map((section) => ({
+        label: section.label,
+        onClick: () => handleNavSectionClick(section.id),
+      })),
+    },
+    { key: "inquiry", label: "Inquiry", items: [{ label: "Contact Us", onClick: () => scrollCenter("contact") }] },
   ];
 
   useEffect(() => {
@@ -294,6 +320,8 @@ export default function ProductsPage() {
         navRef={navRef}
         logo={logo}
         links={productsNavLinks}
+        dropdowns={productsNavDropdowns}
+        desktopLinks={[]}
         ctaLabel="Request pricing"
       />
 
