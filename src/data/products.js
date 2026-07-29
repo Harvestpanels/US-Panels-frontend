@@ -161,7 +161,7 @@ export const PRODUCT_CATEGORIES = [
       {
         name: "Miscellaneous",
         spec: "All-thread · unistrut · fasteners · butyl sealant",
-        desc: "All-thread, unistrut, fasteners, and butyl sealant — the hardware that holds every panel system together.",
+        desc: "All-thread, unistrut, fasteners, and butyl sealant, the hardware that holds every panel system together.",
         img: miscToolsImg,
       },
     ],
