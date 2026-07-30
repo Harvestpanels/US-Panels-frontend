@@ -187,10 +187,15 @@
 }
 
 @media (hover: none) {
-  /* Gallery cards — no scale/dim sibling effect, desc always visible */
+  /* Gallery cards — no scale/dim sibling effect. The description used to
+     force itself permanently open here (there's no hover on touch to
+     reveal it otherwise), but that pushed the label's dark gradient up to
+     cover most of the card, leaving barely any of the actual photo
+     visible. Left collapsed instead, same as desktop's resting state —
+     category + title stay visible, and the full description is still
+     there in the lightbox once a photo is tapped open. */
   .hp-gallery-track:hover .hp-gallery-card:not(:hover) { opacity: 1; transform: none; }
   .hp-gallery-card:hover { transform: none; }
   .hp-gallery-card:hover img { transform: none; }
-  .hp-gallery-card__desc { grid-template-rows: 1fr; opacity: 1; }
   .hp-gallery-card:hover::after { opacity: 0; }
 }

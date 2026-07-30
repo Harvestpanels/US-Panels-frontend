@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "../styles/App.css";
-import logo from "../assets/images/us-panels-logo.png";
+import logo from "../assets/images/General/us-panels-logo.png";
 import {
   BUILDING_ENVELOPE_PANELS,
   COLD_STORAGE_PANELS,
@@ -22,6 +22,7 @@ import { scrollCenter, scrollToTop } from "../utils/scroll";
 import Nav from "../components/Nav";
 import Hero from "../components/Hero";
 import WhoWeAre from "../components/WhoWeAre";
+import Sustainability from "../components/Sustainability";
 import PanelSection from "../components/PanelSection";
 import Gallery from "../components/Gallery";
 import Faq from "../components/Faq";
@@ -45,6 +46,7 @@ const HOME_TOP_LINKS = [
 // scroll spy hook's dependency list.
 const OVERVIEW_SECTIONS = [
   { id: "why", label: "Who We Are" },
+  { id: "sustainability", label: "Sustainability" },
   { id: "panels", label: "Building Envelope" },
   { id: "exterior", label: "Roof Panels" },
   { id: "data-center", label: "Data Centers" },
@@ -140,6 +142,7 @@ function HomePage() {
 
       <Hero heroContentRef={heroContentRef} />
       <WhoWeAre registerReveal={registerReveal} />
+      <Sustainability registerReveal={registerReveal} />
       <PanelSection
         id="panels"
         eyebrow="Building envelope"

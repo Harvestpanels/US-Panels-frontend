@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "../styles/App.css";
 import "./ProductsPage.css";
-import logo from "../assets/images/us-panels-logo.png";
+import logo from "../assets/images/General/us-panels-logo.png";
 import { PRODUCT_CATEGORIES } from "../data/products";
 import { useCountUp } from "../hooks/useCountUp";
 import { useLightbox } from "../hooks/useLightbox";
