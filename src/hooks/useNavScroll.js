@@ -17,7 +17,14 @@ export function useNavScroll(menuOpen) {
         const y = window.scrollY;
         const vh = window.innerHeight;
 
-        navRef.current?.classList.toggle("hp-nav--solid", y > vh * 0.4);
+        // Not while the mobile menu is open — the open panel is the pill
+        // itself (see .hp-nav--solid .hp-nav__pill in Nav.css, which scales
+        // it down 1% and shifts it 2px), so toggling this mid-scroll while
+        // it's open visibly "resized" the whole open menu, links, CTA and
+        // all, out from under the user.
+        if (!menuOpen) {
+          navRef.current?.classList.toggle("hp-nav--solid", y > vh * 0.4);
+        }
 
         // Also held visible while a desktop Menu/Categories dropdown is
         // open — those popups are anchored to the nav, so hiding the nav

@@ -1,9 +1,9 @@
-import buildingCommercialImg from "../assets/images/Building Envelope/Commercial.webp";
-import buildingIndustrialImg from "../assets/images/Building Envelope/Industrial.webp";
-import buildingResidentialImg from "../assets/images/Building Envelope/Residential.webp";
-import roofCommercialImg from "../assets/images/Roof Panels/Commercial.webp";
-import roofIndustrialImg from "../assets/images/Roof Panels/Industrial.webp";
-import roofResidentialImg from "../assets/images/Roof Panels/Residential.webp";
+import buildingCommercialImg from "../assets/images/Sections/Building Envelope/Commercial.webp";
+import buildingIndustrialImg from "../assets/images/Sections/Building Envelope/Industrial.webp";
+import buildingResidentialImg from "../assets/images/Sections/Building Envelope/Residential.webp";
+import roofCommercialImg from "../assets/images/Sections/Roof Panels/Commercial.webp";
+import roofIndustrialImg from "../assets/images/Sections/Roof Panels/Industrial.webp";
+import roofResidentialImg from "../assets/images/Sections/Roof Panels/Residential.webp";
 import dataCenterExteriorImg from "../assets/images/Sections/Data Centers/Data Centers -  Exterior Panels.png";
 import dataCenterInteriorImg from "../assets/images/Sections/Data Centers/Data Centers - Interior Panels.png";
 import dataCenterBenefitsImg from "../assets/images/Sections/Data Centers/Data Centers - Benefits.png";
@@ -19,79 +19,147 @@ import slidingCoolerDoorImg from "../assets/images/Sections/Doors/Doors - Slidin
 import trimCornerAnglesImg from "../assets/images/Sections/Trim & Hardware/Trim & Hardware - Corner Angles.png";
 import trimTBarImg from "../assets/images/Sections/Trim & Hardware/Trim & Hardware - T Bar.png";
 import trimMiscellaneousImg from "../assets/images/Sections/Trim & Hardware/Trim & Hardware - Miscellaneous.png";
+import galleryImg1 from "../assets/images/Sections/Photo Gallery/PG1.jpg";
+import galleryImg2 from "../assets/images/Sections/Photo Gallery/PG2.jpg";
+import galleryImg3 from "../assets/images/Sections/Photo Gallery/PG3.png";
+import galleryImg4 from "../assets/images/Sections/Photo Gallery/PG4.png";
+import galleryImg5 from "../assets/images/Sections/Photo Gallery/PG5.jpg";
+import galleryImg6 from "../assets/images/Sections/Photo Gallery/PG6.png";
+import galleryImg7 from "../assets/images/Sections/Photo Gallery/PG7.png";
+import galleryImg8 from "../assets/images/Sections/Photo Gallery/PG8.png";
+import galleryImg9 from "../assets/images/Sections/Photo Gallery/PG9.jpg";
+import galleryImg10 from "../assets/images/Sections/Photo Gallery/PG10.jpg";
+import galleryImg11 from "../assets/images/Sections/Photo Gallery/PG11.jpg";
+import galleryImg12 from "../assets/images/Sections/Photo Gallery/PG12.jpg";
+import galleryImg13 from "../assets/images/Sections/Photo Gallery/PG13.jpg";
+import galleryImg14 from "../assets/images/Sections/Photo Gallery/PG14.jpg";
+import galleryImg15 from "../assets/images/Sections/Photo Gallery/PG15.jpg";
+import galleryImg16 from "../assets/images/Sections/Photo Gallery/PG16.jpg";
+import galleryImg17 from "../assets/images/Sections/Photo Gallery/PG17.jpg";
+import galleryImg18 from "../assets/images/Sections/Photo Gallery/PG18.jpg";
+import galleryImg19 from "../assets/images/Sections/Photo Gallery/PG19.jpg";
+import galleryImg20 from "../assets/images/Sections/Photo Gallery/PG20.jpg";
 
 export const GALLERY_IMAGES = [
   {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_0380.jpeg/:/rs=w:1300,h:800",
-    category: "Interior",
-    title: "Insulated Panel Corridor",
-    desc: "A finished interior hallway built entirely from insulated metal panels, ready for climate-controlled use.",
-  },
-  {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/IMG_4979.jpeg/:/rs=w:1300,h:800",
-    category: "Production",
-    title: "Panel Fabrication Facility",
-    desc: "Inside one of our fabrication spaces where panels are prepped and staged before delivery.",
-  },
-  {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse.jpg/:/rs=w:1300,h:800",
+    src: galleryImg1,
     category: "Exterior",
-    title: "Steel Frame Under Construction",
-    desc: "The structural steel frame going up ahead of panel installation on an industrial build.",
+    title: "Panel Corner Elevation",
+    desc: "A sharp corner elevation showing insulated wall panels finished with a bold red accent trim.",
   },
   {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/b206acf5-13ee-475b-a65d-00398f243975.JPG/:/rs=w:1300,h:800",
+    src: galleryImg2,
     category: "Exterior",
-    title: "High-Speed Roll-Up Door",
-    desc: "An insulated high-speed door built for fast, efficient access on any exterior loading dock.",
+    title: "Roofline & Soffit Detail",
+    desc: "A close-up of the roofline and perforated soffit panels, finished with a red accent trim along the eave.",
   },
   {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/pvc%20wall.jpg/:/rs=w:1300,h:800",
+    src: galleryImg3,
     category: "Exterior",
-    title: "Corrugated Wall Panel",
-    desc: "A durable, corrugated metal wall panel finish suited for industrial and warehouse exteriors.",
+    title: "Building Entrance Facade",
+    desc: "A finished building entrance framed by insulated wall panels, glazing, and a covered upper balcony.",
   },
   {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/37253940_l-5b6bb8e.webp/:/rs=w:1300,h:800",
+    src: galleryImg4,
     category: "Exterior",
-    title: "Insulated Sliding Door",
-    desc: "A heavy-duty sliding door built for consistent temperature control and secure exterior access.",
+    title: "Cantilevered Panel Overhangs",
+    desc: "Projecting panel-clad overhangs add depth and shadow lines to this building's exterior facade.",
   },
   {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20warehouse%202.jpg/:/rs=w:1300,h:800",
+    src: galleryImg5,
     category: "Exterior",
-    title: "Structural Steel Framing",
-    desc: "A wide-span steel frame under construction, engineered to carry insulated panel cladding.",
+    title: "Vertical Ribbed Wall Panels",
+    desc: "A tall building corner finished in dark ribbed wall panels for a clean, modern industrial look.",
   },
   {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/74a5a362-e5c8-4ceb-a326-5fd0cd86305f%202.JPG/:/rs=w:1300,h:800",
-    category: "Interior",
-    title: "Modular Insulated Enclosure",
-    desc: "A compact, standalone insulated enclosure built for a specialized on-site application.",
+    src: galleryImg6,
+    category: "Installation",
+    title: "Panel Installation in Progress",
+    desc: "A crew member on an aerial lift installs insulated wall panels along a building's exterior face.",
   },
   {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/HR%20Rack1.jpg/:/rs=w:1300,h:800",
-    category: "Interior",
-    title: "Warehouse Racking System",
-    desc: "High-density racking installed inside a panel-built warehouse for efficient storage.",
+    src: galleryImg7,
+    category: "Installation",
+    title: "Exterior Panel Close-Out",
+    desc: "Crews finish grading and site work around a newly panel-clad building exterior.",
   },
   {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/panel%20ceiling.jpg/:/rs=w:1300,h:800",
-    category: "Interior",
-    title: "Panel Ceiling Installation",
-    desc: "Insulated ceiling panels installed for full thermal envelope coverage.",
+    src: galleryImg8,
+    category: "Installation",
+    title: "Loading Dock Panel Work",
+    desc: "Finishing work underway around a loading dock built into an insulated panel exterior.",
   },
   {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/12863561-52d0-466e-a0fb-8253e955b2f6.JPG/:/rs=w:1300,h:800",
-    category: "Production",
-    title: "Panel Production Line",
-    desc: "Panels moving through production, ready for cutting, finishing, and shipment.",
+    src: galleryImg9,
+    category: "Installation",
+    title: "Multi-Tone Panel Facade",
+    desc: "A striking checkerboard pattern of insulated wall panels going up with lift equipment staged on site.",
   },
   {
-    src: "//img1.wsimg.com/isteam/ip/9d047147-aa87-4de4-9ec4-ce8e08e069a7/0249337c-ae22-4276-8571-5a3e234cc0fd.JPG/:/rs=w:1300,h:800",
-    category: "Production",
-    title: "Finished Panel Stock",
-    desc: "Finished insulated panels staged and ready for delivery to the job site.",
+    src: galleryImg10,
+    category: "Installation",
+    title: "Panel Facade Under Construction",
+    desc: "A long building elevation mid-installation, with panel stock staged and equipment on site.",
+  },
+  {
+    src: galleryImg11,
+    category: "Exterior",
+    title: "Aerial View of Panel-Clad Facility",
+    desc: "A bird's-eye view of a multi-building industrial complex finished in insulated metal panels.",
+  },
+  {
+    src: galleryImg12,
+    category: "Exterior",
+    title: "Standing Seam Wall Detail",
+    desc: "A closer look at standing-seam wall panels and window integration on a finished facade.",
+  },
+  {
+    src: galleryImg13,
+    category: "Exterior",
+    title: "Panel-Clad Facility Corridor",
+    desc: "Twin panel-clad buildings frame a central access road connecting to the facility's main entrance.",
+  },
+  {
+    src: galleryImg14,
+    category: "Exterior",
+    title: "Modern Facility Streetscape",
+    desc: "An aerial street-level view of panel-finished buildings along a landscaped facility corridor.",
+  },
+  {
+    src: galleryImg15,
+    category: "Exterior",
+    title: "Large-Scale Panel Facility",
+    desc: "A sprawling panel-clad facility complex set against a mountain backdrop.",
+  },
+  {
+    src: galleryImg16,
+    category: "Roof",
+    title: "Standing Seam Roof Panels",
+    desc: "An aerial view of standing-seam metal roof panels spanning a large industrial rooftop.",
+  },
+  {
+    src: galleryImg17,
+    category: "Exterior",
+    title: "Two-Tone Panel Facade",
+    desc: "A blue-and-white insulated panel facade with clean color-blocked banding.",
+  },
+  {
+    src: galleryImg18,
+    category: "Exterior",
+    title: "Panel Facade with Access Catwalks",
+    desc: "A panel-clad building corner fitted with exterior maintenance catwalks and stairs.",
+  },
+  {
+    src: galleryImg19,
+    category: "Exterior",
+    title: "Cross-Braced Panel Warehouse",
+    desc: "A large panel-clad warehouse with a distinctive cross-braced facade pattern and dock doors.",
+  },
+  {
+    src: galleryImg20,
+    category: "Roof",
+    title: "Aerial Warehouse Overview",
+    desc: "A wide aerial view of a panel-clad warehouse roof and cross-braced exterior walls.",
   },
 ];
 

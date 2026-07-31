@@ -67,7 +67,7 @@
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #f3f1ec;
+  color: var(--hp-cream);
   margin: 0 0 18px;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
   animation: hp-hero-in 0.7s cubic-bezier(0.16,1,0.3,1) both;
@@ -100,7 +100,7 @@
 /* Hero ghost button sits over the video background, so it needs light text */
 .hp-hero__ctas .hp-btn--ghost {
   border-color: rgba(255, 255, 255, 0.35);
-  color: #f3f1ec;
+  color: var(--hp-cream);
 }
 
 @media (max-width: 640px) {

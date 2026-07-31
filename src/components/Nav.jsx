@@ -233,18 +233,18 @@ function NavDropdown({ label, items, onOpenChange }) {
 // nowhere sensible to float one on a narrow screen), each group is an
 // inline accordion — tap the label, its items expand right underneath it
 // within the mobile panel. Independent open state per group (not
-// accordion-exclusive), each with its own measured max-height so the
-// expand/collapse transition tracks that group's real item count rather
-// than a guessed constant.
+// accordion-exclusive), each with its own measured max-height (via
+// ResizeObserver on its content) so the expand/collapse transition tracks
+// that group's real item count rather than a guessed constant.
 function MobileDropdownGroup({ label, items, navigate, onNavigate, tabIndex }) {
   const [expanded, setExpanded] = useState(false);
   const innerRef = useRef(null);
-  const [innerHeight, setInnerHeight] = useState(0);
+  const [height, setHeight] = useState(0);
 
   useEffect(() => {
     const el = innerRef.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => setInnerHeight(el.scrollHeight));
+    const ro = new ResizeObserver(() => setHeight(el.scrollHeight));
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
@@ -265,7 +265,7 @@ function MobileDropdownGroup({ label, items, navigate, onNavigate, tabIndex }) {
       </button>
       <div
         className={`hp-nav__mobile-group-panel${expanded ? " is-open" : ""}`}
-        style={{ maxHeight: expanded ? innerHeight : 0 }}
+        style={{ maxHeight: expanded ? height : 0 }}
       >
         <div ref={innerRef}>
           {items.map((item) =>
@@ -360,43 +360,27 @@ export default function Nav({
     navRef.current?.classList.toggle("hp-nav--dropdown-open", open.size > 0);
   };
 
-  // The mobile panel's open height used to be a flat guessed constant
-  // (420px), which worked for a short flat link list but silently clips
-  // content now that groups can expand inline underneath it (e.g. Overview
-  // has 9 items — several groups open at once easily exceeds 420px).
-  // Measuring the actual content and animating toward that instead keeps
-  // the collapse/expand transition smooth at any content height, on any
-  // screen size, and self-adjusts as groups inside it expand/collapse.
+  // The mobile panel's open height is measured off its real content (via
+  // ResizeObserver) rather than a guessed flat constant, so it fits any
+  // link/dropdown combination without clipping. Capped to whatever's
+  // actually left in the viewport below the header row — if content would
+  // exceed that, `.hp-nav__mobile.is-open` scrolls internally instead
+  // (see Nav.css) rather than overflowing off-screen.
   const mobileInnerRef = useRef(null);
   const [mobileMaxHeight, setMobileMaxHeight] = useState(0);
   useEffect(() => {
     const el = mobileInnerRef.current;
     if (!el) return;
-    // A flat "85% of the viewport" cap on just this scrollable panel was
-    // its own bug: the *pill* holding it also has the header row (logo +
-    // close button) above this panel, so header + 85vh of panel could
-    // still add up to more than 100vh — pushing the very bottom of the
-    // menu (the "Get a quote" CTA) past the bottom of the screen with no
-    // way to reach it, since the whole nav is `position: fixed` and
-    // doesn't scroll with the page. Measuring the header's real height and
-    // the pill's real top offset and capping to whatever's actually left
-    // in the viewport (minus a small bottom margin) guarantees the whole
-    // pill — header and all — always fits on screen, on any device.
     const measure = () => {
       const navTop = navRef.current?.getBoundingClientRect().top ?? 0;
       const headerHeight = navRef.current?.querySelector(".hp-nav__inner")?.getBoundingClientRect().height ?? 0;
-      const bottomMargin = 16;
-      const available = window.innerHeight - navTop - headerHeight - bottomMargin;
+      const available = window.innerHeight - navTop - headerHeight - 16;
       setMobileMaxHeight(Math.max(0, Math.min(el.scrollHeight, available)));
     };
     const ro = new ResizeObserver(measure);
     ro.observe(el);
-    window.addEventListener("resize", measure);
     measure();
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("resize", measure);
-    };
+    return () => ro.disconnect();
     // Re-measured on menuOpen too: the header row's own height/padding
     // changes between closed and open (see .hp-nav--open .hp-nav__inner in
     // Nav.css), which shifts how much room is actually left for the panel.
@@ -593,7 +577,8 @@ export default function Nav({
             Overview/Categories/Inquiry grouping as desktop when `dropdowns`
             is supplied, rendered as inline accordions instead of floating
             popovers; falls back to the flat `links` list for pages that
-            don't use dropdowns at all (e.g. the 404 page). */}
+            don't use dropdowns at all (e.g. the 404 page). The CTA lives
+            inside this same scrollable region, as its last item. */}
         <div
           className={`hp-nav__mobile${menuOpen ? " is-open" : ""}`}
           aria-hidden={!menuOpen}

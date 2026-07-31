@@ -537,48 +537,17 @@
 
 .hp-nav__mobile.is-open {
   /* Actual target height comes from the inline `max-height` style (see
-     Nav.jsx — measured off real content via ResizeObserver, since a flat
-     guessed constant clips as soon as an accordion group underneath it
-     expands). Overflow switches to a real scrollbar past that, as a
-     fallback for a short phone screen with everything expanded at once. */
+     Nav.jsx — measured off real content via ResizeObserver, capped to
+     whatever's actually left in the viewport below the header row). If
+     content still exceeds that, this scrolls internally instead of
+     overflowing off-screen. */
   opacity: 1;
   overflow-y: auto;
-  padding: 4px 20px 18px;
-  border-top: 1px solid rgba(20, 30, 50, 0.1);
   -webkit-overflow-scrolling: touch;
-  /* Firefox: thin, translucent-navy thumb on a transparent track — the
-     standardized (if more limited) equivalent of the ::-webkit-scrollbar
-     rules below, which Firefox doesn't support. */
   scrollbar-width: thin;
   scrollbar-color: rgba(20, 30, 50, 0.25) transparent;
-}
-
-/* Chromium/Safari: replaces the default chunky gray scrollbar-with-arrow-
-   buttons (jarring against the frosted glass panel) with a slim, rounded,
-   low-contrast thumb that only really shows up while actively scrolling —
-   same visual language as the rest of the site rather than the browser's
-   raw OS-default control. */
-.hp-nav__mobile.is-open::-webkit-scrollbar {
-  width: 6px;
-}
-
-.hp-nav__mobile.is-open::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.hp-nav__mobile.is-open::-webkit-scrollbar-thumb {
-  background: rgba(20, 30, 50, 0.25);
-  border-radius: 999px;
-}
-
-.hp-nav__mobile.is-open::-webkit-scrollbar-thumb:hover {
-  background: rgba(20, 30, 50, 0.4);
-}
-
-.hp-nav__mobile.is-open::-webkit-scrollbar-button {
-  display: none;
-  height: 0;
-  width: 0;
+  padding: 4px 20px 18px;
+  border-top: 1px solid rgba(20, 30, 50, 0.1);
 }
 
 .hp-nav__mobile a:not(.hp-nav__mobile-cta) {
@@ -594,6 +563,9 @@
 .hp-nav__mobile a:not(.hp-nav__mobile-cta):last-of-type { border-bottom: none; }
 .hp-nav__mobile a:not(.hp-nav__mobile-cta):hover { color: #14213a; }
 
+/* Last item inside the same scrollable list (see Nav.jsx) rather than a
+   separate footer — separated from the links above it with margin instead
+   of its own border/background. */
 .hp-nav__mobile-cta {
   display: block;
   text-align: center;
@@ -643,9 +615,16 @@
   transform: rotate(180deg);
 }
 
+/* Grid-row trick instead of animating max-height — max-height is a layout
+   property whose in-between animated values force the browser to reflow
+   this element (and anything measuring it, like the mobile menu's own
+   available-height calc above) on every frame; grid-template-rows achieves
+   the identical expand/collapse visual without ever changing the box's
+   actual layout size mid-transition (same technique already used for the
+   FAQ accordion — see .hp-faq-item__a in Faq.css). */
 .hp-nav__mobile-group-panel {
-  overflow: hidden;
   max-height: 0;
+  overflow: hidden;
   transition: max-height 0.3s cubic-bezier(0.16,1,0.3,1);
 }
 
@@ -705,6 +684,15 @@
      pinned in place at this breakpoint instead. */
   .hp-nav--hidden { transform: none; }
 
+  /* Same idea for the "solid" scroll state (.hp-nav--solid .hp-nav__pill,
+     desktop-only translateY(2px) scale(0.99) shift once scrolled past 40%
+     of the viewport) — at this breakpoint the pill *is* the small circular
+     hamburger button, so that shift read as the button visibly wobbling in
+     place every time it crossed the threshold while scrolling, rather than
+     the subtle "settling" effect it's meant to be on the full-width
+     desktop pill. Kept perfectly still here instead. */
+  .hp-nav--solid .hp-nav__pill { transform: none; }
+
   /* Collapsed: circle button only */
   .hp-nav__pill {
     width: 52px !important;
@@ -756,5 +744,22 @@
   .hp-nav__pill {
     -webkit-backdrop-filter: blur(16px) saturate(140%);
     backdrop-filter: blur(16px) saturate(140%);
+  }
+}
+
+/* Width-based, not (hover: none) — the CTA's hover lift needs to be off
+   any time the nav is in its mobile/collapsed layout (below the same
+   1024px breakpoint the rest of this file's mobile rules use), including
+   on a desktop browser with a mouse narrowed down to that width. A
+   `(hover: none)` media query only matches devices that can't hover at
+   all (real touchscreens) — it doesn't match a desktop browser just
+   because its window happens to be narrow, so it missed exactly that
+   case. On an actual touch device this also still matters: tapping the
+   CTA can trigger a "sticky" hover state that many mobile browsers apply
+   on tap and only clear once something else is tapped, leaving the -2px
+   lift visibly stuck in place instead of a clean, momentary press. */
+@media (max-width: 1024px) {
+  .hp-nav__quote:hover {
+    transform: none;
   }
 }

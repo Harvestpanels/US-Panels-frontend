@@ -98,11 +98,10 @@ function HomePage() {
     },
   ];
 
-  // Lightbox now takes a ready-to-use `src` (so it can also show local,
-  // already-resolved product images elsewhere) — gallery photos still come
-  // from wsimg as protocol-relative URLs, so the "https:" prefix Lightbox
-  // used to add internally now has to happen at the call site instead.
-  const galleryLightboxImages = GALLERY_IMAGES.map((img) => ({ ...img, src: `https:${img.src}` }));
+  // Lightbox takes a ready-to-use `src` — gallery photos are now local,
+  // bundler-resolved imports (see GALLERY_IMAGES in data/panels.js), so no
+  // URL transformation is needed before handing them to it.
+  const galleryLightboxImages = GALLERY_IMAGES;
 
   return (
     <div className="hp-app">

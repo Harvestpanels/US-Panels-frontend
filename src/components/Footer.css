@@ -2,14 +2,14 @@
   position: relative;
   z-index: 5;
   padding: 44px 0 28px;
-  border-top: 1px solid rgba(20, 30, 50, 0.1);
+  border-top: 1px solid rgba(var(--hp-navy-rgb), 0.1);
   margin-top: 10px;
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.54));
   -webkit-backdrop-filter: blur(28px) saturate(150%);
   backdrop-filter: blur(28px) saturate(150%);
   box-shadow:
     0 1px 1px rgba(255, 255, 255, 0.6) inset,
-    0 24px 60px rgba(20, 30, 50, 0.1),
+    0 24px 60px rgba(var(--hp-navy-rgb), 0.1),
     9999px 0 0 0 rgba(255, 255, 255, 0.54),
     -9999px 0 0 0 rgba(255, 255, 255, 0.54);
 }
@@ -28,19 +28,19 @@
 .hp-footer__inner p {
   margin: 10px 0 0;
   font-size: 14px;
-  color: rgba(20, 30, 50, 0.65);
+  color: rgba(var(--hp-navy-rgb), 0.65);
 }
 
 .hp-footer__inner a {
   transition: color 0.2s ease;
 }
 
-.hp-footer__inner a:hover { color: #c8262e; }
+.hp-footer__inner a:hover { color: var(--hp-red); }
 
 .hp-footer__social {
   display: flex;
   gap: 18px;
-  color: rgba(20, 30, 50, 0.72);
+  color: rgba(var(--hp-navy-rgb), 0.72);
 }
 
 .hp-footer__social a {
@@ -50,7 +50,7 @@
 }
 
 .hp-footer__social a:hover {
-  color: #c8262e;
+  color: var(--hp-red);
   transform: translateY(-2px);
 }
 
@@ -64,10 +64,10 @@
   max-width: 1180px;
   margin: 24px auto 0;
   padding: 20px 32px 0;
-  border-top: 1px solid rgba(20, 30, 50, 0.12);
+  border-top: 1px solid rgba(var(--hp-navy-rgb), 0.12);
   font-size: 12px;
   line-height: 1.7;
-  color: rgba(20, 30, 50, 0.45);
+  color: rgba(var(--hp-navy-rgb), 0.45);
 }
 
 .hp-footer__legal p {
@@ -93,8 +93,14 @@
   .hp-footer { padding: 48px 0 24px; }
 }
 
-@media (hover: none) {
+/* Also matched by max-width, not just hover: none — a desktop browser
+   window resized/emulated narrow still reports (hover: hover), so a mouse
+   there would still trigger the lift this rule exists to disable. */
+@media (hover: none), (max-width: 1024px) {
   .hp-footer__social a:hover { transform: none; }
+}
+
+@media (hover: none) {
   .hp-footer {
     -webkit-backdrop-filter: blur(12px) saturate(130%);
     backdrop-filter: blur(12px) saturate(130%);

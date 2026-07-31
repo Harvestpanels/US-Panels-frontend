@@ -9,7 +9,7 @@
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  border: 1px solid rgba(20, 30, 50, 0.12);
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.12);
   cursor: pointer;
   transition:
     transform 0.45s cubic-bezier(0.16,1,0.3,1),
@@ -136,7 +136,10 @@
   .hp-panel-grid { grid-template-columns: 1fr; }
 }
 
-@media (hover: none) {
+/* Also matched by max-width, not just hover: none — a desktop browser
+   window resized/emulated narrow still reports (hover: hover), so a mouse
+   there would still trigger the effects this block exists to disable. */
+@media (hover: none), (max-width: 1024px) {
   /* Panel cards — no scale/dim sibling effect, desc always visible */
   .hp-panel-grid:hover .hp-panel-card:not(:hover) { opacity: 1; transform: none; }
   .hp-panel-card:hover { transform: none; }

@@ -1,18 +1,84 @@
 .hp-products-page {
-  background: #1b1d1f;
   min-height: 100vh;
 }
 
+/* Same light frosted-glass container the home page's sections use (see
+   .hp-glass in App.css) — position/border-radius/padding/backdrop-blur
+   structure and colors both copied directly, so every panel on this page
+   reads as the exact same "section" the home page uses, just with a
+   video instead of a static image sitting behind it. Reused by the hero,
+   the search/filter bar, and each product category section below. */
+.hp-products-panel {
+  position: relative;
+  border-radius: 28px;
+  padding: 56px 48px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.5));
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.1);
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  backdrop-filter: blur(28px) saturate(150%);
+  box-shadow:
+    0 1px 1px rgba(255, 255, 255, 0.6) inset,
+    0 -1px 1px rgba(var(--hp-navy-rgb), 0.08) inset,
+    0 24px 60px rgba(var(--hp-navy-rgb), 0.12);
+  overflow: hidden;
+}
+
+.hp-products-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0) 70%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .hp-products-panel { padding: 28px 20px; border-radius: 18px; }
+}
+
+@media (hover: none) {
+  .hp-products-panel {
+    -webkit-backdrop-filter: blur(12px) saturate(130%);
+    backdrop-filter: blur(12px) saturate(130%);
+  }
+}
+
+/* Just top clearance/spacing now — the actual panel width and padding
+   come from the same .hp-products-category__inner > .hp-products-panel
+   nesting every other section below it uses (see JSX), so the two are
+   guaranteed to render at the exact same width instead of two separately
+   maintained max-width values silently drifting apart. */
 .hp-products-hero {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 168px 32px 64px;
+  /* Enough top margin to clear the fixed nav pill entirely (18px top +
+     ~84px tall on desktop) with real breathing room, instead of nearly
+     touching/tucking underneath it. Both the pill and this hero card use
+     the same translucent white frosted-glass style, so a narrow gap reads
+     as the two bleeding into one shape rather than two distinct elements
+     — this needs to be noticeably wider than a plain "clears the nav" gap
+     to keep them visually separate. */
+  margin-top: 180px;
   text-align: center;
+}
+
+/* .hp-eyebrow (Hero.css) is styled cream-on-dark for the home page's video
+   hero — this page's hero sits on a light frosted card instead, so that
+   same light color washed out to near-invisible here. Overriding just the
+   color/shadow for this page's context rather than touching the shared
+   class, which still needs its original light styling on the home page. */
+.hp-products-hero .hp-eyebrow {
+  color: var(--hp-navy);
+  font-weight: 700;
+  text-shadow: none;
 }
 
 .hp-hero-heading {
   font-size: clamp(32px, 6vw, 56px);
-  color: #f3f1ec;
+  color: var(--hp-navy);
   margin: 14px 0 24px;
 }
 
@@ -55,7 +121,7 @@
 .hp-products-hero__sub {
   font-size: 16px;
   line-height: 1.65;
-  color: rgba(243, 241, 236, 0.75);
+  color: rgba(var(--hp-navy-rgb), 0.72);
   max-width: 640px;
   margin: 0 auto;
 }
@@ -66,9 +132,7 @@
 }
 
 .hp-products-filter {
-  max-width: 1180px;
-  margin: 0 auto 48px;
-  padding: 0 32px;
+  margin-top: 40px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -82,7 +146,7 @@
   align-items: center;
   flex: 1 1 280px;
   max-width: 420px;
-  color: rgba(243, 241, 236, 0.5);
+  color: rgba(var(--hp-navy-rgb), 0.5);
 }
 
 .hp-products-filter__search svg {
@@ -101,9 +165,9 @@
   font-family: "Inter", sans-serif;
   /* 16px avoids iOS Safari's auto-zoom-on-focus for inputs under 16px */
   font-size: 16px;
-  color: #f3f1ec;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(243, 241, 236, 0.15);
+  color: var(--hp-navy);
+  background: rgba(var(--hp-navy-rgb), 0.04);
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.14);
   border-radius: 999px;
   padding: 11px 16px 11px 42px;
   transition: border-color 0.2s ease, background 0.2s ease;
@@ -116,13 +180,13 @@
 }
 
 .hp-products-filter__search input::placeholder {
-  color: rgba(243, 241, 236, 0.4);
+  color: rgba(var(--hp-navy-rgb), 0.4);
 }
 
 .hp-products-filter__search input:focus-visible {
   outline: none;
-  border-color: #c8262e;
-  background: rgba(255, 255, 255, 0.07);
+  border-color: var(--hp-red);
+  background: rgba(var(--hp-navy-rgb), 0.07);
 }
 
 .hp-products-filter__chips {
@@ -135,9 +199,9 @@
   font-family: "Inter", sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: rgba(243, 241, 236, 0.65);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(243, 241, 236, 0.15);
+  color: rgba(var(--hp-navy-rgb), 0.65);
+  background: rgba(var(--hp-navy-rgb), 0.04);
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.14);
   border-radius: 999px;
   padding: 8px 16px;
   cursor: pointer;
@@ -146,15 +210,15 @@
 }
 
 .hp-products-filter__chip:hover {
-  color: #f3f1ec;
-  border-color: rgba(243, 241, 236, 0.3);
+  color: var(--hp-navy);
+  border-color: rgba(var(--hp-navy-rgb), 0.3);
   transform: translateY(-1px);
 }
 
 .hp-products-filter__chip.is-active {
-  color: #f3f1ec;
-  background: #c8262e;
-  border-color: #c8262e;
+  color: var(--hp-cream);
+  background: var(--hp-red);
+  border-color: var(--hp-red);
 }
 
 .hp-products-empty {
@@ -162,16 +226,30 @@
   margin: 32px auto 0;
   padding: 0 32px;
   font-size: 14px;
-  color: rgba(243, 241, 236, 0.6);
+  color: rgba(var(--hp-navy-rgb), 0.6);
 }
 
 .hp-products-hidden {
   display: none;
 }
 
+/* Same padding/isolation rhythm as the home page's .hp-section (App.css)
+   — deliberately a separate, page-scoped class rather than sharing that
+   literal one: .hp-section h2/.hp-section__eyebrow also carry the home
+   page's scroll-triggered reveal CSS (opacity:0 + translateY, cleared via
+   IntersectionObserver's .is-visible class), which this page's headings
+   never receive since they use their own JS-driven .hp-anim-item/
+   .hp-filter-anim system instead — sharing the class would've left every
+   heading permanently shifted down 32px with no way to clear it. */
 .hp-products-category {
+  position: relative;
+  z-index: 5;
   padding: 110px 0;
-  border-top: 1px solid rgba(243, 241, 236, 0.08);
+  isolation: isolate;
+}
+
+@media (max-width: 640px) {
+  .hp-products-category { padding: 72px 0; }
 }
 
 .hp-products-category__inner {
@@ -180,16 +258,20 @@
   padding: 0 32px;
 }
 
+@media (max-width: 640px) {
+  .hp-products-category__inner { padding: 0 16px; }
+}
+
 .hp-products-category h2 {
   font-size: clamp(26px, 4vw, 38px);
-  color: #f3f1ec;
+  color: var(--hp-navy);
   margin-bottom: 12px;
 }
 
 .hp-products-category__blurb {
   font-size: 15px;
   line-height: 1.65;
-  color: rgba(243, 241, 236, 0.65);
+  color: rgba(var(--hp-navy-rgb), 0.65);
   max-width: 640px;
   margin: 0 0 32px;
 }
@@ -237,8 +319,11 @@
   position: relative;
   border-radius: 14px;
   overflow: hidden;
-  border: 1px solid rgba(243, 241, 236, 0.1);
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.12);
+  /* Opaque, not translucent — a semi-transparent card here let the parent
+     panel's own backdrop-blur bleed through its edges, which read as a
+     blurry haze around the card (especially once it scaled up on hover). */
+  background: #fdfcfb;
   display: flex;
   flex-direction: column;
   cursor: pointer;
@@ -265,7 +350,7 @@
 .hp-product-card:hover {
   z-index: 2;
   transform: rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg)) scale(1.03);
-  border-color: rgba(243, 241, 236, 0.25);
+  border-color: rgba(var(--hp-navy-rgb), 0.25);
 }
 
 /* Cards are role="button" (not a real <button>/<a>), so the global
@@ -314,7 +399,7 @@
   pointer-events: none;
   background: radial-gradient(
     circle at var(--glare-x, 50%) var(--glare-y, 50%),
-    rgba(255, 255, 255, 0.22),
+    rgba(255, 255, 255, 0.35),
     transparent 55%
   );
   opacity: 0;
@@ -342,20 +427,20 @@
 .hp-product-card__body h3 {
   font-size: 17px;
   text-transform: none;
-  color: #f3f1ec;
+  color: var(--hp-navy);
   margin-bottom: 8px;
 }
 
 .hp-product-card__body p {
   font-size: 13px;
   line-height: 1.55;
-  color: rgba(243, 241, 236, 0.7);
+  color: rgba(var(--hp-navy-rgb), 0.7);
   margin: 0;
 }
 
 @media (max-width: 640px) {
-  .hp-products-hero { padding: 110px 20px 40px; }
-  .hp-products-filter { padding: 0 20px; margin-bottom: 32px; }
+  .hp-products-hero { margin-top: 90px; }
+  .hp-products-filter { margin-top: 28px; }
   .hp-products-empty { padding: 0 20px; }
   .hp-products-category { padding: 72px 0; }
   .hp-products-category__inner { padding: 0 20px; }
@@ -374,3 +459,9 @@
 @media (prefers-reduced-motion: reduce) {
   .hp-product-card:hover { transform: none; }
 }
+
+/* ===================== SHARED SECTIONS =====================
+   Contact, Footer, and Nav are shared components also used as-is on the
+   home page — no color overrides needed here at all now: this page uses
+   the exact same light theme those components already default to, so
+   they render identically to how they look on the home page. */

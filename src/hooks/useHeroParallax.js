@@ -95,7 +95,19 @@ export function useHeroParallax() {
         const y = window.scrollY;
         const vh = window.innerHeight;
 
-        navRef.current?.classList.toggle("hp-nav--solid", y > vh * 0.4);
+        // Also gates the solid-pill toggle just below, not just the hide
+        // logic — the open mobile menu *is* the pill (see .hp-nav--solid
+        // .hp-nav__pill in Nav.css, which scales it down 1% and shifts it
+        // 2px), so toggling this mid-scroll while it's open visibly
+        // "resized" the whole open menu, links, CTA and all, out from
+        // under the user.
+        const menuIsOpen =
+          navRef.current?.classList.contains("hp-nav--open") ||
+          navRef.current?.classList.contains("hp-nav--dropdown-open");
+
+        if (!menuIsOpen) {
+          navRef.current?.classList.toggle("hp-nav--solid", y > vh * 0.4);
+        }
 
         // Hide nav once scrolled past the top; only hovering near the top
         // (see onMouseMove below) or scrolling back to the very top reveals
@@ -103,9 +115,6 @@ export function useHeroParallax() {
         // Menu/Overview/Inquiry dropdown is open — those popups are
         // positioned relative to the nav (or portaled but anchored to it),
         // so hiding the nav out from under an open one would strand it.
-        const menuIsOpen =
-          navRef.current?.classList.contains("hp-nav--open") ||
-          navRef.current?.classList.contains("hp-nav--dropdown-open");
         if (!menuIsOpen) {
           if (y < 80) {
             clearTimeout(hoverHideTimer);

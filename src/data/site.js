@@ -1,4 +1,4 @@
-import skiesVideo from "../assets/videos/skies.mp4";
+import skiesVideo from "../assets/videos/AI VIdeo - Skies1 - 1.mp4";
 import facilityImg from "../assets/images/General/US Panels Facility.webp";
 
 export const VIDEO_URL = skiesVideo;

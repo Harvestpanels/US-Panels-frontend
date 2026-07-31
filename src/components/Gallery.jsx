@@ -110,7 +110,7 @@ export default function Gallery({ images, registerReveal, onSelect }) {
                   onClick={() => onSelect(i)}
                   aria-label={`View "${img.title}" full screen`}
                 >
-                  <img src={`https:${img.src}`} alt={img.title} loading="lazy" decoding="async" />
+                  <img src={img.src} alt={img.title} loading="lazy" decoding="async" />
                   <span className="hp-gallery-card__label">
                     <span className="hp-gallery-card__use">{img.category}</span>
                     <span className="hp-gallery-card__caption">{img.title}</span>

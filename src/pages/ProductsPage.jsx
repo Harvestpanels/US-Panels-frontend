@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "../styles/App.css";
 import "./ProductsPage.css";
 import logo from "../assets/images/General/us-panels-logo.png";
+import dataCenterVideo from "../assets/videos/AI Video - Data Center Background1 - 1.mp4";
 import { PRODUCT_CATEGORIES } from "../data/products";
 import { useCountUp } from "../hooks/useCountUp";
 import { useLightbox } from "../hooks/useLightbox";
@@ -46,8 +47,12 @@ const PRODUCTS_NAV_SECTIONS = [
   { id: "foam-panels", label: "Wall & Roof" },
   { id: "mineral-wool-panels", label: "Fire-Rated" },
   { id: "cold-storage-panels", label: "Cold Storage" },
-  { id: "doors", label: "Doors" },
-  { id: "trim-hardware", label: "Trim & Hardware" },
+  // ids match PRODUCT_CATEGORIES' own "-panels"-suffixed ids (see
+  // src/data/products.js) — kept in sync deliberately since these are
+  // used both to scroll to the matching <section id="..."> and to
+  // highlight it via useScrollSpy.
+  { id: "doors-panels", label: "Doors" },
+  { id: "trim-hardware-panels", label: "Trim & Hardware" },
 ];
 
 const PRODUCTS_SCROLL_SPY_IDS = [...PRODUCTS_NAV_SECTIONS.map((s) => s.id), "contact"];
@@ -155,6 +160,105 @@ export default function ProductsPage() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useNavScroll(menuOpen);
+
+  // Same scroll-scrubbed video technique the home page's background uses
+  // (see useHeroParallax.js) — the video stays paused and its currentTime
+  // is driven directly off scroll progress through the whole page, so the
+  // footage itself visibly advances as you scroll instead of just playing
+  // on a loop regardless of what you're doing. Kept as a local effect
+  // rather than reusing that hook: it also drives hero-fade/curtain-
+  // parallax/nav-hide behavior this page doesn't have (it already gets
+  // its nav scroll behavior from useNavScroll above).
+  const bgVideoRef = useRef(null);
+  useEffect(() => {
+    const video = bgVideoRef.current;
+    if (!video) return;
+    let raf = null;
+    let lastVideoTime = -1;
+    let videoSeeking = false;
+    let pendingTarget = null;
+    let videoUnlocked = false;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isTouch = window.matchMedia("(hover: none)").matches;
+    const SEEK_THRESHOLD = isTouch ? 0.08 : 0.03;
+
+    function seekVideo(target) {
+      if (reducedMotion) return;
+      if (videoSeeking) { pendingTarget = target; return; }
+      lastVideoTime = target;
+      videoSeeking = true;
+      video.currentTime = target;
+    }
+
+    function onSeeked() {
+      videoSeeking = false;
+      if (pendingTarget !== null) {
+        const t = pendingTarget;
+        pendingTarget = null;
+        seekVideo(t);
+      }
+    }
+
+    // iOS/mobile requires the video to have actually played once before
+    // seeking is allowed — play it silently then immediately pause to
+    // "unlock" it, same as the home page's video.
+    function unlockVideo() {
+      if (videoUnlocked) return;
+      videoUnlocked = true;
+      video.muted = true;
+      const p = video.play();
+      if (p && typeof p.then === "function") {
+        p.then(() => { video.pause(); video.currentTime = 0; }).catch(() => {});
+      } else {
+        video.pause();
+        video.currentTime = 0;
+      }
+    }
+
+    video.addEventListener("seeked", onSeeked);
+    video.load();
+    video.addEventListener("canplay", unlockVideo, { once: true });
+    window.addEventListener("touchstart", unlockVideo, { passive: true, once: true });
+
+    // Each `video.currentTime` write is a real decode-and-seek, not a cheap
+    // property set — on this page's 15MB video that's expensive enough
+    // that firing it on every single animation frame during a fast scroll
+    // (up to 60/sec) visibly competed with the page's own scroll/paint
+    // work and read as laggy. A minimum real-time gap between seeks (on
+    // top of the existing rAF coalescing, which only dedupes *within* a
+    // frame) cuts the actual seek count roughly 8x while still reading as
+    // continuously "scrubbing" rather than stepping.
+    let lastSeekAt = 0;
+    const MIN_SEEK_INTERVAL_MS = 120;
+    function onScroll() {
+      if (raf) return;
+      raf = requestAnimationFrame((now) => {
+        raf = null;
+        if (reducedMotion || !videoUnlocked || !video.duration || !isFinite(video.duration)) return;
+        if (now - lastSeekAt < MIN_SEEK_INTERVAL_MS) return;
+        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        if (scrollable <= 0) return;
+        const progress = Math.max(0, Math.min(1, window.scrollY / scrollable));
+        const target = progress * video.duration;
+        if (Math.abs(target - lastVideoTime) > SEEK_THRESHOLD) {
+          lastSeekAt = now;
+          seekVideo(target);
+        }
+      });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchstart", unlockVideo);
+      video.removeEventListener("seeked", onSeeked);
+      video.removeEventListener("canplay", unlockVideo);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   const [query, setQuery] = useState("");
   const [activeCategoryId, setActiveCategoryId] = useState("all");
   const [pendingScrollId, setPendingScrollId] = useState(null);
@@ -332,7 +436,23 @@ export default function ProductsPage() {
         ctaLabel="Request pricing"
       />
 
+      <div className="hp-bgvideo-layer" aria-hidden="true">
+        <video
+          className="hp-bgvideo"
+          ref={bgVideoRef}
+          src={dataCenterVideo}
+          muted
+          playsInline
+          webkit-playsinline="true"
+          preload="auto"
+          disablePictureInPicture
+          disableRemotePlayback
+        />
+      </div>
+
       <section className="hp-products-hero">
+      <div className="hp-products-category__inner">
+      <div className="hp-products-panel">
         <p className="hp-eyebrow hp-hero-fade">Full product catalog</p>
         <h1 className="hp-hero-heading">
           {HERO_HEADING_WORDS.map((word, i) => (
@@ -346,9 +466,8 @@ export default function ProductsPage() {
           Browse our complete line of insulated wall panels, roof panels,
           fire-rated panels, cold storage panels, and doors.
         </p>
-      </section>
 
-      <div className="hp-products-filter hp-hero-fade" style={{ animationDelay: "0.6s" }}>
+        <div className="hp-products-filter hp-hero-fade" style={{ animationDelay: "0.6s" }}>
         <div className="hp-products-filter__search">
           <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
             <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" />
@@ -375,7 +494,10 @@ export default function ProductsPage() {
             </button>
           ))}
         </div>
+        </div>
       </div>
+      </div>
+      </section>
 
       {totalResults === 0 && (
         <p className="hp-products-empty">
@@ -391,21 +513,23 @@ export default function ProductsPage() {
         id="search-results"
       >
         <div className="hp-products-category__inner">
-          <h2 className="hp-anim-item" onAnimationEnd={clearAnimOnEnd}>
-            {animatedTotalResults} result{animatedTotalResults === 1 ? "" : "s"} for "{query}"
-          </h2>
-          <div className="hp-products-grid">
-            {ALL_PRODUCTS.map((product) => (
-              <ProductCard
-                key={`search-${product.categoryId}-${product.name}`}
-                product={product}
-                hidden={!visibleSearchProducts.includes(product)}
-                showCategory
-                onOpen={() =>
-                  openAlbum(visibleSearchProducts.map(toAlbumItem), visibleSearchProducts.indexOf(product))
-                }
-              />
-            ))}
+          <div className="hp-products-panel">
+            <h2 className="hp-anim-item" onAnimationEnd={clearAnimOnEnd}>
+              {animatedTotalResults} result{animatedTotalResults === 1 ? "" : "s"} for "{query}"
+            </h2>
+            <div className="hp-products-grid">
+              {ALL_PRODUCTS.map((product) => (
+                <ProductCard
+                  key={`search-${product.categoryId}-${product.name}`}
+                  product={product}
+                  hidden={!visibleSearchProducts.includes(product)}
+                  showCategory
+                  onOpen={() =>
+                    openAlbum(visibleSearchProducts.map(toAlbumItem), visibleSearchProducts.indexOf(product))
+                  }
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -420,19 +544,21 @@ export default function ProductsPage() {
             key={category.id}
           >
             <div className="hp-products-category__inner">
-              <h2 className="hp-anim-item" onAnimationEnd={clearAnimOnEnd}>{category.name}</h2>
-              <p className="hp-products-category__blurb hp-anim-item" onAnimationEnd={clearAnimOnEnd}>
-                {category.blurb}
-              </p>
-              <div className="hp-products-grid">
-                {category.products.map((product, i) => (
-                  <ProductCard
-                    key={`browse-${category.id}-${product.name}`}
-                    product={product}
-                    hidden={false}
-                    onOpen={() => openAlbum(category.products.map(toAlbumItem), i)}
-                  />
-                ))}
+              <div className="hp-products-panel">
+                <h2 className="hp-anim-item" onAnimationEnd={clearAnimOnEnd}>{category.name}</h2>
+                <p className="hp-products-category__blurb hp-anim-item" onAnimationEnd={clearAnimOnEnd}>
+                  {category.blurb}
+                </p>
+                <div className="hp-products-grid">
+                  {category.products.map((product, i) => (
+                    <ProductCard
+                      key={`browse-${category.id}-${product.name}`}
+                      product={product}
+                      hidden={false}
+                      onOpen={() => openAlbum(category.products.map(toAlbumItem), i)}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </section>

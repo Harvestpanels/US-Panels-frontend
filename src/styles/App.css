@@ -3,6 +3,26 @@
    used by more than one component lives here; component-specific styling
    lives in that component's own .css file. */
 
+/* ===================== DESIGN TOKENS ===================== */
+/* Single source of truth for the brand palette. These five colors used to
+   be raw hex/rgb literals repeated across every component stylesheet (the
+   navy alone appeared 100+ times) — a rebrand, or even a single shade
+   tweak, meant hunting it down file by file with no guarantee every copy
+   was caught. Centralizing them here means every one of those usages now
+   updates from a single edit.
+   The `-rgb` variants sit alongside their hex counterpart so translucent
+   tints (rgba(var(--hp-navy-rgb), 0.1) etc.) can share the same source
+   color instead of needing a second hardcoded triplet. */
+:root {
+  --hp-dark: #1b1d1f;
+  --hp-cream: #f3f1ec;
+  --hp-navy: #14213a;
+  --hp-navy-rgb: 20, 30, 50;
+  --hp-red: #c8262e;
+  --hp-red-rgb: 200, 38, 46;
+  --hp-red-hover: #a81f26;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -21,8 +41,8 @@ html {
 
 body {
   margin: 0;
-  background: #1b1d1f;
-  color: #f3f1ec;
+  background: var(--hp-dark);
+  color: var(--hp-cream);
   font-family: "Inter", sans-serif;
 }
 
@@ -116,8 +136,8 @@ h3 {
 }
 
 .hp-btn--primary {
-  background: #c8262e;
-  color: #f3f1ec;
+  background: var(--hp-red);
+  color: var(--hp-cream);
 }
 
 .hp-btn--primary:hover {
@@ -129,8 +149,8 @@ h3 {
 }
 
 .hp-btn--ghost {
-  border: 1px solid rgba(20, 30, 50, 0.18);
-  color: #14213a;
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.18);
+  color: var(--hp-navy);
   background: transparent;
 }
 
@@ -163,13 +183,13 @@ h3 {
   border-radius: 28px;
   padding: 56px 48px;
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.5));
-  border: 1px solid rgba(20, 30, 50, 0.1);
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.1);
   -webkit-backdrop-filter: blur(28px) saturate(150%);
   backdrop-filter: blur(28px) saturate(150%);
   box-shadow:
     0 1px 1px rgba(255, 255, 255, 0.6) inset,
-    0 -1px 1px rgba(20, 30, 50, 0.08) inset,
-    0 24px 60px rgba(20, 30, 50, 0.12);
+    0 -1px 1px rgba(var(--hp-navy-rgb), 0.08) inset,
+    0 24px 60px rgba(var(--hp-navy-rgb), 0.12);
   overflow: hidden;
 }
 
@@ -192,7 +212,7 @@ h3 {
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #c8262e;
+  color: var(--hp-red);
   margin: 0 0 14px;
 }
 
@@ -230,7 +250,7 @@ h3 {
 .hp-section h2 {
   font-size: clamp(32px, 5vw, 52px);
   margin-bottom: 56px;
-  color: #14213a;
+  color: var(--hp-navy);
 }
 
 /* Shared "description under heading" pattern — used by WhoWeAre,
@@ -243,7 +263,7 @@ h3 {
 .hp-panel-section__desc {
   font-size: 15px;
   line-height: 1.65;
-  color: rgba(20, 30, 50, 0.72);
+  color: rgba(var(--hp-navy-rgb), 0.72);
   margin: 12px 0 0;
   max-width: 640px;
 }
@@ -277,10 +297,16 @@ h3 {
   .hp-logo__img { height: 28px; }
 }
 
-@media (hover: none) {
+/* Also matched by max-width (not just hover: none) — a desktop browser
+   window resized/emulated narrow still reports (hover: hover), so a mouse
+   hovering a button there would otherwise still trigger the lift/"sticky"
+   tap-hover, same issue already fixed for .hp-nav__quote in Nav.css. */
+@media (hover: none), (max-width: 1024px) {
   .hp-btn--primary:hover,
   .hp-btn--ghost:hover { transform: none; }
+}
 
+@media (hover: none) {
   /* Reduce backdrop-filter cost on mobile GPU */
   .hp-glass {
     -webkit-backdrop-filter: blur(12px) saturate(130%);

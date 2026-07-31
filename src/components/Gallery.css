@@ -13,7 +13,7 @@
 .hp-gallery-header__desc {
   font-size: 15px;
   line-height: 1.65;
-  color: rgba(20, 30, 50, 0.72);
+  color: rgba(var(--hp-navy-rgb), 0.72);
   margin: 12px 0 0;
   max-width: 640px;
 }
@@ -32,9 +32,9 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1px solid rgba(20, 30, 50, 0.16);
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.16);
   background: rgba(255, 255, 255, 0.7);
-  color: #14213a;
+  color: var(--hp-navy);
   cursor: pointer;
   transition: transform 0.22s cubic-bezier(0.16,1,0.3,1), background 0.2s ease, opacity 0.2s ease;
 }
@@ -77,7 +77,7 @@
   aspect-ratio: 3 / 4;
   overflow: hidden;
   border-radius: 0;
-  border: 1px solid rgba(20, 30, 50, 0.12);
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.12);
   padding: 0;
   background: none;
   cursor: pointer;
@@ -142,7 +142,7 @@
   font-size: 16px;
   line-height: 1.15;
   letter-spacing: 0.01em;
-  color: #f3f1ec;
+  color: var(--hp-cream);
   margin-bottom: 6px;
 }
 
@@ -186,7 +186,10 @@
   .hp-gallery-card__caption { font-size: 15px; }
 }
 
-@media (hover: none) {
+/* Also matched by max-width, not just hover: none — a desktop browser
+   window resized/emulated narrow still reports (hover: hover), so a mouse
+   there would still trigger the effects this block exists to disable. */
+@media (hover: none), (max-width: 1024px) {
   /* Gallery cards — no scale/dim sibling effect. The description used to
      force itself permanently open here (there's no hover on touch to
      reveal it otherwise), but that pushed the label's dark gradient up to

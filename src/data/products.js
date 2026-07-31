@@ -115,7 +115,13 @@ export const PRODUCT_CATEGORIES = [
     ],
   },
   {
-    id: "doors",
+    // "-panels" suffix (also on trim-hardware-panels below) avoids
+    // colliding with the *home page's* own #doors/#trim-hardware section
+    // ids — App.css has a home-specific rule (`#doors h2, #trim-hardware
+    // h2 { font-size: clamp(20px, 2.5vw, 26px) }`) that unintentionally
+    // matched these same-named ids here too, shrinking just these two
+    // category headings relative to the other three on this page.
+    id: "doors-panels",
     name: "Insulated Doors",
     blurb:
       "Insulated doors built to match the thermal performance of the panel envelope around them, for fast, secure, and efficient access.",
@@ -141,7 +147,7 @@ export const PRODUCT_CATEGORIES = [
     ],
   },
   {
-    id: "trim-hardware",
+    id: "trim-hardware-panels",
     name: "Trim & Hardware",
     blurb:
       "Trim, fasteners, and sealants engineered specifically for insulated panel systems, keeping every seam clean and weather-tight.",
