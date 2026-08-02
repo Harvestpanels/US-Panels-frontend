@@ -1,10 +1,23 @@
 import "./Gallery.css";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useGalleryCarousel } from "../hooks/useGalleryCarousel";
 
 // Below this, swiping past the last card's edge should feel like there's
 // somewhere further to go — a real, physical drag rather than a snap.
 const SWIPE_THRESHOLD_PX = 40;
+
+// Accumulated wheel delta (mouse wheel notches report on deltaY, trackpad
+// two-finger swipes report on deltaX — summing both lets either gesture
+// drive the carousel) needed before advancing exactly one card. Roughly
+// one mouse wheel notch (~100-120) or a short trackpad flick.
+const WHEEL_THRESHOLD = 60;
+// How long to ignore further wheel input right after a step, so one
+// continuous trackpad gesture (which fires many small wheel events) only
+// advances a single card instead of racing through several. Matches the
+// track's own CSS transition duration (see .hp-gallery-track in
+// Gallery.css) plus a small buffer, so the next step never interrupts the
+// current one mid-animation.
+const WHEEL_LOCK_MS = 550;
 
 export default function Gallery({ images, registerReveal, onSelect }) {
   const {
@@ -52,6 +65,91 @@ export default function Gallery({ images, registerReveal, onSelect }) {
     else if (dx >= SWIPE_THRESHOLD_PX) galleryPrev();
   }
 
+  // CSS `:hover` only gets re-evaluated on an actual pointer-movement
+  // event — it doesn't know or care that a card just slid out from under
+  // an otherwise-still cursor. Sliding the track (via the CSS transition
+  // below) means the card visually under the mouse changes throughout that
+  // ~0.5s animation while the mouse itself never moves, so without this,
+  // whatever card happened to be hovered when the step started stays stuck
+  // showing the hover state (its zoom/dim-siblings effect) for the whole
+  // transition, while the card sliding into place under the cursor shows
+  // nothing until the user physically twitches the mouse. Tracking the
+  // last real pointer position and re-dispatching a synthetic mousemove at
+  // those same coordinates on every animated frame forces the browser to
+  // redo its hit-test against the *current* layout, keeping :hover
+  // accurate to what's really under the cursor throughout the slide.
+  const pointerRef = useRef({ x: 0, y: 0, inside: false });
+  function handleMouseMove(e) {
+    pointerRef.current = { x: e.clientX, y: e.clientY, inside: true };
+  }
+  function handleMouseLeave() {
+    pointerRef.current.inside = false;
+  }
+
+  const hoverRafRef = useRef(null);
+  function startHoverRefresh() {
+    if (hoverRafRef.current != null) return;
+    function tick() {
+      const pointer = pointerRef.current;
+      if (pointer.inside) {
+        window.dispatchEvent(new MouseEvent("mousemove", {
+          clientX: pointer.x,
+          clientY: pointer.y,
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        }));
+      }
+      hoverRafRef.current = requestAnimationFrame(tick);
+    }
+    hoverRafRef.current = requestAnimationFrame(tick);
+  }
+  function stopHoverRefresh() {
+    if (hoverRafRef.current == null) return;
+    cancelAnimationFrame(hoverRafRef.current);
+    hoverRafRef.current = null;
+  }
+  useEffect(() => stopHoverRefresh, []);
+
+  // Desktop only (hover-capable, fine-pointer devices) — mobile already has
+  // touch swipe above, and touchscreens report `hover: none` here so this
+  // never double-handles the same gesture. Lets a mouse wheel or a
+  // trackpad's two-finger scroll advance the carousel one card at a time
+  // while hovering it, instead of requiring the small prev/next buttons —
+  // the actual movement is just galleryNext/galleryPrev updating the
+  // index, so it animates via the track's own CSS transition (smooth,
+  // consistent with clicking the buttons) rather than following the raw
+  // scroll distance 1:1. Attached as a native listener (not JSX onWheel)
+  // specifically so `preventDefault()` actually takes effect — React
+  // attaches wheel listeners passively by default, which silently ignores
+  // preventDefault and lets the page scroll anyway.
+  const wheelStateRef = useRef({ accum: 0, locked: false });
+  useEffect(() => {
+    const viewport = galleryViewportRef.current;
+    if (!viewport) return;
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+
+    function onWheel(e) {
+      e.preventDefault();
+      const state = wheelStateRef.current;
+      if (state.locked) return;
+      state.accum += e.deltaX + e.deltaY;
+      if (Math.abs(state.accum) < WHEEL_THRESHOLD) return;
+      if (state.accum > 0) galleryNext();
+      else galleryPrev();
+      state.accum = 0;
+      state.locked = true;
+      startHoverRefresh();
+      setTimeout(() => {
+        state.locked = false;
+        stopHoverRefresh();
+      }, WHEEL_LOCK_MS);
+    }
+
+    viewport.addEventListener("wheel", onWheel, { passive: false });
+    return () => viewport.removeEventListener("wheel", onWheel);
+  }, [galleryViewportRef, galleryNext, galleryPrev]);
+
   return (
     <section className="hp-section hp-section--gallery" id="gallery">
       <div className="hp-section__inner">
@@ -94,6 +192,8 @@ export default function Gallery({ images, registerReveal, onSelect }) {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
           >
             <div
               className="hp-gallery-track"
