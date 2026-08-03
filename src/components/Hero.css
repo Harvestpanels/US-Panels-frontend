@@ -1,19 +1,7 @@
-.hp-bgvideo-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.hp-bgvideo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+/* .hp-bgvideo-layer / .hp-bgvideo moved to App.css — both pages render a
+   fixed background <video> with these classes, and App.css (unlike this
+   file) is imported directly by both, so it can't be route-split away by
+   App.jsx's React.lazy. See the comment there for the full explanation. */
 
 .hp-parallax-layer {
   position: fixed;
@@ -62,13 +50,15 @@
   to   { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
-.hp-eyebrow {
-  font-family: "JetBrains Mono", monospace;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+/* Structural rule (font/size/spacing/margin) lives in App.css and is
+   shared by every page's own eyebrow text — this scoped rule only adds
+   the home hero's specific color/shadow/entrance-animation on top of it.
+   Scoped to .hp-hero specifically (not a bare .hp-eyebrow) so this
+   cream-on-dark treatment can never bleed onto another page's eyebrow if
+   this chunk happens to already be loaded in the same SPA session (e.g.
+   a visitor who came from "/" and then hit a 404). */
+.hp-hero .hp-eyebrow {
   color: var(--hp-cream);
-  margin: 0 0 18px;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
   animation: hp-hero-in 0.7s cubic-bezier(0.16,1,0.3,1) both;
 }

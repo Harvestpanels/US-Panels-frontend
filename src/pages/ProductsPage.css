@@ -76,10 +76,13 @@
   text-shadow: none;
 }
 
-.hp-hero-heading {
-  font-size: clamp(32px, 6vw, 56px);
+/* Font-size/margin (structural, shared with every page's hero heading)
+   live in App.css — scoped to .hp-products-hero here so this page's navy
+   color can't bleed onto another page's heading if this chunk happens to
+   already be loaded in the same SPA session (e.g. a visitor who came from
+   /products and then hit a 404). */
+.hp-products-hero .hp-hero-heading {
   color: var(--hp-navy);
-  margin: 14px 0 24px;
 }
 
 /* Staggered per-word reveal on load — each word's delay is set inline

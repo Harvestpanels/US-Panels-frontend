@@ -4,6 +4,20 @@
   align-items: center;
 }
 
+/* Font-size/margin (structural) come from the shared .hp-eyebrow/
+   .hp-hero-heading rules in App.css — this page's own dark background
+   (see body's --hp-dark) needs the same light cream-on-dark treatment the
+   home hero uses, scoped here rather than reusing Hero.css's version
+   directly since that's a different chunk this page never loads. */
+.hp-notfound .hp-eyebrow {
+  color: var(--hp-cream);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+}
+
+.hp-notfound .hp-hero-heading {
+  color: var(--hp-cream);
+}
+
 .hp-notfound__inner {
   text-align: center;
 }
@@ -12,7 +26,11 @@
   margin-bottom: 16px;
 }
 
-.hp-notfound__inner p {
+/* :not(.hp-eyebrow) — without it, this rule's class+tag specificity
+   (0,1,1) beat .hp-eyebrow's own font-size (0,1,0) regardless of source
+   order, so the "404" label was silently rendering at this paragraph's
+   16px instead of the small-caps 12px .hp-eyebrow is supposed to be. */
+.hp-notfound__inner p:not(.hp-eyebrow) {
   font-size: 16px;
   color: rgba(243, 241, 236, 0.75);
   max-width: 480px;

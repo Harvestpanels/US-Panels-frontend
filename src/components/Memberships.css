@@ -1,0 +1,137 @@
+.hp-membership-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  margin-top: 32px;
+}
+
+.hp-membership-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+  padding: 32px 20px;
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.12);
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition:
+    opacity 0.65s cubic-bezier(0.16,1,0.3,1),
+    transform 0.4s cubic-bezier(0.16,1,0.3,1),
+    box-shadow 0.4s ease,
+    border-color 0.4s ease,
+    background 0.4s ease;
+}
+
+/* Same radial hover glow / lift language as .hp-card (WhoWeAre.css,
+   Sustainability.css) so this section reads as part of the same family
+   of "content card" sections, not a one-off design. */
+.hp-membership-badge::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(220px circle at 50% 0%, rgba(214, 40, 40, 0.1), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.hp-membership-badge::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.3);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.hp-membership-badge:hover {
+  transform: translateY(-8px);
+  border-color: rgba(214, 40, 40, 0.35);
+  box-shadow: 0 20px 40px -20px rgba(var(--hp-navy-rgb), 0.35);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.hp-membership-badge:hover::before { opacity: 1; }
+.hp-membership-badge:hover::after { opacity: 1; }
+
+.hp-membership-grid .hp-membership-badge:nth-child(2) { transition-delay: 0.05s; }
+.hp-membership-grid .hp-membership-badge:nth-child(3) { transition-delay: 0.1s; }
+.hp-membership-grid .hp-membership-badge:nth-child(4) { transition-delay: 0.15s; }
+
+/* The "seal" — a circular monogram standing in for each organization's
+   actual logo. Sized and weighted to read clearly at a glance (this is a
+   trust signal skimmed in passing, not read word-for-word) without
+   needing real logo artwork. */
+.hp-membership-badge__mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 2px solid rgba(var(--hp-red-rgb), 0.35);
+  background: rgba(var(--hp-navy-rgb), 0.03);
+  transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hp-membership-badge:hover .hp-membership-badge__mark {
+  border-color: var(--hp-red);
+  background: rgba(var(--hp-red-rgb), 0.06);
+  transform: scale(1.05);
+}
+
+.hp-membership-badge__acronym {
+  font-family: "Big Shoulders Display", sans-serif;
+  font-weight: 800;
+  font-size: 19px;
+  letter-spacing: 0.01em;
+  color: var(--hp-navy);
+  line-height: 1;
+}
+
+.hp-membership-badge__name {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(var(--hp-navy-rgb), 0.72);
+  max-width: 200px;
+  transition: color 0.3s ease;
+}
+
+.hp-membership-badge:hover .hp-membership-badge__name {
+  color: rgba(var(--hp-navy-rgb), 0.88);
+}
+
+@media (max-width: 1024px) {
+  .hp-membership-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .hp-membership-grid { grid-template-columns: 1fr; gap: 20px; }
+  .hp-membership-badge { padding: 26px 20px; }
+}
+
+/* Also matched by max-width, not just hover: none — a desktop browser
+   window resized/emulated narrow still reports (hover: hover), so a mouse
+   there would still trigger the effects this block exists to disable. */
+@media (hover: none), (max-width: 1024px) {
+  .hp-membership-badge:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(var(--hp-navy-rgb), 0.12);
+    background: transparent;
+  }
+  .hp-membership-badge:hover::before { opacity: 0; }
+  .hp-membership-badge:hover::after { opacity: 0; }
+  .hp-membership-badge:hover .hp-membership-badge__mark {
+    border-color: rgba(var(--hp-red-rgb), 0.35);
+    background: rgba(var(--hp-navy-rgb), 0.03);
+    transform: none;
+  }
+  .hp-membership-badge:hover .hp-membership-badge__name {
+    color: rgba(var(--hp-navy-rgb), 0.72);
+  }
+}

@@ -172,6 +172,18 @@
   transform: scale(0.97);
 }
 
+/* Suppressed while a wheel-driven scroll step is in flight (see Gallery.jsx
+   — the .is-scrolling class is toggled on .hp-gallery-viewport for the
+   duration of each step). Scaling a photo down by a non-integer factor
+   like 0.97 forces the browser to resample it, reading as a slight blur —
+   an intentional cue for a deliberate mouse hover, but scrolling drags the
+   cursor across cards incidentally, so it looked like a stray blur left
+   behind on whichever card the cursor happened to pass over. */
+.hp-gallery-viewport.is-scrolling .hp-gallery-track:hover .hp-gallery-card:not(:hover) {
+  opacity: 1;
+  transform: none;
+}
+
 .hp-gallery-card:hover {
   z-index: 3;
   transform: scale(1.04);

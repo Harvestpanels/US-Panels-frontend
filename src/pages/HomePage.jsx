@@ -25,6 +25,7 @@ import WhoWeAre from "../components/WhoWeAre";
 import Sustainability from "../components/Sustainability";
 import PanelSection from "../components/PanelSection";
 import Gallery from "../components/Gallery";
+import Memberships from "../components/Memberships";
 import Faq from "../components/Faq";
 import Contact from "../components/Contact";
 import Footer from "../components/Footer";
@@ -55,6 +56,7 @@ const OVERVIEW_SECTIONS = [
   { id: "doors", label: "Doors" },
   { id: "trim-hardware", label: "Trim & Hardware" },
   { id: "gallery", label: "Photo Gallery" },
+  { id: "memberships", label: "Memberships" },
 ];
 
 const INQUIRY_SECTIONS = [
@@ -199,6 +201,7 @@ function HomePage() {
         registerReveal={registerReveal}
       />
       <Gallery images={GALLERY_IMAGES} registerReveal={registerReveal} onSelect={lightbox.openLightbox} />
+      <Memberships registerReveal={registerReveal} />
       <Faq registerReveal={registerReveal} />
       <Contact registerReveal={registerReveal} onToast={setToast} />
       <Footer logo={logo} />

@@ -163,6 +163,36 @@ h3 {
   transform: translateY(0);
 }
 
+/* ===================== FIXED BACKGROUND VIDEO ===================== */
+/* Shared by the home page (Hero.jsx) and the Products page (ProductsPage.jsx
+   renders its own <video> with these same classes directly, no Hero
+   involved) — lives here, not in Hero.css, specifically because App.css is
+   imported directly by both pages and can never be route-split away. Hero.css
+   only loads as part of the Hero component's own chunk (home page only), so
+   a visitor landing straight on /products with routes code-split (see
+   App.jsx's React.lazy) would never load it — leaving this fixed video
+   completely unstyled: static position, native pixel size instead of
+   filling the viewport, plain instead of `cover`. Confirmed by inspecting a
+   fresh /products load: .hp-bgvideo-layer computed to position: static and
+   .hp-bgvideo rendered at its raw 1280x720 source size in the corner of the
+   screen with a black void filling the rest of the viewport. */
+.hp-bgvideo-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.hp-bgvideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* ===================== SECTIONS / REVEAL ===================== */
 .hp-section {
   position: relative;
@@ -214,6 +244,32 @@ h3 {
   text-transform: uppercase;
   color: var(--hp-red);
   margin: 0 0 14px;
+}
+
+/* Distinct from .hp-section__eyebrow above — this is the larger hero-style
+   eyebrow used above each page's own big H1 (home, products, 404), not the
+   smaller in-page section label. Structural only (font/size/spacing/
+   margin, no color) — each page scopes its own color on top (see
+   ".hp-hero .hp-eyebrow" in Hero.css, ".hp-products-hero .hp-eyebrow" in
+   ProductsPage.css, ".hp-notfound .hp-eyebrow" in NotFoundPage.css). Lives
+   here, not in any one of those pages' own CSS, specifically because every
+   page uses it but App.css is the only stylesheet all of them import
+   directly — with routes code-split (see App.jsx's React.lazy), anything
+   page-specific would only load for that one page's own chunk. */
+.hp-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 18px;
+}
+
+/* Same reasoning as .hp-eyebrow above — structural only, color scoped per
+   page (".hp-products-hero .hp-hero-heading" in ProductsPage.css,
+   ".hp-notfound .hp-hero-heading" in NotFoundPage.css). */
+.hp-hero-heading {
+  font-size: clamp(32px, 6vw, 56px);
+  margin: 14px 0 24px;
 }
 
 /* Panel sections (Building Envelope, Roof Panels, Data Center, Cold
