@@ -1,21 +1,21 @@
-import fortisWallImg from "../assets/images/Products/Insulated Wall & Roofs Panels/USP Fortis Wall Panel.png";
-import boxWallImg from "../assets/images/Products/Insulated Wall & Roofs Panels/USP Box Wall Panel.png";
-import copRoofImg from "../assets/images/Products/Insulated Wall & Roofs Panels/USP Cop Roof Panel.png";
-import grecataRoofImg from "../assets/images/Products/Insulated Wall & Roofs Panels/USP Grecata Roof Panel.png";
-import coldboxTpoPvcImg from "../assets/images/Products/Cold Storage Panels/USP Coldbox TPOPVC Panel.png";
-import boxVinylImg from "../assets/images/Products/Cold Storage Panels/USP Box Vinyl Panel.png";
-import wallVinylImg from "../assets/images/Products/Cold Storage Panels/USP Wall Vinyl Panel.png";
-import fireguardWallExposedImg from "../assets/images/Products/Mineral Wool Fire-Rated Panels/USP Fireguard Wall Panel - Exposed Fastening.png";
-import fireguardWallHiddenImg from "../assets/images/Products/Mineral Wool Fire-Rated Panels/USP Fireguard Wall Panel - Hidden Fastening.png";
-import fireguardWallAcousticImg from "../assets/images/Products/Mineral Wool Fire-Rated Panels/USP Fireguard Wall Panel - Acoustic.png";
-import fireguardRoofImg from "../assets/images/Products/Mineral Wool Fire-Rated Panels/USP Fireguard Roof Panel.png";
-import fireguardRoofAcousticImg from "../assets/images/Products/Mineral Wool Fire-Rated Panels/USP Fireguard Roof Panel - Acoustic.png";
-import cornerAnglesImg from "../assets/images/Products/Trim & Hardware/Corner Angles.png";
-import tBarImg from "../assets/images/Products/Trim & Hardware/T-Bar.png";
-import miscToolsImg from "../assets/images/Products/Trim & Hardware/Miscellaneous Tools.png";
-import hingeCoolerDoorImg from "../assets/images/Products/Insulated Doors/Hinge Cooler Doors.png";
-import slidingCoolerDoorImg from "../assets/images/Products/Insulated Doors/Sliding Cooler Doors.png";
-import metalDoorImg from "../assets/images/Products/Insulated Doors/Metal Doors.png";
+import fortisWallImg from "../assets/images/Products/Insulated Wall & Roofs Panels/USP Fortis Wall Panel.webp";
+import boxWallImg from "../assets/images/Products/Insulated Wall & Roofs Panels/USP Box Wall Panel.webp";
+import copRoofImg from "../assets/images/Products/Insulated Wall & Roofs Panels/USP Cop Roof Panel.webp";
+import grecataRoofImg from "../assets/images/Products/Insulated Wall & Roofs Panels/USP Grecata Roof Panel.webp";
+import coldboxTpoPvcImg from "../assets/images/Products/Cold Storage Panels/USP Coldbox TPOPVC Panel.webp";
+import boxVinylImg from "../assets/images/Products/Cold Storage Panels/USP Box Vinyl Panel.webp";
+import wallVinylImg from "../assets/images/Products/Cold Storage Panels/USP Wall Vinyl Panel.webp";
+import fireguardWallExposedImg from "../assets/images/Products/Mineral Wool Fire-Rated Panels/USP Fireguard Wall Panel - Exposed Fastening.webp";
+import fireguardWallHiddenImg from "../assets/images/Products/Mineral Wool Fire-Rated Panels/USP Fireguard Wall Panel - Hidden Fastening.webp";
+import fireguardWallAcousticImg from "../assets/images/Products/Mineral Wool Fire-Rated Panels/USP Fireguard Wall Panel - Acoustic.webp";
+import fireguardRoofImg from "../assets/images/Products/Mineral Wool Fire-Rated Panels/USP Fireguard Roof Panel.webp";
+import fireguardRoofAcousticImg from "../assets/images/Products/Mineral Wool Fire-Rated Panels/USP Fireguard Roof Panel - Acoustic.webp";
+import cornerAnglesImg from "../assets/images/Products/Trim & Hardware/Corner Angles.webp";
+import tBarImg from "../assets/images/Products/Trim & Hardware/T-Bar.webp";
+import miscToolsImg from "../assets/images/Products/Trim & Hardware/Miscellaneous Tools.webp";
+import hingeCoolerDoorImg from "../assets/images/Products/Insulated Doors/Hinge Cooler Doors.webp";
+import slidingCoolerDoorImg from "../assets/images/Products/Insulated Doors/Sliding Cooler Doors.webp";
+import metalDoorImg from "../assets/images/Products/Insulated Doors/Metal Doors.webp";
 
 export const PRODUCT_CATEGORIES = [
   {

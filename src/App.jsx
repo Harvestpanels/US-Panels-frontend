@@ -1,9 +1,15 @@
-import { useEffect, useRef } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import ProductsPage from "./pages/ProductsPage";
-import NotFoundPage from "./pages/NotFoundPage";
 import { scrollCenter } from "./utils/scroll";
+
+// Route-level code splitting — each page (plus everything it imports:
+// components, hooks, and every image it references) only downloads when a
+// visitor actually navigates there, instead of all three shipping in one
+// bundle up front. A visitor landing on "/" never needs ProductsPage's
+// code at all, and vice versa.
+const HomePage = lazy(() => import("./pages/HomePage"));
+const ProductsPage = lazy(() => import("./pages/ProductsPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 // React Router keeps the browser's scroll position across navigations by
 // default (it's an SPA — there's no real page load to reset it), so
@@ -64,11 +70,18 @@ function App() {
   return (
     <>
       <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      {/* No visible fallback UI — the page's own dark body background
+          (see --hp-dark in App.css) already shows during this brief gap,
+          and each page chunk is small enough on a real connection that a
+          spinner would just flash on and off, reading as more broken than
+          a plain, momentary continuation of the page background. */}
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
     </>
   );
 }
