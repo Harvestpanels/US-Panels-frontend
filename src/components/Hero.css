@@ -43,6 +43,21 @@
    have both. */
 @media (max-width: 640px) {
   .hp-parallax {
+    /* Plain `cover` has zero effective vertical crop room on this photo/
+       viewport combination — it's a landscape photo (~16:9) inside a
+       narrow portrait container, so `cover`'s minimum scale is already
+       height-bound (the scaled image's height lands exactly at the
+       container's height), leaving background-position-Y nothing to
+       move. Zooming in enough to create real vertical room (tried up to
+       560%) reliably pushes the logo's own on-screen width past the
+       container's width, clipping one edge or the other at narrower
+       phone sizes (confirmed empirically at 320-414px) — the logo's
+       width-to-height ratio combined with this container's aspect ratio
+       makes "fully in frame" and "clear of the text below" mutually
+       exclusive at any single zoom/position. Plain `cover` at least
+       guarantees the whole logo stays in frame, un-clipped, at every
+       width, which matters more than dodging a minor overlap with the
+       small eyebrow text line above the main headline. */
     background-size: cover;
     background-position: 32% 28%;
   }

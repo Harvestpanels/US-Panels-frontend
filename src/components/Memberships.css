@@ -154,7 +154,30 @@
     inset: 0;
   }
 
+  /* All four cards share one height regardless of which row they land
+     in — CSS Grid only stretches items to match *within* their own row,
+     so without this, a row holding a longer description (MBCEA, CEBA)
+     renders taller than a row with shorter ones (GCCA, BBB), leaving
+     visibly mismatched card sizes down the page instead of the uniform
+     grid the rest of the site uses. 200px covers the worst case measured
+     in this 2-column range (199px at 641px viewport width, just above
+     the narrower breakpoint below which needs its own taller value). */
   .hp-membership-badge__face--back {
     transform: none;
+    min-height: 200px;
+  }
+}
+
+/* Placed after the block above deliberately, not merged into it — both
+   this and the general (hover: none), (max-width: 1024px) block match
+   simultaneously at any width ≤640px, and since both rules below have
+   equal selector specificity, source order decides the winner: this
+   later block's min-height needs to override the general 200px value at
+   this narrower width specifically (296px measured worst case at a
+   320px-wide phone), and it silently lost that override entirely when it
+   was previously declared *before* the general block instead of after. */
+@media (max-width: 640px) {
+  .hp-membership-badge__face--back {
+    min-height: 300px;
   }
 }
