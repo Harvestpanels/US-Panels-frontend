@@ -124,9 +124,34 @@
     inset: auto;
   }
 
+  /* Square box via the classic padding-percentage trick, not the modern
+     `aspect-ratio` property — this face is a flex child inside a
+     column-flex parent (.hp-membership-badge__inner above), and on at
+     least one real mobile browser tested, `aspect-ratio` silently fails
+     to resolve in that position, collapsing the face's height to 0.
+     Since the logo <img> below sizes itself via `height: 100%`, a
+     collapsed (0px) parent height means that percentage has nothing
+     definite to resolve against — per spec it's then ignored entirely,
+     so the browser falls back to rendering the image at its raw
+     intrinsic pixel size instead of scaling it to fit. Confirmed on an
+     actual device: the logo rendered many times larger than the card,
+     bleeding straight past its right edge instead of a contained square.
+     padding-top: 100% computes a height from the box's *width* — always
+     supported, no ambiguity possible in a flex/grid context — so this
+     guarantees a real, non-zero height regardless of aspect-ratio
+     support. The image is then pulled out of flow and pinned to fill
+     that padding-created box. */
   .hp-membership-badge__face--front {
-    aspect-ratio: 1 / 1;
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-top: 100%;
     border-bottom: none;
+  }
+
+  .hp-membership-badge__face--front .hp-membership-badge__logo {
+    position: absolute;
+    inset: 0;
   }
 
   .hp-membership-badge__face--back {
