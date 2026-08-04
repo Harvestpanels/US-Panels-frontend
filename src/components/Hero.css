@@ -15,11 +15,18 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  background-size: cover;
-  /* Biased toward the logo signage on the building (upper-left third of
-     the source photo) so it stays in frame on narrow/tall viewports
-     instead of getting cropped out by center-cover. */
-  background-position: 25% 20%;
+  /* Explicit 100% 100% — stretched to exactly fill the layer on both
+     axes, not `cover` (crops whatever doesn't fit the viewport's aspect
+     ratio) and not `contain` (keeps the whole photo uncropped but
+     letterboxes empty bars wherever the viewport's ratio doesn't match
+     the photo's, leaving gaps instead of a full-bleed background). Both
+     "nothing cropped" and "fills the entire screen" together are only
+     possible if the image is allowed to stretch on viewports whose ratio
+     doesn't match the photo's own — a mild stretch is the trade-off for
+     satisfying both at once. */
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
   will-change: transform;
   transform: translate3d(0, 0%, 0);
   filter: grayscale(0.25) brightness(0.7);

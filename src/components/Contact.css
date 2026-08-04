@@ -11,7 +11,16 @@
   margin: 0 0 28px;
 }
 
-.hp-contact__info .hp-panel-section__desc {
+/* Same specificity tier as the `p:not()` rule above (2 classes + 1
+   element each) so this wins on source order as intended, instead of
+   losing to it — a bare `.hp-panel-section__desc` class selector here
+   used to sit one specificity tier below `p:not(.hp-section__eyebrow)`
+   (that :not()'s argument counts toward specificity same as a class, and
+   its own `p` element type pushed it strictly higher), so the intended
+   12px top margin was silently overridden back to 0 by the rule above —
+   this section's desc paragraph sat flush under its heading while every
+   other section left the same 12px gap. */
+.hp-contact__info p.hp-panel-section__desc {
   margin: 12px 0 0;
 }
 

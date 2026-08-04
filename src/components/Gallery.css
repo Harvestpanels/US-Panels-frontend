@@ -3,7 +3,14 @@
   align-items: flex-end;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 24px;
+  /* 40px, not the 24px every other section uses between its intro text
+     and its content below — .hp-gallery-viewport right below this (see
+     its own -16px top margin/padding overflow trick further down) shifts
+     16px up into this margin to make room for card-hover scale/shadow
+     without clipping, eating exactly 16px of it. 40 - 16 = 24, landing on
+     the same visible gap as every other section instead of the 8px this
+     read as before. */
+  margin-bottom: 40px;
 }
 
 .hp-gallery-header h2 {

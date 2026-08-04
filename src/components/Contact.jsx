@@ -72,7 +72,7 @@ export default function Contact({ registerReveal, onToast }) {
               <label htmlFor="f-message">Message</label>
               <textarea id="f-message" name="message" rows={4} />
 
-              <label htmlFor="f-attachment" className="hp-contact__file">Attach floor plan for a quote (max 10MB)</label>
+              <label htmlFor="f-attachment">Attach floor plan for a quote (max 10MB)</label>
               <input
                 id="f-attachment"
                 type="file"

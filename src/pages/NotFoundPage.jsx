@@ -18,7 +18,7 @@ export default function NotFoundPage() {
   const navRef = useNavScroll(menuOpen);
 
   return (
-    <div className="hp-app">
+    <div>
       <Nav menuOpen={menuOpen} setMenuOpen={setMenuOpen} navRef={navRef} logo={logo} logoTo="/" ctaTo="/#contact" />
 
       <section className="hp-section hp-notfound">

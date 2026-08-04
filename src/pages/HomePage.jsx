@@ -40,14 +40,13 @@ const HOME_TOP_LINKS = [
 ];
 
 // Every scrollable section on the homepage, top to bottom — Who We Are
-// through Photo Gallery (Welcome/the hero is reachable via Menu > Home).
+// through Memberships (Welcome/the hero is reachable via Menu > Home).
 // `id` doubles as the section id both for scrolling to it and for
 // useScrollSpy to know which item to highlight as "current" — kept as a
 // stable module-level array (not rebuilt every render) since it's also the
 // scroll spy hook's dependency list.
 const OVERVIEW_SECTIONS = [
   { id: "why", label: "Who We Are" },
-  { id: "sustainability", label: "Sustainability" },
   { id: "panels", label: "Building Envelope" },
   { id: "exterior", label: "Roof Panels" },
   { id: "data-center", label: "Data Centers" },
@@ -57,6 +56,7 @@ const OVERVIEW_SECTIONS = [
   { id: "trim-hardware", label: "Trim & Hardware" },
   { id: "gallery", label: "Photo Gallery" },
   { id: "memberships", label: "Memberships" },
+  { id: "sustainability", label: "Sustainability" },
 ];
 
 const INQUIRY_SECTIONS = [
@@ -106,7 +106,7 @@ function HomePage() {
   const galleryLightboxImages = GALLERY_IMAGES;
 
   return (
-    <div className="hp-app">
+    <div>
       <Nav
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
@@ -143,7 +143,6 @@ function HomePage() {
 
       <Hero heroContentRef={heroContentRef} />
       <WhoWeAre registerReveal={registerReveal} />
-      <Sustainability registerReveal={registerReveal} />
       <PanelSection
         id="panels"
         eyebrow="Building envelope"
@@ -202,6 +201,7 @@ function HomePage() {
       />
       <Gallery images={GALLERY_IMAGES} registerReveal={registerReveal} onSelect={lightbox.openLightbox} />
       <Memberships registerReveal={registerReveal} />
+      <Sustainability registerReveal={registerReveal} />
       <Faq registerReveal={registerReveal} />
       <Contact registerReveal={registerReveal} onToast={setToast} />
       <Footer logo={logo} />

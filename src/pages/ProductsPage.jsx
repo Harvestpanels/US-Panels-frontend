@@ -424,7 +424,7 @@ export default function ProductsPage() {
   }, [normalizedQuery, activeCategoryId]);
 
   return (
-    <div className="hp-app hp-products-page">
+    <div className="hp-products-page">
       <Nav
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}

@@ -199,7 +199,7 @@ export default function Lightbox({ images, index, onClose, onNext, onPrev }) {
               <div className="hp-lightbox__nav-group">
                 <button
                   type="button"
-                  className="hp-lightbox__nav hp-lightbox__nav--prev"
+                  className="hp-lightbox__nav"
                   onClick={onPrev}
                   disabled={index === 0}
                   aria-label="Previous photo"
@@ -208,7 +208,7 @@ export default function Lightbox({ images, index, onClose, onNext, onPrev }) {
                 </button>
                 <button
                   type="button"
-                  className="hp-lightbox__nav hp-lightbox__nav--next"
+                  className="hp-lightbox__nav"
                   onClick={onNext}
                   disabled={index >= images.length - 1}
                   aria-label="Next photo"

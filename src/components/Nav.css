@@ -233,8 +233,8 @@
   transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
-  gap: 24px;
-  font-size: 15px;
+  gap: 48px;
+  font-size: 16px;
   font-weight: 700;
   color: rgba(20, 30, 50, 0.7);
 }
@@ -261,7 +261,7 @@
 .hp-nav__menu-trigger {
   display: inline-block;
   font-family: inherit;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: rgba(20, 30, 50, 0.7);
   background: none;
@@ -427,7 +427,7 @@
 
 /* Plain text CTA link in the desktop nav — no border/background, just like the other nav links */
 .hp-nav__quote {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   color: #c8262e;
   transition: color 0.2s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);

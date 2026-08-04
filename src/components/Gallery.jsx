@@ -215,7 +215,7 @@ export default function Gallery({ images, registerReveal, onSelect }) {
       <div className="hp-section__inner">
         <div className="hp-glass">
           <div className="hp-gallery-header">
-            <div className="hp-gallery-header__left">
+            <div>
               <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Photo gallery</p>
               <h2 className="hp-reveal" ref={registerReveal}>Projects from the field</h2>
               <p className="hp-gallery-header__desc hp-reveal" ref={registerReveal}>
@@ -227,7 +227,7 @@ export default function Gallery({ images, registerReveal, onSelect }) {
             <div className="hp-gallery-header__nav hp-reveal" ref={registerReveal}>
               <button
                 type="button"
-                className="hp-gallery-nav hp-gallery-nav--prev"
+                className="hp-gallery-nav"
                 onClick={galleryPrev}
                 disabled={galleryIndex === 0}
                 aria-label="Previous photos"
@@ -236,7 +236,7 @@ export default function Gallery({ images, registerReveal, onSelect }) {
               </button>
               <button
                 type="button"
-                className="hp-gallery-nav hp-gallery-nav--next"
+                className="hp-gallery-nav"
                 onClick={galleryNext}
                 disabled={galleryIndex >= galleryMaxIndex}
                 aria-label="Next photos"

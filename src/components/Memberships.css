@@ -2,7 +2,10 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 28px;
-  margin-top: 32px;
+  /* 24px, matching the desc-to-content gap every other section uses
+     (.hp-cards, .hp-panel-grid, etc.) — this was 32px, the only section
+     off the shared rhythm. */
+  margin-top: 24px;
 }
 
 .hp-membership-badge {

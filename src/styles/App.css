@@ -272,17 +272,25 @@ h3 {
   margin: 14px 0 24px;
 }
 
-/* Panel sections (Building Envelope, Roof Panels, Data Center, Cold
-   Storage, PEMB, Doors, Trim & Hardware): eyebrow scaled up to match the
-   heading below it, instead of the small label style Who We Are/Gallery/
-   FAQ/Contact use. */
+/* Every home-page section: eyebrow scaled up to read as a huge red
+   sub-headline (originally just the panel sections — Building Envelope,
+   Roof Panels, Data Center, Cold Storage, PEMB, Doors, Trim & Hardware —
+   now applied site-wide to Who We Are/Sustainability/Gallery/Memberships/
+   FAQ/Contact too, for one consistent look across the whole page instead
+   of two different heading styles). */
 #panels .hp-section__eyebrow,
 #exterior .hp-section__eyebrow,
 #data-center .hp-section__eyebrow,
 #cold-storage .hp-section__eyebrow,
 #pemb .hp-section__eyebrow,
 #doors .hp-section__eyebrow,
-#trim-hardware .hp-section__eyebrow {
+#trim-hardware .hp-section__eyebrow,
+#why .hp-section__eyebrow,
+#sustainability .hp-section__eyebrow,
+#gallery .hp-section__eyebrow,
+#memberships .hp-section__eyebrow,
+#faq .hp-section__eyebrow,
+#contact .hp-section__eyebrow {
   font-family: "Big Shoulders Display", sans-serif;
   font-size: clamp(32px, 5vw, 52px);
   font-weight: 800;
@@ -299,7 +307,13 @@ h3 {
 #cold-storage h2,
 #pemb h2,
 #doors h2,
-#trim-hardware h2 {
+#trim-hardware h2,
+#why h2,
+#sustainability h2,
+#gallery h2,
+#memberships h2,
+#faq h2,
+#contact h2 {
   font-size: clamp(20px, 2.5vw, 26px);
 }
 
