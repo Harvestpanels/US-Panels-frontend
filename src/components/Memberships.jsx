@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./Memberships.css";
 import bbbLogo from "../assets/images/Sections/Memberships/BBB Logo.webp";
 import cebaLogo from "../assets/images/Sections/Memberships/CEBA Logo.webp";
@@ -27,25 +28,39 @@ const MEMBERSHIPS = [
   },
 ];
 
-// Flip is driven purely by CSS :hover (see Memberships.css) — not
-// click/tap. It used to also toggle on click via local React state, but
-// that state living on the same element .hp-reveal/registerReveal governs
-// caused a real bug: toggling `flipped` changes the computed className
-// string every click, and React fully replaces an element's className on
-// any string change — which silently wiped out the "is-visible" class
-// that registerReveal's IntersectionObserver had added *imperatively*
-// (via classList.add, outside React's own tracking). The card would
-// instantly revert to .hp-reveal's default opacity: 0 state — reading as
-// the whole card "fading out" the moment it was clicked. Removing the
-// click-driven state entirely (this card was never meant to be clickable)
-// removes the re-render that caused it, not just the symptom.
+// Desktop flips on :hover (see Memberships.css). Touch devices have no
+// hover, so they flip via tap instead, tracked here with local state —
+// this used to cause a real bug the first time it was tried: the flip
+// class was applied to this same outer element that also carries
+// .hp-reveal and registerReveal's ref, so toggling state changed this
+// element's own className string on every tap, and React fully replaces
+// an element's className on any string change — silently wiping out the
+// "is-visible" class registerReveal's IntersectionObserver had added
+// *imperatively* (via classList.add, outside React's own tracking). The
+// card instantly reverted to .hp-reveal's default opacity: 0, reading as
+// the whole card fading out the moment it was tapped. Fixed this time by
+// keeping the outer element's className a permanently static string and
+// applying the flip class to the *inner* wrapper instead — that inner
+// element has no reveal ref and no imperative classList changes of its
+// own, so re-rendering it on every tap is completely safe.
 function MembershipCard({ logo, name, desc, registerReveal }) {
+  const [flipped, setFlipped] = useState(false);
   return (
     <article
       className="hp-membership-badge hp-reveal"
       ref={registerReveal}
+      onClick={() => setFlipped((f) => !f)}
+      role="button"
+      tabIndex={0}
+      aria-pressed={flipped}
+      aria-label={`${name} — tap to show details`}
+      onKeyDown={(e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        setFlipped((f) => !f);
+      }}
     >
-      <div className="hp-membership-badge__inner">
+      <div className={`hp-membership-badge__inner${flipped ? " is-flipped" : ""}`}>
         <div className="hp-membership-badge__face hp-membership-badge__face--front">
           <img
             src={logo}

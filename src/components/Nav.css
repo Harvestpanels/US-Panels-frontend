@@ -688,7 +688,15 @@
      desktop pill. Kept perfectly still here instead. */
   .hp-nav--solid .hp-nav__pill { transform: none; }
 
-  /* Collapsed: circle button only */
+  /* Collapsed: circle button only. Noticeably more opaque than the
+     desktop pill's own translucent glass (0.62/0.5) — this button is
+     `position: fixed`, always floating over whatever content is
+     currently scrolled beneath it, and a page heading passing behind a
+     more see-through circle visibly reduced how clearly the ☰ icon read
+     against it. A near-solid backdrop keeps the icon legible regardless
+     of what's scrolling underneath, while the backdrop-filter blur
+     (inherited from the base .hp-nav__pill rule) still keeps it from
+     looking like a flat, out-of-place disc. */
   .hp-nav__pill {
     width: 52px !important;
     height: 52px;
@@ -696,7 +704,7 @@
     margin: 0 !important;
     border-radius: 50% !important;
     overflow: hidden;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.5));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.85));
     border: 1px solid rgba(20, 30, 50, 0.1);
     transition: width 0.35s cubic-bezier(0.16,1,0.3,1),
                 height 0.35s cubic-bezier(0.16,1,0.3,1),

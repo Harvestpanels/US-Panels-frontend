@@ -85,99 +85,35 @@
   margin: 0;
 }
 
+/* Single column below 1024px — matching the same breakpoint and layout
+   every other card grid on the page switches to (.hp-cards in
+   WhoWeAre.css/Sustainability.css, .hp-panel-grid in PanelSection.css),
+   instead of this section being the only one still running 2 columns at
+   that width. */
 @media (max-width: 1024px) {
-  .hp-membership-grid { grid-template-columns: repeat(2, 1fr); }
+  .hp-membership-grid { grid-template-columns: 1fr; max-width: 480px; margin: 24px auto 0; }
 }
 
 @media (max-width: 640px) {
-  .hp-membership-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .hp-membership-badge__face--back { padding: 16px; }
   .hp-membership-badge__face--back p { font-size: 11px; }
 }
 
-/* The flip above is purely :hover-driven, and deliberately not click/tap
-   (see the comment on MembershipCard in Memberships.jsx — toggling it via
-   click used to cause a real fade-out bug, and the cards were never meant
-   to be clickable to begin with). On a touch device that also means the
-   back face's name and description are permanently unreachable — there's
-   no hover to trigger the flip and no tap wired up to do it either, so
-   that content would just be missing for every mobile visitor. Rather
-   than add a tap handler back, this drops the flip mechanic entirely at
-   this breakpoint and stacks both faces in normal document flow instead:
-   logo on top, name/description underneath, always visible, no
-   interaction required to reach any of it. */
-@media (hover: none), (max-width: 1024px) {
+/* Touch devices have no hover to trigger the flip above, so this is the
+   tap-driven equivalent — .is-flipped is toggled by local state in
+   Memberships.jsx on click/tap (see the comment on MembershipCard there
+   for how last time this caused a real fade-out bug, and how this time
+   avoids it by keeping the flip class off the same element that also
+   carries the scroll-reveal ref). Gated to `hover: none` specifically
+   (not tied to viewport width) so a desktop browser window merely
+   resized narrow still flips on hover like normal — only genuine touch
+   devices, which have no hover at all, get the tap behavior. */
+@media (hover: none) {
+  .hp-membership-badge__inner.is-flipped {
+    transform: rotateY(180deg);
+  }
+
   .hp-membership-badge {
-    aspect-ratio: auto;
-    perspective: none;
-  }
-
-  .hp-membership-badge__inner {
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    transform: none !important;
-  }
-
-  .hp-membership-badge__face {
-    position: static;
-    inset: auto;
-  }
-
-  /* Square box via the classic padding-percentage trick, not the modern
-     `aspect-ratio` property — this face is a flex child inside a
-     column-flex parent (.hp-membership-badge__inner above), and on at
-     least one real mobile browser tested, `aspect-ratio` silently fails
-     to resolve in that position, collapsing the face's height to 0.
-     Since the logo <img> below sizes itself via `height: 100%`, a
-     collapsed (0px) parent height means that percentage has nothing
-     definite to resolve against — per spec it's then ignored entirely,
-     so the browser falls back to rendering the image at its raw
-     intrinsic pixel size instead of scaling it to fit. Confirmed on an
-     actual device: the logo rendered many times larger than the card,
-     bleeding straight past its right edge instead of a contained square.
-     padding-top: 100% computes a height from the box's *width* — always
-     supported, no ambiguity possible in a flex/grid context — so this
-     guarantees a real, non-zero height regardless of aspect-ratio
-     support. The image is then pulled out of flow and pinned to fill
-     that padding-created box. */
-  .hp-membership-badge__face--front {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-top: 100%;
-    border-bottom: none;
-  }
-
-  .hp-membership-badge__face--front .hp-membership-badge__logo {
-    position: absolute;
-    inset: 0;
-  }
-
-  /* All four cards share one height regardless of which row they land
-     in — CSS Grid only stretches items to match *within* their own row,
-     so without this, a row holding a longer description (MBCEA, CEBA)
-     renders taller than a row with shorter ones (GCCA, BBB), leaving
-     visibly mismatched card sizes down the page instead of the uniform
-     grid the rest of the site uses. 200px covers the worst case measured
-     in this 2-column range (199px at 641px viewport width, just above
-     the narrower breakpoint below which needs its own taller value). */
-  .hp-membership-badge__face--back {
-    transform: none;
-    min-height: 200px;
-  }
-}
-
-/* Placed after the block above deliberately, not merged into it — both
-   this and the general (hover: none), (max-width: 1024px) block match
-   simultaneously at any width ≤640px, and since both rules below have
-   equal selector specificity, source order decides the winner: this
-   later block's min-height needs to override the general 200px value at
-   this narrower width specifically (296px measured worst case at a
-   320px-wide phone), and it silently lost that override entirely when it
-   was previously declared *before* the general block instead of after. */
-@media (max-width: 640px) {
-  .hp-membership-badge__face--back {
-    min-height: 300px;
+    cursor: pointer;
   }
 }
