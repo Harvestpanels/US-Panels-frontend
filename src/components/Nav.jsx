@@ -201,12 +201,20 @@ function NavDropdown({ label, items, onOpenChange }) {
               }
             }}
           >
-            {items.map((item) =>
-              item.to ? (
+            {items.map((item, i) => {
+              // Computed here instead of a fixed set of :nth-child CSS
+              // rules — that only covered up to the 10th item, so any
+              // dropdown grown past that (Overview, once Memberships was
+              // added) had its later items snap in instantly instead of
+              // continuing the cascade. Same 0.02s base + 0.03s-per-item
+              // progression the old rules used, just uncapped.
+              const style = { animationDelay: `${(0.02 + i * 0.03).toFixed(2)}s` };
+              return item.to ? (
                 <Link
                   key={item.label}
                   to={item.to}
                   className={`hp-nav__menu-item${item.active ? " is-current" : ""}`}
+                  style={style}
                   onClick={() => setOpen(false)}
                 >
                   {item.label}
@@ -216,12 +224,13 @@ function NavDropdown({ label, items, onOpenChange }) {
                   key={item.label}
                   type="button"
                   className={`hp-nav__menu-item${item.active ? " is-current" : ""}`}
+                  style={style}
                   onClick={() => { item.onClick(); setOpen(false); }}
                 >
                   {item.label}
                 </button>
-              )
-            )}
+              );
+            })}
           </div>,
           document.body
         )}
@@ -404,7 +413,7 @@ export default function Nav({
   //
   // This does *not* measure the real logo's live position directly: this
   // effect runs synchronously before the first paint, which is exactly
-  // when the fold animation's own 0% keyframe (pill collapsed to an 84px
+  // when the fold animation's own 0% keyframe (pill collapsed to a 84px
   // circle) is already in effect. The logo sits inside that same animating
   // pill, so measuring it at this instant would capture its position
   // within the collapsed circle, not its final expanded position — the

@@ -1,5 +1,5 @@
 import "./Gallery.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useGalleryCarousel } from "../hooks/useGalleryCarousel";
 
 // Below this, swiping past the last card's edge should feel like there's
@@ -29,6 +29,20 @@ export default function Gallery({ images, registerReveal, onSelect }) {
     galleryNext,
     galleryPrev,
   } = useGalleryCarousel(images);
+  // Kept fresh after every render (not just at effect-setup time) so the
+  // wheel handler below always sees the *current* index/max — it's
+  // declared once in an effect that doesn't re-run on every index change,
+  // so without this it would keep checking against whatever index
+  // happened to exist when the listener was first attached. Synced in a
+  // layout effect rather than during render itself — refs are an escape
+  // hatch for exactly this ("remember a value for an event handler"), not
+  // something render is supposed to touch.
+  const indexRef = useRef(galleryIndex);
+  const maxIndexRef = useRef(galleryMaxIndex);
+  useLayoutEffect(() => {
+    indexRef.current = galleryIndex;
+    maxIndexRef.current = galleryMaxIndex;
+  });
 
   // Touch swipe on the track (mobile has no other way to advance besides
   // the small prev/next buttons up in the header — a horizontally-sliding
@@ -146,10 +160,27 @@ export default function Gallery({ images, registerReveal, onSelect }) {
     if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
 
     function onWheel(e) {
+      const rawDelta = e.deltaX + e.deltaY;
+      const direction = rawDelta > 0 ? 1 : rawDelta < 0 ? -1 : 0;
+      // Already at the end the gesture is pointing toward — there's
+      // nothing left for the carousel to do with this scroll, so don't
+      // capture it at all. Without this check, every wheel event over the
+      // gallery got `preventDefault()`'d unconditionally, which meant a
+      // visitor scrolling down with the cursor resting over an
+      // already-fully-scrolled gallery could never reach the sections
+      // below it — the page just sat there no matter how much they
+      // scrolled, since the carousel kept swallowing the gesture and
+      // doing nothing with it (galleryNext() at the max index is already
+      // a no-op).
+      const atBoundary =
+        (direction > 0 && indexRef.current >= maxIndexRef.current) ||
+        (direction < 0 && indexRef.current <= 0);
+      if (atBoundary) return;
+
       e.preventDefault();
       const state = wheelStateRef.current;
       if (state.locked) return;
-      state.accum += e.deltaX + e.deltaY;
+      state.accum += rawDelta;
       if (Math.abs(state.accum) < WHEEL_THRESHOLD) return;
       if (state.accum > 0) galleryNext();
       else galleryPrev();

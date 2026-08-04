@@ -1,5 +1,5 @@
 import skiesVideo from "../assets/videos/AI VIdeo - Skies1 - 1.mp4";
-import facilityImg from "../assets/images/General/US Panels Facility.webp";
+import facilityImg from "../assets/images/General/US Panels Facility1.webp";
 
 export const VIDEO_URL = skiesVideo;
 export const PARALLAX_BG_URL = facilityImg;
