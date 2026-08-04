@@ -41,11 +41,11 @@ export const FAQS = [
   },
   {
     question: "How much do Panels Cost?",
-    answer: "Cost varies by panel type, thickness, finish, and project size. Contact us with your specs for an accurate, free estimate.",
+    answer: "Panels typically range from $3 to $10 per square foot, depending on panel type, thickness, finish, and project size. Contact us with your specs for an accurate, free estimate.",
   },
   {
     question: "What sizes do Panels come in?",
-    answer: "We stock common pre-cut lengths and can manufacture custom sizes to fit your exact project dimensions.",
+    answer: "We stock 10ft to 26ft lengths in 2ft increments, and can manufacture custom sizes to fit your exact project dimensions.",
   },
   {
     question: "Do you offer installation services?",
@@ -53,7 +53,7 @@ export const FAQS = [
   },
   {
     question: "How long does it take to install Panels?",
-    answer: "Installation time depends on project size and scope, but panels are designed to go up quickly compared to traditional construction methods.",
+    answer: "Installation time depends on project size and scope, but panels are designed to go up quickly compared to traditional construction methods — crews can typically complete 1,000 to 10,000 square feet in a day, depending on crew size and project requirements.",
   },
   {
     question: "Insulation Value?",

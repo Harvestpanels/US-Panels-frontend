@@ -293,7 +293,7 @@ export const DOOR_PANELS = [
 // TODO: every `img` below is a placeholder — swap for real photos one at a time.
 export const TRIM_HARDWARE_PANELS = [
   {
-    name: "Corner Angles",
+    name: "Corner angles and flashing",
     category: "Trim & Hardware",
     desc: "Formed corner trim finished to match your panel color for a clean, weather-sealed edge at every outside and inside corner.",
     img: trimCornerAnglesImg,

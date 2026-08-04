@@ -32,6 +32,22 @@
   filter: grayscale(0.25) brightness(0.7);
 }
 
+/* On a narrow/tall mobile viewport, the photo's landscape aspect ratio is
+   so far from the screen's that stretching it to 100% 100% (the desktop
+   behavior above) squashes the building noticeably and pushes the "US
+   Panels" logo signage toward the very top edge, half out of frame.
+   `cover` instead crops to fill without distorting, and the position is
+   tuned specifically to keep the logo signage in frame as the focal
+   point — trading "the whole photo visible" (the desktop goal) for "the
+   part that matters looks right," since on this aspect ratio you can't
+   have both. */
+@media (max-width: 640px) {
+  .hp-parallax {
+    background-size: cover;
+    background-position: 32% 28%;
+  }
+}
+
 .hp-hero {
   position: relative;
   z-index: 12;

@@ -146,7 +146,7 @@ function HomePage() {
       <PanelSection
         id="panels"
         eyebrow="Building envelope"
-        heading="Wall panels engineered as your building envelope"
+        heading="Pre-insulated wall panels to replace sheet metal and building facade all in one step"
         description="Insulated metal wall panels for industrial, commercial, and residential builds, engineered for fast installation, long-term energy efficiency, and a clean finished look."
         panels={BUILDING_ENVELOPE_PANELS}
         registerReveal={registerReveal}
@@ -185,7 +185,7 @@ function HomePage() {
       />
       <PanelSection
         id="doors"
-        eyebrow="Doors"
+        eyebrow="Insulated Doors"
         heading="Insulated doors built to match your envelope"
         description="High-speed, sliding, and personnel doors engineered for fast, secure access without breaking the thermal envelope around them."
         panels={DOOR_PANELS}
