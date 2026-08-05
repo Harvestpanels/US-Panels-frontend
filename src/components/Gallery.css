@@ -66,6 +66,34 @@
   margin: -16px -12px;
 }
 
+/* Caps and centers the single (now full-width-capable) card at the same
+   1024px breakpoint .hp-panel-grid switches to one column at — without
+   this, a lone portrait-aspect (3:4) gallery card would stretch to the
+   full glass container width at this breakpoint (862px wide, ~1150px
+   tall at 1024px viewport), rather than the same 480px-wide, reasonably
+   proportioned card size .hp-panel-grid settles on (below that width,
+   the card is already narrower than 480px anyway, so the cap simply
+   doesn't bind — nothing to center). Applied to the card and track
+   rather than to .hp-gallery-viewport itself deliberately: the viewport
+   relies on its own -12px horizontal margin to exactly cancel out its
+   12px padding (so the card still lands flush with the glass container
+   at the wider, uncapped widths) — centering *it* via margin: auto would
+   have wiped out that negative margin outright, which is exactly what
+   happened the first time this was tried (confirmed empirically: the
+   card lost 24px of width — its padding's worth — at every width below
+   this cap). The track has no such trick to conflict with; it already
+   shrink-wraps to the single card's own width with no explicit width of
+   its own, so centering it here is conflict-free. */
+@media (max-width: 1024px) {
+  .hp-gallery-card {
+    max-width: 480px;
+  }
+
+  .hp-gallery-track {
+    margin: 0 auto;
+  }
+}
+
 .hp-gallery-track {
   display: flex;
   gap: 16px;

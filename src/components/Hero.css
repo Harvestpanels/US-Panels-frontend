@@ -67,7 +67,16 @@
   position: relative;
   z-index: 12;
   height: 100vh;
-  height: 100dvh;
+  /* svh, not dvh — dvh is *dynamic*, deliberately recalculating as the
+     mobile browser's toolbar collapses/expands during scroll. Since this
+     hero sits at the top of normal document flow, a height that keeps
+     changing mid-scroll shifts where every section below it starts,
+     reading as page content sliding/resizing while scrolling — the exact
+     symptom already fixed on the JS side for the scroll-driven parallax/
+     fade in useHeroParallax.js. svh (small viewport height) is the
+     stable value browsers use when the toolbar is fully expanded, so
+     this height never changes once set, regardless of toolbar state. */
+  height: 100svh;
   width: 100%;
   display: flex;
   align-items: center;

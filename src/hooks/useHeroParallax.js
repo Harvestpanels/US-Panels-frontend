@@ -10,12 +10,19 @@ export function useHeroParallax() {
   const videoRef = useRef(null);
   const parallaxRef = useRef(null);
   const heroContentRef = useRef(null);
+  // Cached viewport height, deliberately *not* re-read from
+  // window.innerHeight on every scroll tick (see the vhRef effect below
+  // for why) — every scroll-driven calculation in this hook divides by
+  // this value, so it needs to stay a stable reference for the whole
+  // gesture rather than a moving target.
+  const vhRef = useRef(window.innerHeight);
+  const vwRef = useRef(window.innerWidth);
 
   // Synchronous initial pass so a reload mid-scroll doesn't flash the
   // pre-scroll layout before the first scroll-driven paint.
   useLayoutEffect(() => {
     const y = window.scrollY;
-    const vh = window.innerHeight;
+    const vh = vhRef.current;
 
     navRef.current?.classList.toggle("hp-nav--solid", y > vh * 0.4);
 
@@ -93,7 +100,7 @@ export function useHeroParallax() {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         const y = window.scrollY;
-        const vh = window.innerHeight;
+        const vh = vhRef.current;
 
         // Also gates the solid-pill toggle just below, not just the hide
         // logic — the open mobile menu *is* the pill (see .hp-nav--solid
@@ -190,6 +197,26 @@ export function useHeroParallax() {
     }
     window.addEventListener("mousemove", onMouseMove, { passive: true });
 
+    // Mobile Chrome/Safari collapse their address bar / toolbar as the
+    // page scrolls, which changes window.innerHeight *mid-gesture* —
+    // independent of anything the user actually resized. Since every
+    // parallax/fade/shift calculation above divides by vhRef.current,
+    // updating it from a height-only change made the same scroll
+    // position map to a different transform from one scroll tick to the
+    // next, reading as the hero content visibly jumping/rescaling while
+    // scrolling (confirmed: this is exactly what toolbar collapse looks
+    // like paired with a live-vh scroll handler). A genuine resize/
+    // rotation always changes the *width* too, so only updating the
+    // cached height when width has actually changed filters out the
+    // toolbar-collapse noise while still tracking real viewport changes.
+    function onResize() {
+      if (window.innerWidth !== vwRef.current) {
+        vwRef.current = window.innerWidth;
+        vhRef.current = window.innerHeight;
+      }
+    }
+    window.addEventListener("resize", onResize);
+
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("touchmove", onScroll, { passive: true });
     onScroll();
@@ -199,6 +226,7 @@ export function useHeroParallax() {
       window.removeEventListener("touchmove", onScroll);
       window.removeEventListener("touchstart", onFirstInteraction);
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("resize", onResize);
       clearTimeout(hoverHideTimer);
       if (raf) cancelAnimationFrame(raf);
       if (mouseRaf) cancelAnimationFrame(mouseRaf);

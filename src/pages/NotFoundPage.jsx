@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/App.css";
 import "./NotFoundPage.css";
-import logo from "../assets/images/General/us-panels-logo.png";
+import logo from "../assets/images/General/us-panels-logo.webp";
 import { useNavScroll } from "../hooks/useNavScroll";
 import { usePageMeta } from "../hooks/usePageMeta";
 import Nav from "../components/Nav";

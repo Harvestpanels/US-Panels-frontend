@@ -152,3 +152,24 @@
   #sustainability .hp-card:hover h3 { color: var(--hp-navy); }
   #sustainability .hp-card:hover p { color: rgba(var(--hp-navy-rgb), 0.72); }
 }
+
+/* Tap-driven equivalent of the hover effect above, for touch devices
+   that have no hover at all — "is-active" is toggled by local state in
+   Sustainability.jsx on tap, on an *inner* wrapper rather than this card
+   itself (see the comment on SustainabilityCard there for why). `:has()`
+   lets this rule style the outer card based on that inner marker without
+   the card's own className ever needing to change. Gated to `hover: none`
+   specifically (not tied to viewport width) so a desktop browser window
+   merely resized narrow still uses hover like normal — only genuine
+   touch devices get the tap behavior. */
+@media (hover: none) {
+  #sustainability .hp-card:has(.is-active) {
+    transform: translateY(-8px);
+    border-color: var(--hp-navy);
+    box-shadow: none;
+    background-size: 100% 100%;
+  }
+  #sustainability .hp-card:has(.is-active) h3 { color: var(--hp-cream); }
+  #sustainability .hp-card:has(.is-active) p { color: rgba(243, 241, 236, 0.8); }
+  #sustainability .hp-card { cursor: pointer; }
+}

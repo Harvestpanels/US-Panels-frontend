@@ -6,6 +6,14 @@ import { useEffect, useRef } from "react";
 // useHeroParallax so the navbar behaves identically on every page.
 export function useNavScroll(menuOpen) {
   const navRef = useRef(null);
+  // Cached viewport height, not re-read from window.innerHeight on every
+  // scroll tick — mobile Chrome/Safari collapse their toolbar as the page
+  // scrolls, changing innerHeight mid-gesture independent of the user
+  // resizing anything, which could flicker the solid-pill threshold right
+  // as it crosses 40% of a shifting value. Updated only on a genuine
+  // resize (see the effect below), not on that toolbar-driven noise.
+  const vhRef = useRef(window.innerHeight);
+  const vwRef = useRef(window.innerWidth);
 
   useEffect(() => {
     let raf = null;
@@ -15,7 +23,7 @@ export function useNavScroll(menuOpen) {
       if (raf) return;
       raf = requestAnimationFrame(() => {
         const y = window.scrollY;
-        const vh = window.innerHeight;
+        const vh = vhRef.current;
 
         // Not while the mobile menu is open — the open panel is the pill
         // itself (see .hp-nav--solid .hp-nav__pill in Nav.css, which scales
@@ -58,6 +66,16 @@ export function useNavScroll(menuOpen) {
       }
     }
 
+    // See vhRef above — only trust a resize that also changed the width,
+    // filtering out mobile browsers' toolbar-collapse-driven height noise.
+    function onResize() {
+      if (window.innerWidth !== vwRef.current) {
+        vwRef.current = window.innerWidth;
+        vhRef.current = window.innerHeight;
+      }
+    }
+    window.addEventListener("resize", onResize);
+
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     onScroll();
@@ -65,6 +83,7 @@ export function useNavScroll(menuOpen) {
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("resize", onResize);
       clearTimeout(hoverHideTimer);
       if (raf) cancelAnimationFrame(raf);
     };

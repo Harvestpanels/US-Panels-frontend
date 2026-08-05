@@ -338,7 +338,18 @@ h3 {
   max-width: 640px;
 }
 
-/* Reveal animation — transform+opacity only (GPU composited) */
+/* Reveal animation — transform+opacity only (GPU composited).
+   will-change is deliberately NOT declared here: this class (plus
+   .hp-card/.hp-section__eyebrow/.hp-section h2) applies to essentially
+   every heading, card, and paragraph on the page — one page can easily
+   have 100+ of these. Declaring will-change permanently on all of them
+   would promote every single one to its own GPU compositing layer for
+   the entire page lifetime, not just the ~0.65s each actually spends
+   transitioning — real, ongoing GPU memory pressure for no benefit once
+   the reveal is done. useRevealOnScroll.js instead applies will-change
+   via JS right before the transition starts and removes it once the
+   transition ends, so only the handful of elements *currently* animating
+   ever carry the cost. */
 .hp-reveal,
 .hp-card,
 .hp-section__eyebrow,
@@ -348,7 +359,6 @@ h3 {
   transition:
     opacity 0.65s cubic-bezier(0.16,1,0.3,1),
     transform 0.65s cubic-bezier(0.16,1,0.3,1);
-  will-change: opacity, transform;
 }
 
 .is-visible {

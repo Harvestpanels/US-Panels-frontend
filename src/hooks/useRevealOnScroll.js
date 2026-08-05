@@ -36,7 +36,20 @@ export function useRevealOnScroll() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
+            const el = entry.target;
+            // will-change lives here, not in the CSS class itself (see
+            // the comment on .hp-reveal in App.css) — set right before
+            // the transition starts, cleared once it actually ends, so
+            // only elements currently mid-reveal carry the GPU-layer
+            // cost instead of every revealed element on the page holding
+            // it forever.
+            el.style.willChange = "opacity, transform";
+            el.addEventListener(
+              "transitionend",
+              () => { el.style.willChange = ""; },
+              { once: true }
+            );
+            el.classList.add("is-visible");
           }
         });
       },

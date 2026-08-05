@@ -29,27 +29,29 @@ const MEMBERSHIPS = [
 ];
 
 // Desktop flips on :hover (see Memberships.css). Touch devices have no
-// hover, so they flip via tap instead, tracked here with local state —
-// this used to cause a real bug the first time it was tried: the flip
-// class was applied to this same outer element that also carries
-// .hp-reveal and registerReveal's ref, so toggling state changed this
-// element's own className string on every tap, and React fully replaces
-// an element's className on any string change — silently wiping out the
-// "is-visible" class registerReveal's IntersectionObserver had added
-// *imperatively* (via classList.add, outside React's own tracking). The
-// card instantly reverted to .hp-reveal's default opacity: 0, reading as
-// the whole card fading out the moment it was tapped. Fixed this time by
-// keeping the outer element's className a permanently static string and
-// applying the flip class to the *inner* wrapper instead — that inner
-// element has no reveal ref and no imperative classList changes of its
-// own, so re-rendering it on every tap is completely safe.
-function MembershipCard({ logo, name, desc, registerReveal }) {
-  const [flipped, setFlipped] = useState(false);
+// hover, so they flip via tap instead — driven by the parent's
+// `flippedName` state (below), not a local one here, so that tapping one
+// card can flip a *different* already-open card back at the same time
+// (accordion-style, only one open at once). This used to cause a real
+// bug the first time tap-to-flip was tried: the flip class was applied
+// to this same outer element that also carries .hp-reveal and
+// registerReveal's ref, so toggling state changed this element's own
+// className string on every tap, and React fully replaces an element's
+// className on any string change — silently wiping out the "is-visible"
+// class registerReveal's IntersectionObserver had added *imperatively*
+// (via classList.add, outside React's own tracking). The card instantly
+// reverted to .hp-reveal's default opacity: 0, reading as the whole card
+// fading out the moment it was tapped. Fixed this time by keeping the
+// outer element's className a permanently static string and applying the
+// flip class to the *inner* wrapper instead — that inner element has no
+// reveal ref and no imperative classList changes of its own, so
+// re-rendering it on every tap is completely safe.
+function MembershipCard({ logo, name, desc, registerReveal, flipped, onToggle }) {
   return (
     <article
       className="hp-membership-badge hp-reveal"
       ref={registerReveal}
-      onClick={() => setFlipped((f) => !f)}
+      onClick={onToggle}
       role="button"
       tabIndex={0}
       aria-pressed={flipped}
@@ -57,7 +59,7 @@ function MembershipCard({ logo, name, desc, registerReveal }) {
       onKeyDown={(e) => {
         if (e.key !== "Enter" && e.key !== " ") return;
         e.preventDefault();
-        setFlipped((f) => !f);
+        onToggle();
       }}
     >
       <div className={`hp-membership-badge__inner${flipped ? " is-flipped" : ""}`}>
@@ -80,6 +82,11 @@ function MembershipCard({ logo, name, desc, registerReveal }) {
 }
 
 export default function Memberships({ registerReveal }) {
+  // Which card (by name) is currently tap-flipped on touch devices — only
+  // one at a time, so flipping a new one automatically flips back
+  // whichever was already open, rather than each card tracking its own
+  // independent state.
+  const [flippedName, setFlippedName] = useState(null);
   return (
     <section className="hp-section" id="memberships">
       <div className="hp-section__inner">
@@ -93,7 +100,13 @@ export default function Memberships({ registerReveal }) {
           </p>
           <div className="hp-membership-grid">
             {MEMBERSHIPS.map((m) => (
-              <MembershipCard key={m.name} {...m} registerReveal={registerReveal} />
+              <MembershipCard
+                key={m.name}
+                {...m}
+                registerReveal={registerReveal}
+                flipped={flippedName === m.name}
+                onToggle={() => setFlippedName((cur) => (cur === m.name ? null : m.name))}
+              />
             ))}
           </div>
         </div>

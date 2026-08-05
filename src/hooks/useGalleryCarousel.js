@@ -11,20 +11,27 @@ export function useGalleryCarousel(images) {
   const [galleryStepPx, setGalleryStepPx] = useState(0);
 
   useEffect(() => {
-    const queries = [
-      window.matchMedia("(max-width: 640px)"),
-      window.matchMedia("(max-width: 1024px)"),
-    ];
+    // Single breakpoint, matching every other card grid on the page
+    // (.hp-panel-grid in PanelSection.css, .hp-cards in WhoWeAre.css/
+    // Sustainability.css — all go straight from their full column count
+    // to one full-width column at 1024px, with no smaller intermediate
+    // step). This used to have its own separate 640px/1024px two-tier
+    // breakpoint, giving a 2-column layout across the whole tablet range
+    // — at 768px wide, that rendered a gallery card barely 300px across
+    // while the full-width panel cards right above it hit 480px, a
+    // visibly much smaller card in the one section that didn't match
+    // the rest of the page's mobile/tablet sizing.
+    const query = window.matchMedia("(max-width: 1024px)");
 
     function updateCols() {
-      const cols = queries[0].matches ? 1 : queries[1].matches ? 2 : 3;
+      const cols = query.matches ? 1 : 3;
       setGalleryCols(cols);
       setGalleryIndex((i) => Math.min(i, Math.max(0, images.length - cols)));
     }
 
     updateCols();
-    queries.forEach((mq) => mq.addEventListener("change", updateCols));
-    return () => queries.forEach((mq) => mq.removeEventListener("change", updateCols));
+    query.addEventListener("change", updateCols);
+    return () => query.removeEventListener("change", updateCols);
   }, [images.length]);
 
   // Measure the real rendered width so the slide offset is computed in px —

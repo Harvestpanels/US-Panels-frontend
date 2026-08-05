@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./Sustainability.css";
 
 const CARDS = [
@@ -15,6 +16,47 @@ const CARDS = [
   },
 ];
 
+// Desktop gets the navy-fill hover effect (see #sustainability
+// .hp-card:hover in Sustainability.css) for free via :hover. Touch
+// devices have no hover, so tap drives the same effect instead — via a
+// class on an *inner* wrapper, not on this card itself. This card is
+// also where registerReveal's ref and .hp-reveal live for the scroll-in
+// animation; toggling a class directly on it would change its own
+// className string on every tap, and React fully replaces an element's
+// className on any string change — silently wiping the "is-visible"
+// class registerReveal's IntersectionObserver had added *imperatively*
+// (via classList.add, outside React's own tracking), reading as the
+// whole card fading out the moment it's tapped. (Same bug, same fix,
+// already hit once for the membership cards' tap-to-flip and once more
+// for WhoWeAre's own cards.) The inner wrapper carries the "is-active"
+// marker instead, and the CSS uses `:has()` to style the outer card
+// based on that inner marker, so the outer element's own className never
+// needs to change at all.
+function SustainabilityCard({ title, body, registerReveal }) {
+  const [active, setActive] = useState(false);
+  return (
+    <article
+      className="hp-card"
+      ref={registerReveal}
+      onClick={() => setActive((a) => !a)}
+      role="button"
+      tabIndex={0}
+      aria-pressed={active}
+      aria-label={`${title} — tap to show details`}
+      onKeyDown={(e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        setActive((a) => !a);
+      }}
+    >
+      <div className={active ? "is-active" : undefined}>
+        <h3>{title}</h3>
+        <p>{body}</p>
+      </div>
+    </article>
+  );
+}
+
 export default function Sustainability({ registerReveal }) {
   return (
     <section className="hp-section" id="sustainability">
@@ -29,10 +71,7 @@ export default function Sustainability({ registerReveal }) {
           </p>
           <div className="hp-cards">
             {CARDS.map((card) => (
-              <article className="hp-card" key={card.title} ref={registerReveal}>
-                <h3>{card.title}</h3>
-                <p>{card.body}</p>
-              </article>
+              <SustainabilityCard key={card.title} {...card} registerReveal={registerReveal} />
             ))}
           </div>
         </div>

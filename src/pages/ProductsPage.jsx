@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "../styles/App.css";
 import "./ProductsPage.css";
-import logo from "../assets/images/General/us-panels-logo.png";
+import logo from "../assets/images/General/us-panels-logo.webp";
 import dataCenterVideo from "../assets/videos/AI Video - Data Center Background1 - 1.mp4";
 import { PRODUCT_CATEGORIES } from "../data/products";
 import { useCountUp } from "../hooks/useCountUp";
@@ -170,6 +170,16 @@ export default function ProductsPage() {
   // parallax/nav-hide behavior this page doesn't have (it already gets
   // its nav scroll behavior from useNavScroll above).
   const bgVideoRef = useRef(null);
+  // Cached viewport height, not re-read from window.innerHeight on every
+  // scroll tick — mobile Chrome/Safari collapse their toolbar as the page
+  // scrolls, changing innerHeight mid-gesture independent of the user
+  // resizing anything, which would otherwise make the same scroll
+  // position map to a different point in the video from one tick to the
+  // next (same root cause already fixed for the home page's hero
+  // parallax in useHeroParallax.js). Updated only on a genuine resize
+  // (width also changes), not on that toolbar-driven noise.
+  const vhRef = useRef(window.innerHeight);
+  const vwRef = useRef(window.innerWidth);
   useEffect(() => {
     const video = bgVideoRef.current;
     if (!video) return;
@@ -237,7 +247,7 @@ export default function ProductsPage() {
         raf = null;
         if (reducedMotion || !videoUnlocked || !video.duration || !isFinite(video.duration)) return;
         if (now - lastSeekAt < MIN_SEEK_INTERVAL_MS) return;
-        const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollable = document.documentElement.scrollHeight - vhRef.current;
         if (scrollable <= 0) return;
         const progress = Math.max(0, Math.min(1, window.scrollY / scrollable));
         const target = progress * video.duration;
@@ -247,12 +257,21 @@ export default function ProductsPage() {
         }
       });
     }
+    function onResize() {
+      if (window.innerWidth !== vwRef.current) {
+        vwRef.current = window.innerWidth;
+        vhRef.current = window.innerHeight;
+      }
+    }
+    window.addEventListener("resize", onResize);
+
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("touchstart", unlockVideo);
+      window.removeEventListener("resize", onResize);
       video.removeEventListener("seeked", onSeeked);
       video.removeEventListener("canplay", unlockVideo);
       if (raf) cancelAnimationFrame(raf);

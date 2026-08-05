@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "../styles/App.css";
-import logo from "../assets/images/General/us-panels-logo.png";
+import logo from "../assets/images/General/us-panels-logo.webp";
 import {
   BUILDING_ENVELOPE_PANELS,
   COLD_STORAGE_PANELS,
