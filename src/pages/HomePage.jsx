@@ -37,6 +37,7 @@ import Toast from "../components/Toast";
 const HOME_TOP_LINKS = [
   { id: "top", label: "Home", onClick: scrollToTop },
   { to: "/products", label: "Products" },
+  { to: "/specs", label: "Specs" },
 ];
 
 // Every scrollable section on the homepage, top to bottom — Who We Are

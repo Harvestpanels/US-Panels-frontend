@@ -36,3 +36,22 @@
   max-width: 480px;
   margin: 0 auto 32px;
 }
+
+/* This page never needed its own mobile pass before now — the shared
+   .hp-eyebrow/.hp-hero-heading rules in App.css already scale down via
+   clamp(), and the single centered button/paragraph never had anything to
+   overflow — but every other page gets an explicit breakpoint of its own,
+   so this one shouldn't be the one exception relying purely on inherited
+   behavior. min-height is trimmed here for the same reason .hp-section's
+   own padding shrinks at this width in App.css: 70vh on a short mobile
+   viewport (address bar collapsed) pushed the footer needlessly far below
+   the fold. */
+@media (max-width: 640px) {
+  .hp-notfound {
+    min-height: 55vh;
+  }
+
+  .hp-notfound__inner p:not(.hp-eyebrow) {
+    font-size: 15px;
+  }
+}

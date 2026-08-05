@@ -290,7 +290,14 @@ h3 {
 #gallery .hp-section__eyebrow,
 #memberships .hp-section__eyebrow,
 #faq .hp-section__eyebrow,
-#contact .hp-section__eyebrow {
+#contact .hp-section__eyebrow,
+#efficiency .hp-section__eyebrow,
+#colors .hp-section__eyebrow,
+#foam-core .hp-section__eyebrow,
+#certifications .hp-section__eyebrow,
+#structural .hp-section__eyebrow,
+#engineering .hp-section__eyebrow,
+#production-video .hp-section__eyebrow {
   font-family: "Big Shoulders Display", sans-serif;
   font-size: clamp(32px, 5vw, 52px);
   font-weight: 800;
@@ -313,7 +320,14 @@ h3 {
 #gallery h2,
 #memberships h2,
 #faq h2,
-#contact h2 {
+#contact h2,
+#efficiency h2,
+#colors h2,
+#foam-core h2,
+#certifications h2,
+#structural h2,
+#engineering h2,
+#production-video h2 {
   font-size: clamp(20px, 2.5vw, 26px);
 }
 

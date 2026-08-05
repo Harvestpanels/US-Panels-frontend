@@ -15,6 +15,7 @@ const FOLD_ANIMATION_MS = 1650;
 
 const HOME_NAV_LINKS = [
   { to: "/products", label: "Products" },
+  { to: "/specs", label: "Specs" },
   { id: "why", label: "Who We Are" },
   { id: "panels", label: "Overview" },
   { id: "gallery", label: "Gallery" },

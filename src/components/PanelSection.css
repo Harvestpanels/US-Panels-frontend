@@ -124,16 +124,12 @@
      1 column. margin: 0 auto here was a bug: the shorthand's "0" zeroed out
      the base rule's 24px top margin (only horizontal centering was
      intended), leaving the image grid touching the description text right
-     above it with no gap at all. */
+     above it with no gap at all. This single rule already covers every
+     narrower width too (max-width media queries are inclusive downward,
+     so 640px/400px/320px phones all match it as-is) — two more @media
+     blocks below used to just repeat the identical 1fr declaration at
+     640px and 400px with nothing new to add, dead weight removed here. */
   .hp-panel-grid { grid-template-columns: 1fr; max-width: 480px; margin: 32px auto 0; }
-}
-
-@media (max-width: 640px) {
-  .hp-panel-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 400px) {
-  .hp-panel-grid { grid-template-columns: 1fr; }
 }
 
 /* Also matched by max-width, not just hover: none — a desktop browser

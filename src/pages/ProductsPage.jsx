@@ -3,6 +3,7 @@ import "../styles/App.css";
 import "./ProductsPage.css";
 import logo from "../assets/images/General/us-panels-logo.webp";
 import dataCenterVideo from "../assets/videos/AI Video - Data Center Background1 - 1.mp4";
+import dataCenterVideoPoster from "../assets/images/General/products-bg-poster.webp";
 import { PRODUCT_CATEGORIES } from "../data/products";
 import { useCountUp } from "../hooks/useCountUp";
 import { useLightbox } from "../hooks/useLightbox";
@@ -15,6 +16,7 @@ import { scrollCenter, scrollToTop } from "../utils/scroll";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import Lightbox from "../components/Lightbox";
+import Faq from "../components/Faq";
 import Contact from "../components/Contact";
 import Toast from "../components/Toast";
 
@@ -55,7 +57,7 @@ const PRODUCTS_NAV_SECTIONS = [
   { id: "trim-hardware-panels", label: "Trim & Hardware" },
 ];
 
-const PRODUCTS_SCROLL_SPY_IDS = [...PRODUCTS_NAV_SECTIONS.map((s) => s.id), "contact"];
+const PRODUCTS_SCROLL_SPY_IDS = [...PRODUCTS_NAV_SECTIONS.map((s) => s.id), "faq", "contact"];
 
 const CATEGORY_FILTERS = [
   { id: "all", label: "All products" },
@@ -231,30 +233,26 @@ export default function ProductsPage() {
     video.addEventListener("canplay", unlockVideo, { once: true });
     window.addEventListener("touchstart", unlockVideo, { passive: true, once: true });
 
-    // Each `video.currentTime` write is a real decode-and-seek, not a cheap
-    // property set — on this page's 15MB video that's expensive enough
-    // that firing it on every single animation frame during a fast scroll
-    // (up to 60/sec) visibly competed with the page's own scroll/paint
-    // work and read as laggy. A minimum real-time gap between seeks (on
-    // top of the existing rAF coalescing, which only dedupes *within* a
-    // frame) cuts the actual seek count roughly 8x while still reading as
-    // continuously "scrubbing" rather than stepping.
-    let lastSeekAt = 0;
-    const MIN_SEEK_INTERVAL_MS = 120;
+    // Matches useHeroParallax.js's own onScroll exactly (no extra
+    // time-based throttle beyond the rAF coalescing above) — an earlier
+    // version of this effect added a MIN_SEEK_INTERVAL_MS gap on top,
+    // which actually made this page's scrub feel *choppier* than the
+    // home page's, not smoother: it capped seeks to ~8/sec regardless of
+    // how often the browser was already willing to paint. rAF coalescing
+    // alone (only one seek queued per animation frame, via the `raf`
+    // guard) plus the pending-seek coalescing in seekVideo/onSeeked below
+    // is what the home page relies on, and it holds up fine even on this
+    // page's own background video.
     function onScroll() {
       if (raf) return;
-      raf = requestAnimationFrame((now) => {
+      raf = requestAnimationFrame(() => {
         raf = null;
         if (reducedMotion || !videoUnlocked || !video.duration || !isFinite(video.duration)) return;
-        if (now - lastSeekAt < MIN_SEEK_INTERVAL_MS) return;
         const scrollable = document.documentElement.scrollHeight - vhRef.current;
         if (scrollable <= 0) return;
         const progress = Math.max(0, Math.min(1, window.scrollY / scrollable));
         const target = progress * video.duration;
-        if (Math.abs(target - lastVideoTime) > SEEK_THRESHOLD) {
-          lastSeekAt = now;
-          seekVideo(target);
-        }
+        if (Math.abs(target - lastVideoTime) > SEEK_THRESHOLD) seekVideo(target);
       });
     }
     function onResize() {
@@ -265,11 +263,19 @@ export default function ProductsPage() {
     }
     window.addEventListener("resize", onResize);
 
+    // touchmove, not just scroll — same as useHeroParallax.js. Mobile
+    // Safari/Chrome can throttle/delay `scroll` events until an active
+    // touch-drag gesture settles, so scrubbing only on `scroll` reads as
+    // the video "catching up" in one jump once you lift your finger
+    // rather than tracking the drag continuously. touchmove fires
+    // throughout the gesture itself, closing that gap.
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchmove", onScroll, { passive: true });
     onScroll();
 
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchmove", onScroll);
       window.removeEventListener("touchstart", unlockVideo);
       window.removeEventListener("resize", onResize);
       video.removeEventListener("seeked", onSeeked);
@@ -324,11 +330,13 @@ export default function ProductsPage() {
 
   const productsNavLinks = [
     { to: "/", label: "Home" },
+    { to: "/specs", label: "Specs" },
     ...PRODUCTS_NAV_SECTIONS.map((section) => ({
       id: section.id,
       label: section.label,
       onClick: () => handleNavSectionClick(section.id),
     })),
+    { id: "faq", label: "FAQ" },
     { id: "contact", label: "Contact Us" },
   ];
 
@@ -337,6 +345,7 @@ export default function ProductsPage() {
   const productsTopLinks = [
     { to: "/", label: "Home" },
     { id: "products-top", label: "Products", onClick: scrollToTop },
+    { to: "/specs", label: "Specs" },
   ];
 
   // Same collapsed-dropdown pattern as the homepage nav — a "Categories"
@@ -356,7 +365,10 @@ export default function ProductsPage() {
     {
       key: "inquiry",
       label: "Inquiry",
-      items: [{ label: "Contact Us", onClick: () => scrollCenter("contact"), active: activeSectionId === "contact" }],
+      items: [
+        { label: "FAQ", onClick: () => scrollCenter("faq"), active: activeSectionId === "faq" },
+        { label: "Contact Us", onClick: () => scrollCenter("contact"), active: activeSectionId === "contact" },
+      ],
     },
   ];
 
@@ -460,6 +472,7 @@ export default function ProductsPage() {
           className="hp-bgvideo"
           ref={bgVideoRef}
           src={dataCenterVideo}
+          poster={dataCenterVideoPoster}
           muted
           playsInline
           webkit-playsinline="true"
@@ -583,6 +596,8 @@ export default function ProductsPage() {
           </section>
         ))}
       </div>
+
+      <Faq registerReveal={registerReveal} />
 
       <Contact registerReveal={registerReveal} onToast={setToast} />
 

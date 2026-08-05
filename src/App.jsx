@@ -9,6 +9,7 @@ import { scrollCenter } from "./utils/scroll";
 // code at all, and vice versa.
 const HomePage = lazy(() => import("./pages/HomePage"));
 const ProductsPage = lazy(() => import("./pages/ProductsPage"));
+const SpecsPage = lazy(() => import("./pages/SpecsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 // React Router keeps the browser's scroll position across navigations by
@@ -79,6 +80,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/specs" element={<SpecsPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
