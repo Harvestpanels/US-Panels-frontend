@@ -72,11 +72,22 @@ export default function ChatWidget() {
   // the same reason: the state change needs to happen the instant the
   // pathname changes, not after an effect pass, and setState-in-an-effect
   // is what that lint rule (correctly) flags as likely to cascade renders.
+  // Same idea as Nav.jsx's own per-mount entrance (its collapsed pill
+  // replays its pop-in on every page navigation, since each page mounts a
+  // fresh <Nav>) — the launcher and its nudge should read the same way,
+  // greeting the visitor again each time they land on a new page, not
+  // just once for the whole session. ChatWidget itself is mounted once
+  // outside the routed pages (see App.jsx) specifically so the
+  // conversation isn't lost on navigation, so it can't just remount like
+  // Nav does; `unread` re-arming here plus keying the launcher/nudge
+  // below (see the JSX) is what replays the same effect without losing
+  // any chat state.
   const location = useLocation();
   const [prevPathname, setPrevPathname] = useState(location.pathname);
   if (location.pathname !== prevPathname) {
     setPrevPathname(location.pathname);
     setOpen(false);
+    setUnread(true);
   }
 
   // Clears wasOpen in its own effect (mutating a ref during render is
@@ -249,7 +260,14 @@ export default function ChatWidget() {
         </div>
       )}
 
-      <div className="hp-chat__launcher-wrap">
+      {/* Keyed on the route — forces React to tear down and recreate this
+          subtree on every navigation (rather than just re-rendering the
+          same nodes), which is what actually makes the CSS entrance
+          animations on .hp-chat__launcher / .hp-chat__nudge replay: a CSS
+          `animation` only plays once per element per browser paint,
+          fresh DOM nodes from a fresh mount are what re-triggers it,
+          simply changing a class on the same nodes wouldn't. */}
+      <div className="hp-chat__launcher-wrap" key={location.pathname}>
         {!open && (unread || hasNewReply) && (
           <div className={`hp-chat__nudge${hasNewReply ? " hp-chat__nudge--instant" : ""}`} role="status">
             {hasNewReply ? "New reply from the assistant!" : "You have a new message!"}
