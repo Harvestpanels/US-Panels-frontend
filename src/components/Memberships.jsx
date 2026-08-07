@@ -55,7 +55,7 @@ function MembershipCard({ logo, name, desc, registerReveal, flipped, onToggle })
       role="button"
       tabIndex={0}
       aria-pressed={flipped}
-      aria-label={`${name} — tap to show details`}
+      aria-label={`${name}, tap to show details`}
       onKeyDown={(e) => {
         if (e.key !== "Enter" && e.key !== " ") return;
         e.preventDefault();

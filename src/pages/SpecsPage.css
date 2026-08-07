@@ -696,8 +696,14 @@
     top: 0;
     right: 0;
     bottom: 0;
-    width: 28px;
-    background: linear-gradient(to right, transparent, rgba(var(--hp-navy-rgb), 0.14));
+    /* Wider and considerably stronger than the first attempt (28px /
+       0.14 navy) — that was too faint over the light frosted card to
+       actually read as a "more columns off-screen" cue, defeating its
+       whole purpose. 40px and a 0.34 navy end-stop makes the fade
+       plainly visible while still fading fully to transparent on the
+       left so it never looks like a hard border. */
+    width: 40px;
+    background: linear-gradient(to right, transparent, rgba(var(--hp-navy-rgb), 0.34));
     pointer-events: none;
   }
 }
@@ -767,7 +773,14 @@
 }
 
 @media (max-width: 640px) {
-  .hp-specs-swatches { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 14px; }
+  /* 5 fixed columns (not auto-fill) so the 10 swatches always fill two
+     complete rows with no orphaned trailing swatch — auto-fill produced a
+     width-dependent column count (3 at ~375px, 4 at ~480px), which left a
+     lone "Flame Red" stranded on its own last row. 5 divides 10 evenly and
+     keeps chips a comfortable size down to ~480px; below that they'd get
+     too small, so the ≤480 block further down drops to 2 columns (still an
+     even divisor of 10). */
+  .hp-specs-swatches { grid-template-columns: repeat(5, 1fr); gap: 14px; }
 
   /* Below 640px, a long label (e.g. "Misalignment of internal metal
      surfaces") and a long value (e.g. the Length/Thickness tolerance
@@ -785,6 +798,13 @@
     text-align: left;
     white-space: normal;
   }
+}
+
+@media (max-width: 480px) {
+  /* 5 columns would shrink the chips too far on a phone (and wrap the
+     longer names heavily); 2 columns keeps them large and tappable and
+     still divides the 10 swatches into even rows (5 × 2) with no orphan. */
+  .hp-specs-swatches { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ===================== ENTRANCE ANIMATION (MATCHES PRODUCTS PAGE) =====================

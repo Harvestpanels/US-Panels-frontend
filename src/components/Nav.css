@@ -560,13 +560,26 @@
 
 /* Last item inside the same scrollable list (see Nav.jsx) rather than a
    separate footer — separated from the links above it with margin instead
-   of its own border/background. */
+   of its own border/background. Styled as a filled red button (its own
+   background/color, overriding the plain red-text .hp-nav__quote base) so
+   it reads as the primary call-to-action of the menu rather than just
+   another red text link sitting among the nav items. */
 .hp-nav__mobile-cta {
   display: block;
   text-align: center;
-  margin-top: 14px;
-  padding: 10px 4px;
-  font-size: 17px;
+  margin-top: 18px;
+  padding: 14px 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--hp-cream);
+  background: var(--hp-red);
+  border-radius: 999px;
+}
+
+.hp-nav__mobile-cta:hover {
+  color: var(--hp-cream);
+  background: var(--hp-red-hover);
+  transform: none;
 }
 
 /* ===================== MOBILE ACCORDION GROUPS ===================== */

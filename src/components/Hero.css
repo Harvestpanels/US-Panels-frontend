@@ -104,16 +104,22 @@
    cream-on-dark treatment can never bleed onto another page's eyebrow if
    this chunk happens to already be loaded in the same SPA session (e.g.
    a visitor who came from "/" and then hit a 404). */
+/* Two-layer text-shadow throughout the hero: the wide soft shadow is the
+   ambient depth it always had; the added tight, near-opaque second layer
+   is what actually keeps the text legible when a bright frame of the
+   background video sits directly behind it (e.g. the "US Panels" logo
+   painted on the building), which the soft shadow alone washed out
+   against. */
 .hp-hero .hp-eyebrow {
   color: var(--hp-cream);
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.75);
   animation: hp-hero-in 0.7s cubic-bezier(0.16,1,0.3,1) both;
 }
 
 .hp-hero h1 {
   font-size: clamp(48px, 8vw, 96px);
   max-width: 820px;
-  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55), 0 1px 4px rgba(0, 0, 0, 0.7);
   animation: hp-hero-in 0.8s cubic-bezier(0.16,1,0.3,1) 0.08s both;
 }
 
@@ -123,7 +129,7 @@
   font-size: 16px;
   line-height: 1.6;
   color: rgba(243, 241, 236, 0.9);
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55), 0 1px 3px rgba(0, 0, 0, 0.7);
   animation: hp-hero-in 0.8s cubic-bezier(0.16,1,0.3,1) 0.16s both;
 }
 

@@ -9,7 +9,7 @@ export default function Footer({ logo }) {
     <footer className="hp-footer">
       <div className="hp-footer__inner">
         <div>
-          <button className="hp-logo hp-logo--footer" onClick={scrollToTop} aria-label="US Panels — scroll to top">
+          <button className="hp-logo hp-logo--footer" onClick={scrollToTop} aria-label="US Panels, scroll to top">
             <img src={logo} alt="US Panels" className="hp-logo__img" loading="lazy" decoding="async" />
           </button>
           <p>{CONTACT.address}</p>
@@ -35,7 +35,7 @@ export default function Footer({ logo }) {
       </div>
       <div className="hp-footer__legal">
         <p>
-          US Panels manufactures and distributes insulated metal wall and roof panels and doors — including PIR, PUR, and EPS core options — for industrial, commercial, and residential building envelopes, based in Piedmont, Oklahoma.
+          US Panels manufactures and distributes insulated metal wall and roof panels and doors, including PIR, PUR, and EPS core options, for industrial, commercial, and residential building envelopes, based in Piedmont, Oklahoma.
         </p>
         <p>&copy; {CURRENT_YEAR} US Panels - All Rights Reserved. A Globus Ventures Company.</p>
       </div>

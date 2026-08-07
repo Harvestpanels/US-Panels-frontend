@@ -100,7 +100,7 @@ function FoamTraitCard({ name, desc }) {
       role="button"
       tabIndex={0}
       aria-pressed={active}
-      aria-label={`${name} — tap to show details`}
+      aria-label={`${name}, tap to show details`}
       onKeyDown={(e) => {
         if (e.key !== "Enter" && e.key !== " ") return;
         e.preventDefault();
@@ -611,7 +611,7 @@ export default function SpecsPage() {
             </dl>
             <p className="hp-specs-note hp-anim-item" onAnimationEnd={clearAnimOnEnd}>{DIMENSIONAL_TOLERANCE_NOTE}</p>
 
-            <p className="hp-specs-subheading hp-anim-item" onAnimationEnd={clearAnimOnEnd}>Overload wheelbase — load distribution / max spans (ft/in)</p>
+            <p className="hp-specs-subheading hp-anim-item" onAnimationEnd={clearAnimOnEnd}>Overload wheelbase, load distribution / max spans (ft/in)</p>
             {OVERLOAD_WHEELBASE_TABLES.map((table) => (
               <div className="hp-specs-datatable-wrap hp-anim-item" onAnimationEnd={clearAnimOnEnd} key={table.label}>
                 <p className="hp-specs-datatable-caption">{table.label}</p>

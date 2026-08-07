@@ -29,7 +29,7 @@ export const FAQS = [
   },
   {
     question: "What are the benefits of using Panels?",
-    answer: "Energy efficiency, fast installation, durability, and design flexibility — all in a single system that reduces labor and long-term maintenance costs.",
+    answer: "Energy efficiency, fast installation, durability, and design flexibility, all in a single system that reduces labor and long-term maintenance costs.",
   },
   {
     question: "Are Panels safe and easy to maintain?",
@@ -53,11 +53,11 @@ export const FAQS = [
   },
   {
     question: "How long does it take to install Panels?",
-    answer: "Installation time depends on project size and scope, but panels are designed to go up quickly compared to traditional construction methods — crews can typically complete 1,000 to 10,000 square feet in a day, depending on crew size and project requirements.",
+    answer: "Installation time depends on project size and scope, but panels are designed to go up quickly compared to traditional construction methods, crews can typically complete 1,000 to 10,000 square feet in a day, depending on crew size and project requirements.",
   },
   {
     question: "Insulation Value?",
-    answer: "Insulation values (R-values) vary by panel thickness and core material — our team can recommend the right spec for your climate and use case.",
+    answer: "Our panels deliver R-8 per square foot. Insulation values (R-values) vary by panel thickness and core material, our team can recommend the right spec for your climate and use case.",
   },
   {
     question: "Can Panels support hanging of equipment?",

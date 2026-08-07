@@ -179,7 +179,7 @@ export const BUILDING_ENVELOPE_PANELS = [
   {
     name: "Residential",
     category: "Building Envelope",
-    desc: "Single-family, multi-family, stand-alone, or connected — a great option for your next residential project.",
+    desc: "Single-family, multi-family, stand-alone, or connected, a great option for your next residential project.",
     img: buildingResidentialImg,
   },
 ];

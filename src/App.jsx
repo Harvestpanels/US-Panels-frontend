@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { scrollCenter } from "./utils/scroll";
+import ChatWidget from "./components/ChatWidget";
 
 // Route-level code splitting — each page (plus everything it imports:
 // components, hooks, and every image it references) only downloads when a
@@ -84,6 +85,10 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </Suspense>
+      {/* Global floating assistant — rendered once here (not per-page) and
+          imported eagerly rather than lazily, so it's present on every
+          route immediately, including during a page chunk's own load. */}
+      <ChatWidget />
     </>
   );
 }

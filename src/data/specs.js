@@ -105,7 +105,7 @@ export const CERTIFICATIONS = [
   {
     code: "FM 4471",
     name: "Roof Assemblies",
-    desc: "Sets performance requirements for panel roof assemblies — low fire spread, wind uplift resistance, and structural durability.",
+    desc: "Sets performance requirements for panel roof assemblies, low fire spread, wind uplift resistance, and structural durability.",
     standards: [
       { section: "4.1", name: "Combustibility Below the Roof Deck" },
       { section: "4.2", name: "Combustibility Above the Roof Deck" },

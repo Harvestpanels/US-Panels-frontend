@@ -19,7 +19,7 @@ export function validateForm(data) {
   if (!phone) errors.phone = "Phone number is required.";
   else if (phoneDigits.length < 10 || phoneDigits.length > 15) errors.phone = "Enter a valid phone number.";
   if (attachment && attachment.size > MAX_ATTACHMENT_BYTES) {
-    errors.attachment = "File is too large — please attach something under 10MB.";
+    errors.attachment = "File is too large, please attach something under 10MB.";
   }
 
   return errors;

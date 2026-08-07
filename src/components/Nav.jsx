@@ -444,11 +444,11 @@ export default function Nav({
   }, [navRef]);
 
   const logoEl = logoTo ? (
-    <Link to={logoTo} className="hp-logo" aria-label="US Panels — home">
+    <Link to={logoTo} className="hp-logo" aria-label="US Panels, home">
       <img src={logo} alt="US Panels" className="hp-logo__img" />
     </Link>
   ) : (
-    <button className="hp-logo" onClick={scrollToTop} aria-label="US Panels — scroll to top">
+    <button className="hp-logo" onClick={scrollToTop} aria-label="US Panels, scroll to top">
       <img src={logo} alt="US Panels" className="hp-logo__img" />
     </button>
   );

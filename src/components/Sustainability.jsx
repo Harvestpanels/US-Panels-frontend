@@ -42,7 +42,7 @@ function SustainabilityCard({ title, body, registerReveal }) {
       role="button"
       tabIndex={0}
       aria-pressed={active}
-      aria-label={`${title} — tap to show details`}
+      aria-label={`${title}, tap to show details`}
       onKeyDown={(e) => {
         if (e.key !== "Enter" && e.key !== " ") return;
         e.preventDefault();
