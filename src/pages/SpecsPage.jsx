@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import "../styles/App.css";
 import "./SpecsPage.css";
 import logo from "../assets/images/General/us-panels-logo.webp";
@@ -200,6 +200,13 @@ export default function SpecsPage() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isTouch = window.matchMedia("(hover: none)").matches;
     const SEEK_THRESHOLD = isTouch ? 0.08 : 0.03;
+    // Chases the raw scroll-mapped target with a capped per-tick step on
+    // touch — a fast flick can jump the raw target across several seconds
+    // of footage in one tick, and snapping straight there reads as the
+    // background suddenly zooming/lurching. See useHeroParallax.js for
+    // the full rationale (this mirrors it).
+    let smoothedTouchTime = null;
+    const MAX_TOUCH_STEP_SEC = 0.06;
 
     function seekVideo(target) {
       if (reducedMotion) return;
@@ -218,9 +225,10 @@ export default function SpecsPage() {
       }
     }
 
-    // iOS/mobile requires the video to have actually played once before
-    // seeking is allowed — play it silently then immediately pause to
-    // "unlock" it, same as the home/products page's video.
+    // Requires the video to have actually played once before seeking is
+    // allowed — play it silently then immediately pause to "unlock" it,
+    // same as the home/products page's video. Same on touch and desktop;
+    // scroll drives which frame shows either way (see onScroll below).
     function unlockVideo() {
       if (videoUnlocked) return;
       videoUnlocked = true;
@@ -256,7 +264,19 @@ export default function SpecsPage() {
         const scrollable = document.documentElement.scrollHeight - vhRef.current;
         if (scrollable <= 0) return;
         const progress = Math.max(0, Math.min(1, window.scrollY / scrollable));
-        const target = progress * video.duration;
+        const rawTarget = progress * video.duration;
+        let target = rawTarget;
+        if (isTouch) {
+          // Seeded from the video's actual current time, not the raw
+          // target — seeding it at the target would let the very first
+          // scroll tick (if it happens to already be a big flick) skip
+          // the clamp entirely on that one tick.
+          if (smoothedTouchTime === null) smoothedTouchTime = video.currentTime || 0;
+          const diff = rawTarget - smoothedTouchTime;
+          const step = Math.max(-MAX_TOUCH_STEP_SEC, Math.min(MAX_TOUCH_STEP_SEC, diff));
+          smoothedTouchTime += step;
+          target = smoothedTouchTime;
+        }
         if (Math.abs(target - lastVideoTime) > SEEK_THRESHOLD) seekVideo(target);
       });
     }
@@ -544,7 +564,7 @@ export default function SpecsPage() {
             <h2 className="hp-anim-item" onAnimationEnd={clearAnimOnEnd}>Span, weight &amp; tolerance charts</h2>
             <p className="hp-panel-section__desc hp-anim-item" onAnimationEnd={clearAnimOnEnd}>
               Full engineering reference data for steel sheets 24/26 gauge,
-              4⅝" bearing, across every panel thickness we offer.
+              4â…" bearing, across every panel thickness we offer.
             </p>
 
             <p className="hp-specs-subheading hp-anim-item" onAnimationEnd={clearAnimOnEnd}>External face profile</p>

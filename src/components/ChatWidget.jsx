@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import "./ChatWidget.css";
 import { getBotResponse } from "../utils/chatbot";
 import { SUGGESTED_QUESTIONS } from "../data/botKnowledge";
+import { announcePanelOpened, onOtherPanelOpened } from "../utils/floatingPanels";
 
 // A small, natural "thinking" delay before the bot's reply lands — an
 // instant answer reads as canned/robotic, a brief pause reads as a real
@@ -120,6 +121,16 @@ export default function ChatWidget() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
+
+  // Mutually exclusive with the mobile nav dropdown (see Nav.jsx's own
+  // matching pair of effects) — the two are unrelated fixed-position
+  // overlays that would otherwise both be able to stay open at once,
+  // stacking awkwardly on a small screen.
+  useEffect(() => {
+    if (open) announcePanelOpened("chat");
+  }, [open]);
+
+  useEffect(() => onOtherPanelOpened("chat", () => setOpen(false)), []);
 
   useEffect(() => () => clearTimeout(replyTimer.current), []);
 

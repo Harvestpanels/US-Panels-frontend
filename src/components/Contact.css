@@ -99,25 +99,7 @@
   resize: none;
   height: 120px;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(var(--hp-navy-rgb), 0.3) transparent;
-}
-
-.hp-contact__form textarea::-webkit-scrollbar {
-  width: 8px;
-}
-
-.hp-contact__form textarea::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.hp-contact__form textarea::-webkit-scrollbar-thumb {
-  background: rgba(var(--hp-navy-rgb), 0.25);
-  border-radius: 999px;
-}
-
-.hp-contact__form textarea::-webkit-scrollbar-thumb:hover {
-  background: rgba(var(--hp-navy-rgb), 0.4);
+  /* Scrollbar look is shared site-wide — see styles/App.css. */
 }
 
 .hp-contact__form input:focus,

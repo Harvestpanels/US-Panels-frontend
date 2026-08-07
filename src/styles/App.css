@@ -53,6 +53,55 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* ===================== SHARED SCROLLBAR ===================== */
+/* One scrollbar look, shared by every *internal* scrollable panel on the
+   site (the chat transcript, the nav's mobile dropdown, the specs data
+   tables, contact form textareas) — previously each styled its own ad hoc
+   (some thin+navy, some plain browser default), which read as inconsistent
+   polish depending on which part of the site you happened to scroll.
+   Deliberately listed by selector rather than a universal `*` — the
+   top-level page scroll (html/body) stays exactly as the browser renders
+   it by default and is NOT included here. Add any new internal scroll
+   container to this same selector list rather than styling its scrollbar
+   separately. */
+.hp-chat__messages,
+.hp-nav__mobile,
+.hp-specs-datatable-wrap,
+.hp-contact__form textarea {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(var(--hp-navy-rgb), 0.3) transparent;
+}
+
+.hp-chat__messages::-webkit-scrollbar,
+.hp-nav__mobile::-webkit-scrollbar,
+.hp-specs-datatable-wrap::-webkit-scrollbar,
+.hp-contact__form textarea::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.hp-chat__messages::-webkit-scrollbar-track,
+.hp-nav__mobile::-webkit-scrollbar-track,
+.hp-specs-datatable-wrap::-webkit-scrollbar-track,
+.hp-contact__form textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hp-chat__messages::-webkit-scrollbar-thumb,
+.hp-nav__mobile::-webkit-scrollbar-thumb,
+.hp-specs-datatable-wrap::-webkit-scrollbar-thumb,
+.hp-contact__form textarea::-webkit-scrollbar-thumb {
+  background: rgba(var(--hp-navy-rgb), 0.25);
+  border-radius: 999px;
+}
+
+.hp-chat__messages::-webkit-scrollbar-thumb:hover,
+.hp-nav__mobile::-webkit-scrollbar-thumb:hover,
+.hp-specs-datatable-wrap::-webkit-scrollbar-thumb:hover,
+.hp-contact__form textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--hp-navy-rgb), 0.4);
+}
+
 a {
   color: inherit;
   text-decoration: none;

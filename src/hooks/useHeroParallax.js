@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+﻿import { useEffect, useLayoutEffect, useRef } from "react";
 
 // Drives the fixed video background, the parallax "curtain" reveal, the
 // hero fade/shift, and the nav's solid/hidden state — all keyed off scroll
@@ -53,6 +53,17 @@ export function useHeroParallax() {
     const isTouch = window.matchMedia("(hover: none)").matches;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const SEEK_THRESHOLD = isTouch ? 0.08 : 0.03;
+    // Tracks the video-time the visitor has actually "seen" scrubbed to on
+    // touch, separate from the raw scroll-mapped target — a fast flick can
+    // jump the raw target across several seconds of footage in one tick,
+    // and snapping straight there reads as the background suddenly
+    // zooming/lurching (the footage itself pans/zooms over time, so a big
+    // time-jump looks like a big visual jump). Chasing the target with a
+    // capped per-tick step instead means the video always advances
+    // smoothly through the footage in between, same as a real desktop
+    // scroll-scrub, no matter how fast the flick was.
+    let smoothedTouchTime = null;
+    const MAX_TOUCH_STEP_SEC = 0.06;
 
     function seekVideo(target) {
       if (!video || reducedMotion) return;
@@ -71,8 +82,10 @@ export function useHeroParallax() {
       }
     }
 
-    // iOS / mobile: video must be played at least once before seeking is allowed.
-    // We play it silently then pause immediately to "unlock" it.
+    // iOS / mobile: video must be played at least once before seeking is
+    // allowed. We play it silently then pause immediately to "unlock" it —
+    // same on touch and desktop, scroll drives which frame shows either
+    // way (see onScroll below).
     function unlockVideo() {
       if (videoUnlocked || !video) return;
       videoUnlocked = true;
@@ -151,7 +164,19 @@ export function useHeroParallax() {
           const scrollable = document.documentElement.scrollHeight - vh;
           if (videoUnlocked && video?.duration && isFinite(video.duration) && scrollable > 0) {
             const progress = Math.max(0, Math.min(1, y / scrollable));
-            const target = progress * video.duration;
+            const rawTarget = progress * video.duration;
+            let target = rawTarget;
+            if (isTouch) {
+              // Seeded from the video's actual current time, not the raw
+              // target — seeding it at the target would let the very
+              // first scroll tick (if it happens to already be a big
+              // flick) skip the clamp entirely on that one tick.
+              if (smoothedTouchTime === null) smoothedTouchTime = video.currentTime || 0;
+              const diff = rawTarget - smoothedTouchTime;
+              const step = Math.max(-MAX_TOUCH_STEP_SEC, Math.min(MAX_TOUCH_STEP_SEC, diff));
+              smoothedTouchTime += step;
+              target = smoothedTouchTime;
+            }
             if (Math.abs(target - lastVideoTime) > SEEK_THRESHOLD) seekVideo(target);
           }
         }

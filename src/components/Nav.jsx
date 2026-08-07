@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
 import "./Nav.css";
 import { navClick, scrollToTop } from "../utils/scroll";
+import { announcePanelOpened, onOtherPanelOpened } from "../utils/floatingPanels";
 
 // Matches the mobile dropdown's own max-height collapse duration (see
 // .hp-nav__mobile in Nav.css) — the same delay navClick already uses for
@@ -246,7 +247,7 @@ function NavDropdown({ label, items, onOpenChange }) {
 // accordion-exclusive), each with its own measured max-height (via
 // ResizeObserver on its content) so the expand/collapse transition tracks
 // that group's real item count rather than a guessed constant.
-function MobileDropdownGroup({ label, items, navigate, onNavigate, tabIndex }) {
+function MobileDropdownGroup({ label, items, navigate, onNavigate, tabIndex, onExpandedChange }) {
   const [expanded, setExpanded] = useState(false);
   const innerRef = useRef(null);
   const [height, setHeight] = useState(0);
@@ -266,7 +267,11 @@ function MobileDropdownGroup({ label, items, navigate, onNavigate, tabIndex }) {
         className={`hp-nav__mobile-group-toggle${expanded ? " is-expanded" : ""}`}
         aria-expanded={expanded}
         tabIndex={tabIndex}
-        onClick={() => setExpanded((e) => !e)}
+        onClick={() => {
+          const next = !expanded;
+          setExpanded(next);
+          onExpandedChange?.(next);
+        }}
       >
         {label}
         <svg className="hp-nav__mobile-group-chevron" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
@@ -370,6 +375,62 @@ export default function Nav({
     navRef.current?.classList.toggle("hp-nav--dropdown-open", open.size > 0);
   };
 
+  // The mobile panel itself is static (no internal scroll — see its own
+  // .is-open rule in Nav.css), sized to exactly fit its collapsed content.
+  // But expanding one of its accordion groups (Overview/Inquiry) grows
+  // past that fixed height, and with no scroll there'd be no way to reach
+  // whatever that growth pushes past the bottom edge. Same
+  // Set-of-open-keys pattern as the desktop dropdowns above, just toggling
+  // a scroll-enabling class on the mobile panel instead — scrolling only
+  // becomes available while at least one group is actually expanded, not
+  // as a permanent feature of the panel.
+  const mobilePanelRef = useRef(null);
+  const expandedGroupsRef = useRef(new Set());
+  // The panel's max-height update triggered by an accordion resize should
+  // apply instantly, no CSS transition of its own (see instantResizeRef
+  // below) — set directly here, in the same click that actually expands or
+  // collapses a group, rather than inferred from ResizeObserver timing.
+  // (An earlier version tried to detect "this resize came from an
+  // accordion, not the menu's own open/close" by timing how soon after
+  // menuOpen changed the resize happened — the pill's own width-shift
+  // animation on open/close fires this same ResizeObserver continuously
+  // for its own ~0.35s, on width alone, so that heuristic kept
+  // misfiring and killing the open/close transition it was supposed to
+  // leave alone. Tying it directly to the actual user action that causes
+  // an accordion-driven resize sidesteps the guesswork entirely.)
+  const instantResizeRef = useRef(false);
+  const handleGroupExpandedChange = (key, isExpanded) => {
+    const expanded = expandedGroupsRef.current;
+    if (isExpanded) expanded.add(key);
+    else expanded.delete(key);
+    mobilePanelRef.current?.classList.toggle("has-expanded-group", expanded.size > 0);
+    instantResizeRef.current = true;
+  };
+
+  // `.hp-nav__mobile` is `overflow: hidden` (not scrollable) whenever no
+  // accordion group is expanded — but `overflow: hidden` only clips
+  // visually, it doesn't capture wheel/touch input, so scrolling with the
+  // pointer over the panel in that state was scrolling the *page*
+  // underneath instead of doing nothing, exactly as if the panel wasn't
+  // there. `overscroll-behavior: contain` (see Nav.css) already handles
+  // containment correctly once a group *is* expanded and the panel is
+  // genuinely scrollable; this only needs to block input the rest of the
+  // time, while the menu is open but static.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const panel = mobilePanelRef.current;
+    if (!panel) return;
+    function blockScrollThrough(e) {
+      if (!panel.classList.contains("has-expanded-group")) e.preventDefault();
+    }
+    panel.addEventListener("wheel", blockScrollThrough, { passive: false });
+    panel.addEventListener("touchmove", blockScrollThrough, { passive: false });
+    return () => {
+      panel.removeEventListener("wheel", blockScrollThrough);
+      panel.removeEventListener("touchmove", blockScrollThrough);
+    };
+  }, [menuOpen]);
+
   // The mobile panel's open height is measured off its real content (via
   // ResizeObserver) rather than a guessed flat constant, so it fits any
   // link/dropdown combination without clipping. Capped to whatever's
@@ -377,15 +438,63 @@ export default function Nav({
   // exceed that, `.hp-nav__mobile.is-open` scrolls internally instead
   // (see Nav.css) rather than overflowing off-screen.
   const mobileInnerRef = useRef(null);
+  const mobileCtaWrapRef = useRef(null);
   const [mobileMaxHeight, setMobileMaxHeight] = useState(0);
+  // Mirrors instantResizeRef into actual rendered style (see the JSX
+  // below) — an accordion group expanding/collapsing inside the panel
+  // (see MobileDropdownGroup) changes the panel's real content height
+  // continuously for the ~0.3s its own transition runs, and this panel's
+  // max-height was *also* CSS-transitioning in response, at a different
+  // duration, chasing an ever-changing target — so the outer panel
+  // visibly kept stretching for ~150-190ms after the accordion itself had
+  // already finished, instead of the two moving in sync. The accordion's
+  // own transition is already the only motion that needs to be visible
+  // here; this panel just needs to always be exactly big enough to
+  // contain it, tracking instantly with no lag or separate animation of
+  // its own. Opening/closing the whole menu is the one case that
+  // *should* animate smoothly (see instantResizeRef.current reset below).
+  const [instantResize, setInstantResize] = useState(false);
+  const [prevMenuOpenForInstant, setPrevMenuOpenForInstant] = useState(menuOpen);
+  if (menuOpen !== prevMenuOpenForInstant) {
+    setPrevMenuOpenForInstant(menuOpen);
+    if (instantResize) setInstantResize(false);
+  }
+  // Ref mutation can't happen inline during render (disallowed
+  // react-hooks/refs) — `useLayoutEffect`, not `useEffect`, so it's
+  // cleared synchronously before paint, same instant as the state update
+  // above, rather than after — avoids a one-frame gap where a stale
+  // `true` could still be read.
+  useLayoutEffect(() => {
+    instantResizeRef.current = false;
+  }, [menuOpen]);
   useEffect(() => {
     const el = mobileInnerRef.current;
     if (!el) return;
     const measure = () => {
       const navTop = navRef.current?.getBoundingClientRect().top ?? 0;
       const headerHeight = navRef.current?.querySelector(".hp-nav__inner")?.getBoundingClientRect().height ?? 0;
-      const available = window.innerHeight - navTop - headerHeight - 16;
-      setMobileMaxHeight(Math.max(0, Math.min(el.scrollHeight, available)));
+      // The CTA sits below this scrollable list now (see the render below
+      // and its own comment), always visible rather than part of what
+      // scrolls — so its height has to come out of the same "available"
+      // budget the list is capped to, or the two together would still
+      // overflow past the viewport exactly as before.
+      const ctaHeight = mobileCtaWrapRef.current?.getBoundingClientRect().height ?? 0;
+      const available = window.innerHeight - navTop - headerHeight - ctaHeight - 16;
+      setInstantResize(instantResizeRef.current);
+      // The resulting maxHeight is applied to `el`'s *parent* (.hp-nav__mobile
+      // — the padded container, see Nav.css), not to `el` itself (this
+      // inner div has no padding of its own). Without adding that
+      // container's own top/bottom padding back in here, the box ends up
+      // a bit shorter than its real content, and since it's `overflow:
+      // hidden` (no scrolling — see Nav.css), that shortfall doesn't show
+      // up as a scrollbar, it silently clips the bottom of the last item
+      // (its own padding included), which is exactly why "Inquiry" kept
+      // reading as jammed up against the divider line no matter how much
+      // CSS padding was added below it — the padding was there, just cut off.
+      const containerStyle = window.getComputedStyle(el.parentElement);
+      const containerPaddingY =
+        parseFloat(containerStyle.paddingTop) + parseFloat(containerStyle.paddingBottom);
+      setMobileMaxHeight(Math.max(0, Math.min(el.scrollHeight + containerPaddingY, available)));
     };
     const ro = new ResizeObserver(measure);
     ro.observe(el);
@@ -395,6 +504,17 @@ export default function Nav({
     // changes between closed and open (see .hp-nav--open .hp-nav__inner in
     // Nav.css), which shifts how much room is actually left for the panel.
   }, [navRef, menuOpen]);
+
+  // Both the mobile menu and the chat widget are fixed-position overlays
+  // that don't share a parent (this is per-page, ChatWidget is mounted
+  // once in App.jsx outside the routed pages) — announcing/listening via
+  // a plain window event is how they stay mutually exclusive on a small
+  // screen without one stacked awkwardly on top of the other.
+  useEffect(() => {
+    if (menuOpen) announcePanelOpened("nav");
+  }, [menuOpen]);
+
+  useEffect(() => onOtherPanelOpened("nav", () => setMenuOpen(false)), [setMenuOpen]);
 
   useEffect(() => {
     const timer = setTimeout(() => setFolding(false), FOLD_ANIMATION_MS);
@@ -587,12 +707,24 @@ export default function Nav({
             Overview/Categories/Inquiry grouping as desktop when `dropdowns`
             is supplied, rendered as inline accordions instead of floating
             popovers; falls back to the flat `links` list for pages that
-            don't use dropdowns at all (e.g. the 404 page). The CTA lives
-            inside this same scrollable region, as its last item. */}
+            don't use dropdowns at all (e.g. the 404 page). The CTA is a
+            sibling *outside* this scrollable region (see below) rather
+            than its last item — on a short viewport (landscape phones,
+            a zoomed-in desktop browser) this list alone can already
+            exceed the available height and needs to scroll internally;
+            burying the primary "Get a quote" CTA at the bottom of that
+            same scroll area meant it needed scrolling past every link
+            just to become visible. Pinning it outside means it's always
+            visible the instant the menu opens, and only the links above
+            it ever need to scroll. */}
         <div
+          ref={mobilePanelRef}
           className={`hp-nav__mobile${menuOpen ? " is-open" : ""}`}
           aria-hidden={!menuOpen}
-          style={{ maxHeight: menuOpen ? mobileMaxHeight : 0 }}
+          style={{
+            maxHeight: menuOpen ? mobileMaxHeight : 0,
+            transition: instantResize ? "none" : undefined,
+          }}
         >
           <div ref={mobileInnerRef}>
             {dropdowns.length > 0
@@ -609,6 +741,7 @@ export default function Nav({
                         navigate={navigate}
                         onNavigate={() => setMenuOpen(false)}
                         tabIndex={menuOpen ? 0 : -1}
+                        onExpandedChange={(isExpanded) => handleGroupExpandedChange(dropdown.key, isExpanded)}
                       />
                     ))}
                   </>
@@ -616,8 +749,10 @@ export default function Nav({
               : links.map((link) =>
                   renderLink(link, { tabIndex: menuOpen ? 0 : -1, onNavigate: () => setMenuOpen(false) })
                 )}
-            {mobileCta}
           </div>
+        </div>
+        <div className={`hp-nav__mobile-cta-wrap${menuOpen ? " is-open" : ""}`} ref={mobileCtaWrapRef}>
+          {mobileCta}
         </div>
       </div>
     </nav>

@@ -163,17 +163,6 @@
   animation: hp-chat-nudge-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-.hp-chat__nudge::after {
-  content: "";
-  position: absolute;
-  right: -5px;
-  bottom: 14px;
-  width: 10px;
-  height: 10px;
-  background: var(--hp-cream);
-  transform: rotate(45deg);
-}
-
 @keyframes hp-chat-nudge-in {
   from { opacity: 0; transform: scale(0.85) translateX(8px); }
   to { opacity: 1; transform: scale(1) translateX(0); }
@@ -449,19 +438,31 @@
   text-align: center;
 }
 
-/* ---------- mobile ---------- */
-@media (max-width: 640px) {
+/* ---------- tablet & mobile ---------- */
+/* Launcher size/position switches at the exact same 1024px breakpoint the
+   nav collapses to its own circular hamburger at (see Nav.css) — the two
+   are the only fixed floating circles on the page at this width and
+   below, and need to read as one consistent design on a tablet too, not
+   just on phones specifically. The panel itself (below) keeps its own
+   narrower, phone-only breakpoint — there's plenty of room for the normal
+   fixed-width panel on a tablet, no need to force it full-width there. */
+@media (max-width: 1024px) {
   .hp-chat {
     right: 16px;
     bottom: 16px;
-    left: 16px;
-    align-items: flex-end;
   }
 
   /* Matches the nav hamburger's collapsed 52px circle exactly. */
   .hp-chat__launcher {
     width: 52px;
     height: 52px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hp-chat {
+    left: 16px;
+    align-items: flex-end;
   }
 
   .hp-chat__panel {

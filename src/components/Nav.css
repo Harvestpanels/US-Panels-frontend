@@ -94,6 +94,18 @@
   100%    { opacity: 1; }
 }
 
+/* Mobile/tablet hamburger's own entrance — see the ≤1024px .hp-nav__pill
+   rule below for why this exists (matches .hp-chat's own launch-in
+   keyframe in ChatWidget.css exactly, so both floating circles share one
+   intro). Drops in from above rather than below, since this one sits at
+   the top of the screen. */
+@keyframes hp-nav-mobile-pop-in {
+  0%   { opacity: 0; transform: scale(0.3) translateY(-14px); }
+  55%  { opacity: 1; transform: scale(1.12) translateY(0); }
+  75%  { transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
 .hp-nav__fold-logo {
   position: absolute;
   top: 50%;
@@ -151,6 +163,7 @@
   .hp-nav__pill--fold .hp-nav__inner-content { animation: none; opacity: 1; }
   .hp-nav__pill--fold .hp-nav__logo-slot { animation: none; opacity: 1; }
   .hp-nav__fold-logo { animation: none; opacity: 0; }
+  .hp-nav__pill { animation: none; }
 }
 
 .hp-nav__pill::before {
@@ -475,18 +488,29 @@
   transform: scale(0.94);
 }
 
-/* Classic three-bar icon, morphing into an X when the menu is open. */
+/* Classic three-bar icon, morphing into an X when the menu is open.
+   Box is 24x24 (not the glyph's own 22x16) specifically so this icon sits
+   the same 14px in from the mobile pill's edge that the chat launcher's
+   24x24 icon sits from its own circle — matching "hit box" footprints
+   even though the visible glyph inside is narrower/shorter. */
 .hp-nav__hamburger-bars {
   position: relative;
   display: block;
-  width: 22px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
+  /* Cancels a consistent 1px down-right rounding drift measured between
+     this icon's centered position and the circle's true center (absent
+     on the chat launcher's icon, which has no border/pseudo-element
+     overlay competing for the same box) — without this the two read as
+     very slightly, but noticeably, off from each other at this size. */
+  left: -1px;
+  top: -1px;
 }
 
 .hp-nav__hamburger-bars span {
   position: absolute;
-  left: 0;
-  width: 100%;
+  left: 1px;
+  width: 22px;
   height: 2px;
   border-radius: 2px;
   background: #14213a;
@@ -496,12 +520,12 @@
     opacity 0.2s ease;
 }
 
-.hp-nav__hamburger-bars span:nth-child(1) { top: 0; }
-.hp-nav__hamburger-bars span:nth-child(2) { top: 7px; }
-.hp-nav__hamburger-bars span:nth-child(3) { top: 14px; }
+.hp-nav__hamburger-bars span:nth-child(1) { top: 4px; }
+.hp-nav__hamburger-bars span:nth-child(2) { top: 11px; }
+.hp-nav__hamburger-bars span:nth-child(3) { top: 18px; }
 
 .hp-nav__hamburger.is-open .hp-nav__hamburger-bars span:nth-child(1) {
-  top: 7px;
+  top: 11px;
   transform: rotate(45deg);
 }
 
@@ -511,7 +535,7 @@
 }
 
 .hp-nav__hamburger.is-open .hp-nav__hamburger-bars span:nth-child(3) {
-  top: 7px;
+  top: 11px;
   transform: rotate(-45deg);
 }
 
@@ -524,25 +548,44 @@
   overflow: hidden;
   max-height: 0;
   opacity: 0;
+  /* `padding` deliberately NOT in this list (it used to be) — Nav.jsx
+     reads this element's *computed* padding live (via getComputedStyle,
+     see the mobileMaxHeight calc) to size the panel correctly. Animating
+     padding meant that read kept returning a moving, mid-transition
+     value for the whole ~0.2s the padding itself was easing in, so the
+     height calculation kept re-targeting upward throughout — stretching
+     the panel's *visible* expand time well past its own declared 0.38s,
+     long after the pill's own width transition had already finished
+     (confirmed by tracing the actual computed values frame-by-frame).
+     Padding still changes instantly between closed/open, it just no
+     longer drags the height animation out doing so. */
   transition:
     max-height 0.38s cubic-bezier(0.16,1,0.3,1),
-    opacity 0.28s ease,
-    padding 0.2s ease;
+    opacity 0.28s ease;
 }
 
 .hp-nav__mobile.is-open {
   /* Actual target height comes from the inline `max-height` style (see
      Nav.jsx — measured off real content via ResizeObserver, capped to
-     whatever's actually left in the viewport below the header row). If
-     content still exceeds that, this scrolls internally instead of
-     overflowing off-screen. */
+     whatever's actually left in the viewport below the header row).
+     Static by default — no internal scrolling — so anything past that
+     height is simply clipped rather than reachable by scrolling to it. */
   opacity: 1;
+  overflow: hidden;
+  padding: 11px 20px 18px;
+  border-top: 1px solid rgba(20, 30, 50, 0.1);
+}
+
+/* Expanding one of the accordion groups below (Overview/Inquiry) grows
+   the panel's real content past that fixed height — scrolling turns back
+   on for as long as at least one group is actually expanded (see
+   handleGroupExpandedChange in Nav.jsx), so whatever the expansion pushed
+   past the bottom edge stays reachable, instead of just clipped and
+   invisible with no way to get to it. */
+.hp-nav__mobile.is-open.has-expanded-group {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(20, 30, 50, 0.25) transparent;
-  padding: 4px 20px 18px;
-  border-top: 1px solid rgba(20, 30, 50, 0.1);
+  overscroll-behavior: contain;
 }
 
 .hp-nav__mobile a:not(.hp-nav__mobile-cta) {
@@ -558,28 +601,62 @@
 .hp-nav__mobile a:not(.hp-nav__mobile-cta):last-of-type { border-bottom: none; }
 .hp-nav__mobile a:not(.hp-nav__mobile-cta):hover { color: #14213a; }
 
-/* Last item inside the same scrollable list (see Nav.jsx) rather than a
-   separate footer — separated from the links above it with margin instead
-   of its own border/background. Styled as a filled red button (its own
-   background/color, overriding the plain red-text .hp-nav__quote base) so
-   it reads as the primary call-to-action of the menu rather than just
-   another red text link sitting among the nav items. */
+/* Pinned outside the scrollable link list (see Nav.jsx and its own
+   comment on .hp-nav__mobile-cta-wrap) so it's always visible the instant
+   the menu opens, rather than needing a scroll past every link to reach
+   it on a short viewport. Same plain red-text treatment as the desktop
+   nav's own .hp-nav__quote, just centered — kept visually consistent with
+   the regular navbar rather than a separate filled-pill style. */
 .hp-nav__mobile-cta {
   display: block;
   text-align: center;
-  margin-top: 18px;
   padding: 14px 4px;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--hp-cream);
-  background: var(--hp-red);
-  border-radius: 999px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #c8262e;
+  transition: color 0.2s ease;
+}
+
+/* Collapses/fades in lockstep with .hp-nav__mobile (hidden entirely on
+   desktop, revealed only within the ≤1024px mobile breakpoint below) —
+   a fixed max-height rather than a JS-measured one like the link list
+   above it, since this box's content (one button) never varies. Global
+   `* { box-sizing: border-box }` means max-height:0 clips its own padding
+   too, so it's safe to jump straight to the open-state padding below
+   without transitioning it — fully hidden either way while collapsed. */
+.hp-nav__mobile-cta-wrap {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .hp-nav__mobile-cta-wrap {
+    display: block;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0 20px;
+    transition: max-height 0.32s cubic-bezier(0.16,1,0.3,1), opacity 0.24s ease;
+  }
+
+  .hp-nav__mobile-cta-wrap.is-open {
+    max-height: 90px;
+    opacity: 1;
+    /* Top matches every row's own 14px padding exactly (see
+       .hp-nav__mobile-group-toggle) — combined with "Inquiry"'s own 14px
+       bottom padding (and the container's own bottom padding now removed,
+       see .hp-nav__mobile.is-open above), the gap before the CTA divider
+       ends up the same 28px as the gap between any two other rows,
+       instead of noticeably bigger. */
+    padding: 14px 20px 18px;
+    /* Same divider line the header row uses to separate itself from the
+       link list below it (see .hp-nav__mobile.is-open's own border-top) —
+       separates the CTA from the links above it the same way. */
+    border-top: 1px solid rgba(20, 30, 50, 0.1);
+  }
 }
 
 .hp-nav__mobile-cta:hover {
-  color: var(--hp-cream);
-  background: var(--hp-red-hover);
-  transform: none;
+  color: #a81f26;
 }
 
 /* ===================== MOBILE ACCORDION GROUPS ===================== */
@@ -682,8 +759,13 @@
 }
 
 @media (max-width: 1024px) {
-  /* Position nav to the right */
-  .hp-nav { justify-content: flex-end; padding: 0 20px; }
+  /* Position nav to the right. 16px matches the chat launcher's own
+     edge offset exactly (see .hp-chat in ChatWidget.css, which switches
+     to this same compact layout at this same 1024px breakpoint) — the
+     two are the only fixed floating circles on the page at this width
+     and below, and need to read as one consistent design regardless of
+     device size, not just on phones specifically. */
+  .hp-nav { top: 16px; justify-content: flex-end; padding: 0 16px; }
 
   /* The auto-hide-on-scroll-down behavior relies on hovering near the top
      of the screen to bring the nav back — there's no hover on touch
@@ -725,6 +807,18 @@
                 max-width 0.35s cubic-bezier(0.16,1,0.3,1),
                 background 0.35s ease,
                 box-shadow 0.35s ease;
+    /* Desktop gets its own entrance via the fold-in sequence above (which
+       is explicitly turned off at this breakpoint — a wide pill folding
+       down to a circle makes no sense when it's already just a circle
+       here). Without it the collapsed hamburger used to just appear
+       instantly on load — this gives it the same deliberate pop-in intro
+       as the chat launcher (matching duration/easing/delay), so the two
+       floating circles arrive together instead of one animating in and
+       the other snapping into place. `backwards` fill (not `forwards`)
+       reverts to this rule's own resting styles once it plays, so it
+       can't hold a stale transform that would block the hover-scale
+       :has() rule below. */
+    animation: hp-nav-mobile-pop-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.9s backwards;
   }
 
   .hp-nav:not(.hp-nav--open) .hp-nav__pill:active { transform: scale(0.96); }
@@ -750,10 +844,6 @@
   .hp-nav--open .hp-logo { display: block; }
   .hp-nav__hamburger { display: flex; }
   .hp-nav__mobile { display: flex; }
-}
-
-@media (max-width: 640px) {
-  .hp-nav { top: 10px; padding: 0 12px; }
 }
 
 @media (hover: none) {
