@@ -211,7 +211,7 @@ export default function Gallery({ images, registerReveal, onSelect }) {
   }, [galleryViewportRef, galleryNext, galleryPrev]);
 
   return (
-    <section className="hp-section hp-section--gallery" id="gallery">
+    <section className="hp-section" id="gallery">
       <div className="hp-section__inner">
         <div className="hp-glass">
           <div className="hp-gallery-header">

@@ -76,6 +76,15 @@
     box-shadow 0.4s ease,
     border-color 0.4s ease,
     background-size 0.45s cubic-bezier(0.16,1,0.3,1);
+  /* Resting state for the navy-fill wipe hover effect below (#foam-core
+     .hp-card:hover) — starts at 0% height so the hover can transition it
+     up to 100%. Kept in this base rule (not split into its own block)
+     alongside the other background-* properties it depends on. */
+  background-color: transparent;
+  background-image: linear-gradient(var(--hp-navy), var(--hp-navy));
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: 100% 0%;
 }
 
 #foam-core .hp-card h3 {
@@ -131,14 +140,6 @@
   background-repeat: no-repeat;
   background-position: bottom center;
   background-size: 100% 100%;
-}
-
-#foam-core .hp-card {
-  background-color: transparent;
-  background-image: linear-gradient(var(--hp-navy), var(--hp-navy));
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  background-size: 100% 0%;
 }
 
 #foam-core .hp-card:hover h3 { color: var(--hp-cream); }

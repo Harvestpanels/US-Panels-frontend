@@ -234,6 +234,11 @@ export default function SpecsPage() {
       videoUnlocked = true;
       video.muted = true;
       const p = video.play();
+      // Pause immediately/synchronously too (not just once the play()
+      // promise resolves) — on mobile browsers that promise can take
+      // noticeably longer to settle than actual decode start, which left
+      // the video visibly autoplaying for a real stretch on load/refresh.
+      video.pause();
       if (p && typeof p.then === "function") {
         p.then(() => { video.pause(); video.currentTime = 0; }).catch(() => {});
       } else {

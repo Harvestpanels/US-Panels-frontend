@@ -91,6 +91,16 @@ export function useHeroParallax() {
       videoUnlocked = true;
       video.muted = true;
       const p = video.play();
+      // Pause immediately/synchronously, not just once the play() promise
+      // resolves — on mobile browsers that promise can take noticeably
+      // longer to settle than actual decode start, which left the video
+      // visibly autoplaying for a real stretch after landing on/refreshing
+      // a page (only ever appeared to "stop on scroll" because that's
+      // roughly when the delayed pause happened to land). Pausing right
+      // away stops it almost immediately everywhere; the .then() pause
+      // stays as a fallback for browsers that ignore a pause() called
+      // before playback has truly started.
+      video.pause();
       if (p && typeof p.then === "function") {
         p.then(() => {
           video.pause();

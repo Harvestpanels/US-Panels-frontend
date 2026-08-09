@@ -831,6 +831,16 @@
     border-radius: 20px !important;
     margin: 0 !important;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.5));
+    /* Cancels the collapsed circle's own pop-in entrance (see
+       .hp-nav__pill's `animation: hp-nav-mobile-pop-in` above) the instant
+       the menu opens. Without this, tapping the hamburger while that
+       intro is still mid-flight (its 0.9s delay + 0.65s duration overlaps
+       with realistic "tap as soon as it's visible" timing) left the
+       live scale transform (up to ~1.16x, from the bounce's overshoot)
+       applied to the now-expanded dropdown instead of the small circle it
+       was meant for — stretching/blurring the whole open panel. */
+    animation: none !important;
+    transform: none !important;
   }
 
   /* Hide nav logo only — footer logo keeps showing */

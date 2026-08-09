@@ -5,7 +5,7 @@
 
 .hp-toast {
   position: fixed;
-  right: 20px;
+  left: 20px;
   bottom: 20px;
   z-index: 300;
   display: flex;

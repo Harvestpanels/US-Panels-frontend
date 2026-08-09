@@ -47,6 +47,16 @@
   box-shadow: 0 10px 30px -8px rgba(var(--hp-navy-rgb), 0.55);
   transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease;
   animation: hp-chat-launch-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.9s backwards;
+  /* Without this, a click-drag over the button (easy to do by accident
+     right next to page text) selects it like text/an image, and the
+     browser paints its default selection highlight as a solid rectangle
+     over the mascot's full bounding box — ignoring the PNG's transparency
+     entirely, since selection highlighting has no concept of alpha. Not a
+     bug in the artwork; just default browser behavior for any element
+     with selectable content, turned off here since this is a button. */
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
 }
 
 /* App.css's global `button:focus-visible { border-radius: 2px }` (higher
@@ -60,33 +70,22 @@
 }
 
 /* Closed state shows the mascot image itself as the button — no navy
-   circle behind/around it, the image's own shape (including its
-   transparent background) *is* the button now, rather than being
-   cropped into a circle on top of one. The open (X) state is untouched:
-   it still renders on the original navy circle below. */
+   circle, no forced square/circle background shape behind it. The image
+   is used as-is (its own natural shape, whatever that is), and its whole
+   rectangular box is the clickable area, like a normal button. The open
+   (X) state is untouched: it still renders on the original navy circle
+   below.
+   Height is fixed to a proper icon size (the source WebPs are all the
+   same 240x180 resolution, purely a uniform scale-down, no crop/reshape)
+   — width follows automatically from the image's own aspect ratio, so
+   all 3 mascot poses read at the exact same on-screen size. */
 .hp-chat__launcher:has(.hp-chat__launcher-icon) {
-  /* Width is intentionally NOT fixed — the mascot PNGs are trimmed tight to
-     their own visible content, and letting the button shrink-wrap to the
-     rendered image width (instead of a fixed square box) means the
-     clickable area matches the mascot's actual silhouette instead of
-     including a slab of transparent dead space around it. Height stays
-     fixed so every pose reads at the same on-screen size (see the image
-     trim/normalize step that gave all 4 PNGs the same content height). */
   width: auto;
-  height: 112px;
+  height: 116px;
   padding: 0;
   background: transparent;
   border-radius: 0;
   box-shadow: none;
-  /* The button's own box is only as tight as the image's rectangular
-     bounding box — real dead space remains in the corners the silhouette
-     doesn't reach (the sloped hat brim, the gap below a raised arm). The
-     image itself carries the actual per-pose clip-path (see
-     .hp-chat__launcher-icon and POSE_CLIP_PATHS in ChatWidget.jsx), so
-     clicks only land on the visible mascot — turning off hit-testing on
-     the button itself here is what makes that clip-path the deciding
-     factor instead of the button's full rectangle. */
-  pointer-events: none;
 }
 
 .hp-chat__launcher:has(.hp-chat__launcher-icon):focus-visible {
@@ -106,28 +105,24 @@
 .hp-chat__link:focus-visible,
 .hp-chat__input:focus-visible { border-radius: 999px; }
 
-/* Open (X) state: the button IS the full navy circle, no clip-path, no
-   dead space — hovering anywhere in its box is legitimately hovering the
-   visible control, so a direct :hover (with its lift + glow shadow) is
-   correct here. */
-.hp-chat__launcher:not(:has(.hp-chat__launcher-icon)):hover {
+/* Open (X) state: the button is the full navy circle with no transparent
+   padding to worry about, so a plain CSS :hover is correct and sufficient. */
+.hp-chat__launcher-wrap:hover .hp-chat__launcher:not(:has(.hp-chat__launcher-icon)) {
   transform: translateY(-3px);
   box-shadow: 0 16px 36px -10px rgba(var(--hp-navy-rgb), 0.6);
 }
 
-/* Closed (mascot icon) state: the button's own box is only pointer-
-   events:none dead space (see .hp-chat__launcher-icon's comment) — the
-   actual hit target is the image, clipped to the mascot's silhouette. So
-   the hover trigger here is keyed off *that* (`:has(icon:hover)`), not the
-   wrap's/button's full rectangle — hovering the transparent corners
-   outside the mascot must NOT lift anything. No box-shadow on this path:
-   a shadow drawn from the button's rectangular box would render as a
-   ghost/halo well outside the mascot's actual silhouette. */
-.hp-chat__launcher-wrap:has(.hp-chat__launcher-icon:hover) .hp-chat__launcher {
+/* Closed (mascot icon) state: CSS :hover can't tell transparent padding
+   apart from the actual artwork, so the lift is driven by JS instead (see
+   the launcher button's onMouseMove in ChatWidget.jsx, which runs the same
+   pixel-alpha test used to gate clicks) — this class is only added while
+   the cursor is genuinely over a visible pixel, so the same rule applies
+   identically no matter which of the 3 mascot images is showing. */
+.hp-chat__launcher-wrap--icon-hover .hp-chat__launcher {
   transform: translateY(-3px);
 }
 
-.hp-chat__launcher-wrap:has(.hp-chat__launcher-icon:hover) .hp-chat__nudge {
+.hp-chat__launcher-wrap--icon-hover .hp-chat__nudge {
   transform: translateY(-3px);
   box-shadow: 0 14px 30px -8px rgba(var(--hp-navy-rgb), 0.45);
 }
@@ -136,24 +131,31 @@
   transform: translateY(0);
 }
 
-.hp-chat__launcher { position: relative; }
-
-/* Fills the launcher circle edge-to-edge like an avatar badge, rather than
-   sitting small/centered the way the old currentColor SVG icon did — this
-   is a full-color mascot image, not a glyph meant to float on the navy
-   background. */
+/* The photo as-is, no resizing, no cropping, no background shape behind
+   it — whatever the source file's own dimensions are is what renders. */
 .hp-chat__launcher-icon {
-  width: auto;
   height: 100%;
-  object-fit: contain;
+  width: auto;
   display: block;
-  /* The button behind this image has pointer-events:none (see
-     .hp-chat__launcher:has(.hp-chat__launcher-icon) above) — this image is
-     the actual hit target, clipped per-pose to the mascot's silhouette via
-     an inline clip-path (POSE_CLIP_PATHS in ChatWidget.jsx). A click here
-     still bubbles up to the button's own onClick handler. */
-  pointer-events: auto;
-  cursor: pointer;
+  pointer-events: none;
+  /* Plays on every mount — including the deliberate remount ChatWidget.jsx
+     triggers via this element's `key` when the "You have N unread
+     messages!" nudge appears, so the mascot visibly reacts (a quick pop)
+     in sync with that notification instead of sitting static while only
+     the popup bubble animates. `backwards` fill (not `both`), matching
+     every other entrance animation in this file — `both` would keep
+     holding this animation's own resting transform indefinitely, which is
+     harmless here today (nothing else currently animates this element's
+     transform) but is the established convention for a reason: it's what
+     already broke hover on other elements in this file once, so new
+     entrance animations default to `backwards` rather than relying on
+     "nothing conflicts yet". */
+  animation: hp-chat-icon-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+@keyframes hp-chat-icon-pop {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* Positions the nudge relative to the launcher's own box, not the outer
@@ -176,7 +178,7 @@
    the icon. */
 .hp-chat__nudge {
   position: absolute;
-  right: calc(100% + 8px);
+  right: calc(100% + 2px);
   bottom: 26px;
   /* Sized to fit whichever message is passed in (they differ in length) by
      growing horizontally only — never wraps to a second line, so the bubble
@@ -266,6 +268,21 @@
      that's supposed to lift this pill, silently blocking the hover effect
      every other popup gets. */
   animation: hp-chat-nudge-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+/* Each line of RESTING_MESSAGES (ChatWidget.jsx) is keyed so every swap is
+   a fresh DOM node — this plays a quick fade/slide-up on that node each
+   time, giving the loop a "changing" feel rather than a hard text swap.
+   `both` is fine here (not the backwards-vs-both footgun elsewhere in this
+   file) since nothing else needs to override this element's transform. */
+.hp-chat__nudge-text {
+  display: inline-block;
+  animation: hp-chat-nudge-text-in 0.35s ease both;
+}
+
+@keyframes hp-chat-nudge-text-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ---------- panel ---------- */
@@ -560,11 +577,11 @@
 
   .hp-chat__launcher:has(.hp-chat__launcher-icon) {
     width: auto;
-    height: 92px;
+    height: 88px;
   }
 
   .hp-chat__nudge {
-    right: calc(100% + 15px);
+    right: calc(100% + 9px);
     bottom: 12px;
   }
 }
@@ -586,17 +603,40 @@
      single-line bubble is more likely to fit without hitting the 90vw cap;
      still grows/shrinks horizontally only, never wraps. */
   .hp-chat__nudge {
-    right: calc(100% + 8px);
+    right: calc(100% + 2px);
     bottom: 21px;
     font-size: 0.78rem;
     padding: 9px 12px;
   }
 }
 
+/* Below ~360-400px (small phones — iPhone SE 1st-gen width, older/budget
+   Android), the icon + gap + a full-length bubble ("You have a new
+   message!" etc., even at the 640px breakpoint's already-reduced font)
+   no longer both fit — confirmed via measurement: a 117px-wide icon left
+   only ~184px of room but the bubble needed ~196px, pushing its left edge
+   off-screen. Shrinking the icon further here frees up the room the
+   bubble needs, rather than letting it wrap (wrapping would shift the
+   bubble vertically relative to the icon, which the base rule's own
+   comment explicitly avoids). */
+@media (max-width: 400px) {
+  .hp-chat__launcher:has(.hp-chat__launcher-icon) {
+    width: auto;
+    height: 72px;
+  }
+
+  .hp-chat__nudge {
+    font-size: 0.72rem;
+    padding: 8px 10px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hp-chat__launcher,
+  .hp-chat__launcher-icon,
   .hp-chat__panel,
   .hp-chat__status-dot,
   .hp-chat__nudge,
+  .hp-chat__nudge-text,
   .hp-chat__bubble--typing span { animation: none; }
 }

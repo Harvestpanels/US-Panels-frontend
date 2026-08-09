@@ -251,18 +251,10 @@
   isolation: isolate;
 }
 
-@media (max-width: 640px) {
-  .hp-products-category { padding: 72px 0; }
-}
-
 .hp-products-category__inner {
   max-width: 1180px;
   margin: 0 auto;
   padding: 0 32px;
-}
-
-@media (max-width: 640px) {
-  .hp-products-category__inner { padding: 0 16px; }
 }
 
 .hp-products-category h2 {

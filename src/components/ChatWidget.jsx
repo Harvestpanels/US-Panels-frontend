@@ -4,30 +4,53 @@ import "./ChatWidget.css";
 import { getBotResponse } from "../utils/chatbot";
 import { SUGGESTED_QUESTIONS } from "../data/botKnowledge";
 import { announcePanelOpened, onOtherPanelOpened } from "../utils/floatingPanels";
-import mascotIconDefault from "../assets/images/US Panels Mascot Sticker/US Panels Mascot Sticker 1.png";
-import mascotIconOpened from "../assets/images/US Panels Mascot Sticker/US Panels Mascot Sticker 3.png";
-import mascotIconNewMessage from "../assets/images/US Panels Mascot Sticker/US Panels Mascot Sticker 2.png";
-
-// Convex-hull silhouettes (as CSS clip-path polygons, in % of the button's
-// own box) for each mascot pose — the PNGs are trimmed to a tight
-// rectangular bounding box, but the character itself doesn't fill every
-// corner of that rectangle (e.g. the sloped brim of the hat, the gap under
-// a raised arm). Without this, those corners are still transparent-but-
-// clickable rectangle area. Clipping the button to each pose's hull keeps
-// the clickable region hugging the actual silhouette instead. Generated
-// once from the source PNGs (see hull.cjs, run ad hoc — not part of the
-// build) rather than computed at runtime, since the artwork is static.
-const POSE_CLIP_PATHS = {
-  default: "polygon(0.0% 38.0%, 0.0% 32.6%, 20.0% 9.6%, 21.1% 8.5%, 41.5% 0.0%, 42.4% 0.0%, 58.7% 0.0%, 59.3% 0.0%, 60.7% 0.0%, 81.7% 3.2%, 82.5% 3.4%, 83.7% 4.0%, 84.5% 4.5%, 84.8% 4.8%, 85.7% 5.8%, 86.3% 6.6%, 86.8% 7.7%, 87.4% 9.3%, 87.7% 10.4%, 100.0% 78.0%, 100.0% 80.9%, 100.0% 81.8%, 100.0% 83.9%, 100.0% 85.5%, 99.5% 86.6%, 96.6% 89.3%, 79.9% 100.0%, 26.6% 100.0%, 26.0% 100.0%, 7.9% 78.3%, 7.0% 76.7%, 6.8% 75.9%, 0.0% 39.1%)",
-  newMessage: "polygon(0.0% 61.4%, 0.0% 34.0%, 0.0% 33.7%, 31.5% 9.1%, 59.0% 0.0%, 60.4% 0.0%, 69.5% 0.0%, 71.1% 0.0%, 72.7% 0.0%, 73.8% 0.0%, 92.7% 3.7%, 94.3% 4.5%, 96.2% 6.4%, 96.7% 7.2%, 97.3% 8.5%, 98.1% 10.9%, 98.3% 12.5%, 100.0% 76.7%, 100.0% 78.5%, 100.0% 79.3%, 99.1% 87.1%, 98.1% 89.3%, 97.0% 90.9%, 88.4% 100.0%, 88.1% 100.0%, 37.1% 100.0%, 36.6% 100.0%, 8.3% 79.9%, 8.0% 79.6%, 0.0% 68.9%, 0.0% 68.1%, 0.0% 64.9%, 0.0% 61.9%)",
-  opened: "polygon(0.0% 93.0%, 0.0% 92.5%, 27.7% 11.2%, 28.1% 10.4%, 28.9% 9.3%, 43.7% 0.0%, 44.1% 0.0%, 58.0% 0.0%, 59.6% 0.0%, 60.4% 0.0%, 75.6% 4.5%, 76.4% 5.0%, 77.0% 5.6%, 77.8% 6.6%, 78.2% 7.4%, 78.6% 8.5%, 100.0% 94.1%, 100.0% 100.0%, 100.0% 100.0%, 0.0% 100.0%, 0.0% 100.0%, 0.0% 100.0%)",
-};
+// WebP, not PNG — same 240x180 artwork, but ~4-5x smaller (WebP's
+// compression beats PNG considerably even at a high, visually-lossless
+// quality setting), which matters most on mobile/slower connections since
+// this loads as part of the main bundle on every page.
+import mascotIconDefault from "../assets/images/US Panels Mascot Sticker/US Panels Mascot Sticker 1.webp";
+import mascotIconOpened from "../assets/images/US Panels Mascot Sticker/US Panels Mascot Sticker 3.webp";
+import mascotIconNewMessage from "../assets/images/US Panels Mascot Sticker/US Panels Mascot Sticker 2.webp";
 
 // A small, natural "thinking" delay before the bot's reply lands — an
 // instant answer reads as canned/robotic, a brief pause reads as a real
 // assistant composing a response. Purely cosmetic; the answer is already
 // computed synchronously.
 const REPLY_DELAY_MS = 3000;
+
+// Reused for every click on the closed-state mascot image (see
+// isPointOnVisiblePixel below) — one shared offscreen canvas rather than
+// allocating a new one per click.
+const hitTestCanvas = document.createElement("canvas");
+
+// The mascot PNGs are supplied with a transparent background around an
+// irregularly-shaped character, but an <img>/<button> is always a plain
+// rectangle to the browser — clicking, hovering, or showing a pointer
+// cursor over the transparent padding around the character would
+// otherwise still read/act as if it were part of the button. This checks
+// the actual pixel at a given point: draws the already-loaded <img> onto a
+// canvas and reads that one pixel's alpha, so only genuinely visible
+// artwork counts, for every interaction (click, hover-lift, cursor).
+function isPointOnVisiblePixel(imgEl, clientX, clientY) {
+  if (!imgEl.naturalWidth) return true; // image not loaded yet — don't block the click
+  const rect = imgEl.getBoundingClientRect();
+  const x = Math.floor((clientX - rect.left) * (imgEl.naturalWidth / rect.width));
+  const y = Math.floor((clientY - rect.top) * (imgEl.naturalHeight / rect.height));
+  if (x < 0 || y < 0 || x >= imgEl.naturalWidth || y >= imgEl.naturalHeight) return false;
+  hitTestCanvas.width = imgEl.naturalWidth;
+  hitTestCanvas.height = imgEl.naturalHeight;
+  const ctx = hitTestCanvas.getContext("2d");
+  ctx.clearRect(0, 0, hitTestCanvas.width, hitTestCanvas.height);
+  ctx.drawImage(imgEl, 0, 0);
+  return ctx.getImageData(x, y, 1, 1).data[3] > 10;
+}
+
+// The resting "online" pill (shown once the visitor has read/dismissed the
+// unread nudge) cycles through these rather than sitting on one static
+// line forever — reads as a little more alive/attentive while idle,
+// looping back to the start once it reaches the end.
+const RESTING_MESSAGES = ["Ask me anything!", "Let me know your concerns.", "I am always available, feel free to reach out!"];
+const RESTING_MESSAGE_INTERVAL_MS = 4000;
 
 // Knowledge-base links to "/#contact" are written generically (the intent
 // doesn't know what page it'll be answered from), but every page (Home,
@@ -54,20 +77,20 @@ const GREETING = {
 // quiet before one of these fires.
 const ENGAGEMENT_MESSAGES = [
   { text: "Still there? Happy to help if you've got more questions about panels or doors.", links: null },
-  { text: "Just checking in — let me know if you'd like pricing, specs, or delivery info for any of our panels.", links: null },
+  { text: "Just checking in. Let me know if you'd like pricing, specs, or delivery info for any of our panels.", links: null },
   {
     text: "Quick fact while you think it over: our insulated metal panels come in PIR, PUR, and EPS core options, so there's usually a fit for whatever you're building.",
     links: null,
   },
   {
-    text: "By the way, most of our panels ship with immediate availability — no long lead times to plan around.",
+    text: "By the way, most of our panels ship with immediate availability, so there's no long lead time to plan around.",
     links: null,
   },
   {
     text: "If it's easier, you can always reach a real person directly.",
     links: [{ label: "Contact us", href: "/#contact" }],
   },
-  { text: "No rush — I'll be right here whenever you're ready to keep going.", links: null },
+  { text: "No rush. I'll be right here whenever you're ready to keep going.", links: null },
 ];
 
 const ENGAGEMENT_INTERVAL_MS = 2 * 60 * 1000;
@@ -86,15 +109,31 @@ export default function ChatWidget() {
   // is folded, e.g. the visitor closed it mid-typing-indicator. Cleared the
   // next time they open the panel.
   const [hasNewReply, setHasNewReply] = useState(false);
+  // How many bot messages (real replies + proactive engagement check-ins)
+  // have landed since the panel was last opened — drives the nudge text
+  // switching from "New reply from the assistant!" to "You have N unread
+  // messages!" once more than one has piled up unseen. Reset to 0 the
+  // moment the visitor opens the panel (they're about to see all of them).
+  const [unreadCount, setUnreadCount] = useState(0);
   // Launcher shows the "sticker 1" pose fresh on every page load; once the
   // visitor has opened the panel at least once, it switches to "sticker 3"
   // for the rest of the session (persists across navigation/close, resets
   // only on a real refresh since this is plain useState).
   const [hasOpened, setHasOpened] = useState(false);
+  // Which line of RESTING_MESSAGES the "online" pill is currently showing.
+  const [restingMsgIndex, setRestingMsgIndex] = useState(0);
+  // Whether the cursor is currently over a genuinely visible pixel of the
+  // closed-state mascot image (not the transparent padding around/inside
+  // it) — drives the hover-lift class in ChatWidget.css for both the icon
+  // itself and its popup message, which must ONLY ever lift by hovering an
+  // actual visible pixel of the icon (never by hovering the popup
+  // directly, which stays pointer-events:none, or any other trigger).
+  const [iconHovered, setIconHovered] = useState(false);
 
   const listRef = useRef(null);
   const inputRef = useRef(null);
   const buttonRef = useRef(null);
+  const launcherIconRef = useRef(null);
   const replyTimer = useRef(null);
   // Idle-since-last-user-message clock for the proactive engagement
   // check-ins (see ENGAGEMENT_MESSAGES) — reset every time the visitor
@@ -147,6 +186,7 @@ export default function ChatWidget() {
     setOpen(false);
     setUnread(true);
     setHasNewReply(false);
+    setUnreadCount(0);
     setHasOpened(false);
   }
 
@@ -160,6 +200,18 @@ export default function ChatWidget() {
   useEffect(() => {
     wasOpen.current = false;
   }, [location.pathname]);
+
+  // Opening the panel swaps the button's content from the mascot image to
+  // the plain X circle — clears any "default" cursor the closed-state
+  // hover handler left behind (see onMouseMove below), since that handler
+  // stops running once open and would otherwise leave the X looking
+  // non-interactive until the next mouse movement re-sets it. (A stale
+  // iconHovered=true is harmless on its own — see where it's read below,
+  // gated on `!open` there instead of reset here, to avoid a setState
+  // call inside this effect.)
+  useEffect(() => {
+    if (open && buttonRef.current) buttonRef.current.style.cursor = "";
+  }, [open]);
 
   // Keep the transcript pinned to the newest message / typing indicator.
   useEffect(() => {
@@ -212,6 +264,19 @@ export default function ChatWidget() {
     openRef.current = open;
   }, [open]);
 
+  // Cycles the resting "online" pill's message on a loop, only while it's
+  // actually the thing showing (panel closed, unread already dismissed,
+  // no fresher reply waiting) — no point ticking a hidden timer the rest
+  // of the time.
+  const restingPillShowing = !open && !unread && !hasNewReply;
+  useEffect(() => {
+    if (!restingPillShowing) return;
+    const interval = setInterval(() => {
+      setRestingMsgIndex((i) => (i + 1) % RESTING_MESSAGES.length);
+    }, RESTING_MESSAGE_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [restingPillShowing]);
+
   // Resets the "how long has the visitor gone quiet" clock and reschedules
   // the next proactive check-in — called both after every message the
   // visitor sends (so it always counts from their last activity) and again
@@ -231,7 +296,10 @@ export default function ChatWidget() {
       lastEngagementIndex.current = idx;
       const msg = ENGAGEMENT_MESSAGES[idx];
       setMessages((m) => [...m, { role: "bot", text: msg.text, links: msg.links, showSuggestions: false }]);
-      if (!openRef.current) setHasNewReply(true);
+      if (!openRef.current) {
+        setHasNewReply(true);
+        setUnreadCount((n) => n + 1);
+      }
       scheduleEngagement();
     }, ENGAGEMENT_INTERVAL_MS);
   }
@@ -250,7 +318,10 @@ export default function ChatWidget() {
         ...m,
         { role: "bot", text: res.text, links: res.links, showSuggestions: res.fallback },
       ]);
-      if (!openRef.current) setHasNewReply(true);
+      if (!openRef.current) {
+        setHasNewReply(true);
+        setUnreadCount((n) => n + 1);
+      }
     }, REPLY_DELAY_MS);
     // Only starts once the visitor has actually said something — a silent
     // visitor who never engages shouldn't get unsolicited check-ins, just
@@ -358,11 +429,18 @@ export default function ChatWidget() {
           `animation` only plays once per element per browser paint,
           fresh DOM nodes from a fresh mount are what re-triggers it,
           simply changing a class on the same nodes wouldn't. */}
-      <div className="hp-chat__launcher-wrap" key={location.pathname}>
+      <div
+        className={`hp-chat__launcher-wrap${!open && iconHovered ? " hp-chat__launcher-wrap--icon-hover" : ""}`}
+        key={location.pathname}
+      >
         {!open && (unread || hasNewReply) && (
           <div className={`hp-chat__nudge${hasNewReply ? " hp-chat__nudge--instant" : ""}`} role="status">
             <span className="hp-chat__nudge-dot" aria-hidden="true" />
-            {hasNewReply ? "New reply from the assistant!" : "You have a new message!"}
+            {hasNewReply
+              ? unreadCount >= 2
+                ? `You have ${unreadCount} unread messages!`
+                : "New reply from the assistant!"
+              : "You have a new message!"}
           </div>
         )}
 
@@ -371,10 +449,17 @@ export default function ChatWidget() {
             bare — reassures a visitor who's already seen the chat that
             it's ready for another question, not just decoration on their
             first ever visit. */}
-        {!open && !unread && !hasNewReply && (
+        {restingPillShowing && (
           <div className="hp-chat__nudge hp-chat__nudge--online" role="status">
             <span className="hp-chat__nudge-dot hp-chat__nudge-dot--online" aria-hidden="true" />
-            Ask me anything!
+            {/* Keyed on the message index so each change is a fresh DOM
+                node — same trick as the launcher/nudge entrance elsewhere
+                in this file, since a CSS `animation` only plays once per
+                element per paint and simply swapping the text on the same
+                node wouldn't replay it. */}
+            <span className="hp-chat__nudge-text" key={restingMsgIndex}>
+              {RESTING_MESSAGES[restingMsgIndex]}
+            </span>
           </div>
         )}
 
@@ -382,14 +467,49 @@ export default function ChatWidget() {
           ref={buttonRef}
           type="button"
           className="hp-chat__launcher"
-          onClick={() => {
+          onClick={(e) => {
+            // Closed state: the mascot photo has a transparent background
+            // around an irregular shape, so ignore clicks that land on
+            // that invisible padding rather than the actual artwork.
+            // Keyboard/screen-reader activation (Enter/Space on the
+            // focused button) fires a synthetic click with detail === 0
+            // and no real coordinates — always let those through, since
+            // there's no "pixel" to test in that case.
+            if (
+              !open &&
+              e.detail !== 0 &&
+              launcherIconRef.current &&
+              !isPointOnVisiblePixel(launcherIconRef.current, e.clientX, e.clientY)
+            ) {
+              return;
+            }
             const next = !open;
             setOpen(next);
             if (next) {
               setHasNewReply(false);
+              setUnreadCount(0);
               setUnread(false);
               setHasOpened(true);
             }
+          }}
+          onMouseMove={(e) => {
+            // Mirrors the click gate above for the cursor AND the hover
+            // lift — without this, both the pointer cursor and the lift
+            // animation would trigger over the transparent gaps
+            // around/inside the mascot too (e.g. the gap under a raised
+            // arm), reading as "this is clickable" right up until the
+            // click silently does nothing. Cursor is set imperatively
+            // (not via React state) since this can fire dozens of times a
+            // second; iconHovered only actually re-renders on the (much
+            // rarer) true/false transitions themselves, guarded below.
+            if (open || !launcherIconRef.current) return;
+            const visible = isPointOnVisiblePixel(launcherIconRef.current, e.clientX, e.clientY);
+            e.currentTarget.style.cursor = visible ? "pointer" : "default";
+            setIconHovered((prev) => (prev === visible ? prev : visible));
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.cursor = "";
+            setIconHovered(false);
           }}
           aria-label={open ? "Close chat assistant" : "Open chat assistant"}
           aria-expanded={open}
@@ -400,6 +520,14 @@ export default function ChatWidget() {
             </svg>
           ) : (
             <img
+              ref={launcherIconRef}
+              // Keyed so the icon remounts (replaying its pop-in animation,
+              // see .hp-chat__launcher-icon's own `animation` in
+              // ChatWidget.css) specifically when the "2+ unread" nudge
+              // text appears — the mascot should visibly react in step
+              // with that notification, not just sit there while only the
+              // popup bubble animates.
+              key={hasNewReply && unreadCount >= 2 ? `unread-${unreadCount}` : "base"}
               src={
                 hasNewReply
                   ? mascotIconNewMessage
@@ -410,13 +538,6 @@ export default function ChatWidget() {
               alt=""
               className="hp-chat__launcher-icon"
               aria-hidden="true"
-              style={{
-                clipPath: hasNewReply
-                  ? POSE_CLIP_PATHS.newMessage
-                  : hasOpened
-                  ? POSE_CLIP_PATHS.opened
-                  : POSE_CLIP_PATHS.default,
-              }}
             />
           )}
         </button>
