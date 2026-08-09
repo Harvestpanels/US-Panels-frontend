@@ -46,6 +46,20 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+/* The floating chat widget (see ChatWidget.css) is fixed to the bottom-
+   right corner on every page and, on mobile, stretches edge-to-edge with
+   its "unread"/"online" pill. Without reserving space for it, scrolling a
+   page all the way down leaves its last content (a FAQ answer, the
+   contact form's file input, etc.) permanently sitting behind the widget's
+   footprint — there's nowhere further to scroll to clear it. This adds
+   just enough breathing room at the very bottom of every page so the last
+   bit of real content can always be scrolled clear above the widget. */
+@media (max-width: 640px) {
+  body {
+    padding-bottom: 120px;
+  }
+}
+
 a,
 button {
   /* Disable the default mobile tap-highlight (shows as a black flash on
