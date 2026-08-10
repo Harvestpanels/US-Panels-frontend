@@ -26,8 +26,18 @@
   transform-style: preserve-3d;
 }
 
-.hp-membership-badge:hover .hp-membership-badge__inner {
-  transform: rotateY(180deg);
+/* Scoped to real hover-capable pointers only — left unconditional, this
+   also matched on touch devices, since many mobile browsers simulate
+   :hover on tap (and can leave it "stuck" until something else is
+   tapped). That fought with the JS-driven .is-flipped toggle below: a tap
+   that un-flips a card via state could still visually hold it flipped via
+   this rule's lingering simulated :hover, then need an extra tap to
+   register as a real click and flip it forward again — exactly the
+   "flips back, then won't flip forward again" bug this fixes. */
+@media (hover: hover) {
+  .hp-membership-badge:hover .hp-membership-badge__inner {
+    transform: rotateY(180deg);
+  }
 }
 
 .hp-membership-badge__face {

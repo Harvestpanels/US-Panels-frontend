@@ -10,9 +10,9 @@ export default function Hero({ heroContentRef }) {
           Insulated metal panels &amp; doors &middot; immediate availability
         </p>
         <h1>
-          Fast building.
+          Build faster.
           <br />
-          Smarter solutions.
+          Insulate smarter.
         </h1>
         <p className="hp-hero__sub">
           US Panels is a global distributor of exterior Insulated Metal

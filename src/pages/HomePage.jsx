@@ -147,23 +147,23 @@ function HomePage() {
       <PanelSection
         id="panels"
         eyebrow="Building envelope"
-        heading="Pre-insulated wall panels to replace sheet metal and building facade all in one step"
-        description="Insulated metal wall panels for industrial, commercial, and residential builds, engineered for fast installation, long-term energy efficiency, and a clean finished look."
+        heading="Insulated Metal Wall Panels"
+        description="Insulation + facade in one step."
         panels={BUILDING_ENVELOPE_PANELS}
         registerReveal={registerReveal}
       />
       <PanelSection
         id="exterior"
         eyebrow="Roof panels"
-        heading="Roof panels built to complete the envelope"
-        description="Standing seam and corrugated roof panel systems that pair with your walls to complete a fully insulated building envelope, built to shed weather for decades."
+        heading="Insulated Metal Roof Panels"
+        description="Durable insulated roofing for tangible temperature control and real cost savings."
         panels={ROOF_PANELS}
         registerReveal={registerReveal}
       />
       <PanelSection
         id="data-center"
         eyebrow="Data centers"
-        heading="Panel systems built for data center environments"
+        heading="Panel systems built for data center facilities inside and out"
         description="Insulated wall and interior panel systems engineered for the tight tolerances and reliability data center environments demand."
         panels={DATA_CENTER_PANELS}
         registerReveal={registerReveal}
@@ -187,16 +187,16 @@ function HomePage() {
       <PanelSection
         id="doors"
         eyebrow="Insulated Doors"
-        heading="Insulated doors built to match your envelope"
-        description="High-speed, sliding, and personnel doors engineered for fast, secure access without breaking the thermal envelope around them."
+        heading="Insulated Doors"
+        description="High-speed, sliding, and personnel doors that seal tight for reliable temperature control on cold storage and cooler rooms."
         panels={DOOR_PANELS}
         registerReveal={registerReveal}
       />
       <PanelSection
         id="trim-hardware"
         eyebrow="Trim & hardware"
-        heading="The finishing details that complete every install"
-        description="Trim, fasteners, and sealants engineered specifically for insulated panel systems, keeping every seam clean and weather-tight."
+        heading="Trim & Hardware"
+        description="The finishing details that complete every install — trim, fasteners, and sealants engineered specifically for insulated panel systems to keep every seam clean and weather-tight."
         panels={TRIM_HARDWARE_PANELS}
         registerReveal={registerReveal}
       />

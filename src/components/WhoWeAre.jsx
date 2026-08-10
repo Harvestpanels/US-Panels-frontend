@@ -61,8 +61,8 @@ export default function WhoWeAre({ registerReveal }) {
     <section className="hp-section" id="why">
       <div className="hp-section__inner">
         <div className="hp-glass">
-          <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Welcome</p>
-          <h2 className="hp-reveal" ref={registerReveal}>Built for the way you build</h2>
+          <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>About us</p>
+          <h2 className="hp-reveal" ref={registerReveal}>Insulated Panels, Doors, and Buildings from One Source</h2>
           <p className="hp-panel-section__desc hp-reveal" ref={registerReveal}>
             A global distributor of exterior insulated metal panels and doors,
             built to make every project faster, more efficient, and easier to manage
