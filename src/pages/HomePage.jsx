@@ -196,7 +196,7 @@ function HomePage() {
         id="trim-hardware"
         eyebrow="Trim & hardware"
         heading="Trim & Hardware"
-        description="The finishing details that complete every install — trim, fasteners, and sealants engineered specifically for insulated panel systems to keep every seam clean and weather-tight."
+        description="The finishing details that complete every install: trim, fasteners, and sealants engineered specifically for insulated panel systems to keep every seam clean and weather-tight."
         panels={TRIM_HARDWARE_PANELS}
         registerReveal={registerReveal}
       />
