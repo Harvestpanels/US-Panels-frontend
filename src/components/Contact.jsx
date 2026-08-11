@@ -7,9 +7,10 @@ export default function Contact({ registerReveal, onToast }) {
   const [formStatus, setFormStatus] = useState("idle");
   const [formErrors, setFormErrors] = useState({});
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const data = new FormData(form);
     const errors = validateForm(data);
 
     if (Object.keys(errors).length > 0) {
@@ -20,7 +21,26 @@ export default function Contact({ registerReveal, onToast }) {
     }
 
     setFormErrors({});
-    setFormStatus("sent");
+    setFormStatus("sending");
+
+    try {
+      const res = await fetch("/api/contact", { method: "POST", body: data });
+      if (!res.ok) {
+        // 422 means the server's own validation caught something the
+        // client-side check above missed (defense in depth, not expected
+        // in normal use) — anything else is a real send failure.
+        if (res.status === 422) {
+          const { errors: serverErrors } = await res.json().catch(() => ({ errors: {} }));
+          setFormErrors(serverErrors);
+        }
+        throw new Error("send failed");
+      }
+      setFormStatus("sent");
+      form.reset();
+    } catch {
+      setFormStatus("idle");
+      onToast("Something went wrong sending your message. Please try again or call/email us directly.");
+    }
   }
 
   return (
@@ -84,7 +104,9 @@ export default function Contact({ registerReveal, onToast }) {
               />
               {formErrors.attachment && <span id="f-attachment-err" className="hp-field-error" role="alert">{formErrors.attachment}</span>}
 
-              <button type="submit" className="hp-btn hp-btn--primary">Send message</button>
+              <button type="submit" className="hp-btn hp-btn--primary" disabled={formStatus === "sending"}>
+                {formStatus === "sending" ? "Sending…" : "Send message"}
+              </button>
               <p className="hp-contact__legal">By submitting this form you agree to be contacted by US Panels regarding your inquiry.</p>
             </form>
           )}
