@@ -170,8 +170,15 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 12px;
+  gap: 6px;
   padding: 32px 0;
+  /* Matches the form's own natural height (measured at 593px) — without
+     this, swapping the grid's right column between the form and this much
+     shorter success message changes which side is tallest, and CSS
+     grid's default `auto` row sizing shrinks the *whole* row (both
+     columns, including .hp-contact__info on the left) down to match,
+     visibly resizing the entire card. */
+  min-height: 593px;
 }
 
 .hp-form-success__title {
@@ -192,6 +199,10 @@
 
 @media (max-width: 1024px) {
   .hp-contact__grid { grid-template-columns: 1fr; gap: 36px; }
+  /* Stacked to one column here — the min-height guard above exists only
+     to stop the two-column row from resizing itself, which no longer
+     applies once there's no shared row to protect. */
+  .hp-form-success { min-height: 0; }
 }
 
 @media (max-width: 640px) {

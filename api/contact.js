@@ -28,6 +28,13 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 // because this endpoint can be hit directly (not just through the form's
 // own client-side validation), so it can't trust the client at all.
 const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+// Matches the file picker's own `accept` attribute in Contact.jsx — that
+// attribute is only a UI hint (trivially bypassed by drag-and-drop or a
+// direct request to this endpoint), so it's re-checked here by filename
+// extension. Resend delivers whatever's attached straight to a real
+// inbox, so this is about not letting an executable/script ride along as
+// a floor plan, not deep content inspection.
+const ALLOWED_ATTACHMENT_EXTENSIONS = [".pdf", ".dwg", ".png", ".jpg", ".jpeg"];
 
 function escapeHtml(value) {
   return value
@@ -38,9 +45,34 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+// Blocks other websites from pointing their own <form> (or a script) at
+// this endpoint and sending mail through your Resend account on your
+// dime. Checked against the browser-set Origin header, which JavaScript
+// on a page can't spoof — allows your production domain, its www
+// variant, and any Vercel preview/deployment URL for this project (which
+// all end in .vercel.app), and is lenient (doesn't block) when the header
+// is simply absent, since some non-browser or older-browser requests omit
+// it and blocking those blindly would risk false positives.
+const ALLOWED_ORIGIN_SUFFIXES = ["uspanels.com", ".vercel.app"];
+
+function isAllowedOrigin(originHeader) {
+  if (!originHeader) return true;
+  try {
+    const host = new URL(originHeader).hostname;
+    return ALLOWED_ORIGIN_SUFFIXES.some((suffix) => host === suffix.replace(/^\./, "") || host.endsWith(suffix));
+  } catch {
+    return false;
+  }
+}
+
 export default async function handler(request) {
   if (request.method !== "POST") {
     return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405 });
+  }
+
+  if (!isAllowedOrigin(request.headers.get("origin"))) {
+    console.error("contact form: rejected request from disallowed origin", request.headers.get("origin"));
+    return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403 });
   }
 
   const apiKey = process.env.RESEND_API_KEY;
@@ -59,6 +91,15 @@ export default async function handler(request) {
     return new Response(JSON.stringify({ error: "Could not read the submitted form." }), { status: 400 });
   }
 
+  // Honeypot (see the "company" field in Contact.jsx) — invisible to real
+  // visitors, so anything filling it in is a bot. Return a fake success
+  // rather than a 4xx: a real error response teaches scripted spam to
+  // adjust and retry, while a silent "success" gives it no signal at all
+  // and it moves on.
+  if (formData.get("company")?.toString().trim()) {
+    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "Content-Type": "application/json" } });
+  }
+
   const name = formData.get("name")?.toString().trim() ?? "";
   const email = formData.get("email")?.toString().trim() ?? "";
   const phone = formData.get("phone")?.toString().trim() ?? "";
@@ -71,9 +112,18 @@ export default async function handler(request) {
   if (!email) errors.email = "Email is required.";
   else if (!EMAIL_REGEX.test(email)) errors.email = "Enter a valid email address.";
   if (!phone) errors.phone = "Phone number is required.";
-  else if (phone.replace(/\D/g, "").length < 10) errors.phone = "Enter a valid phone number.";
+  else {
+    const phoneDigits = phone.replace(/\D/g, "");
+    if (phoneDigits.length < 10 || phoneDigits.length > 15) errors.phone = "Enter a valid phone number.";
+  }
   if (hasAttachment && attachment.size > MAX_ATTACHMENT_BYTES) {
     errors.attachment = "File is too large, please attach something under 10MB.";
+  } else if (hasAttachment) {
+    const lowerName = (attachment.name || "").toLowerCase();
+    const hasAllowedExtension = ALLOWED_ATTACHMENT_EXTENSIONS.some((ext) => lowerName.endsWith(ext));
+    if (!hasAllowedExtension) {
+      errors.attachment = "Please attach a PDF, DWG, PNG, or JPG file.";
+    }
   }
   if (Object.keys(errors).length > 0) {
     return new Response(JSON.stringify({ errors }), { status: 422 });

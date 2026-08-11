@@ -335,7 +335,7 @@ export default function ChatWidget() {
   }
 
   return (
-    <div className={`hp-chat${open ? " hp-chat--open" : ""}${unread || hasNewReply ? " hp-chat--unread" : ""}`}>
+    <div className="hp-chat">
       {open && (
         <div className="hp-chat__panel" role="dialog" aria-label="US Panels assistant" aria-modal="false">
           <header className="hp-chat__header">

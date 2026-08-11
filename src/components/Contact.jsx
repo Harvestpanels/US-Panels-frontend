@@ -28,18 +28,28 @@ export default function Contact({ registerReveal, onToast }) {
       if (!res.ok) {
         // 422 means the server's own validation caught something the
         // client-side check above missed (defense in depth, not expected
-        // in normal use) — anything else is a real send failure.
+        // in normal use) — surface those field errors same as usual.
+        // Anything else (429 rate-limited, 502 send failure, etc.) carries
+        // its own specific { error } message worth showing verbatim
+        // rather than a single generic one for every failure reason.
         if (res.status === 422) {
           const { errors: serverErrors } = await res.json().catch(() => ({ errors: {} }));
           setFormErrors(serverErrors);
+          setFormStatus("idle");
+          return;
         }
-        throw new Error("send failed");
+        const { error } = await res.json().catch(() => ({ error: null }));
+        throw new Error(error || "send failed");
       }
       setFormStatus("sent");
       form.reset();
-    } catch {
+    } catch (err) {
       setFormStatus("idle");
-      onToast("Something went wrong sending your message. Please try again or call/email us directly.");
+      onToast(
+        err.message && err.message !== "send failed"
+          ? err.message
+          : "Something went wrong sending your message. Please try again or call/email us directly."
+      );
     }
   }
 
@@ -71,12 +81,28 @@ export default function Contact({ registerReveal, onToast }) {
             <div className="hp-form-success hp-reveal" ref={registerReveal} role="status" aria-live="polite">
               <p className="hp-form-success__title">Message sent!</p>
               <p>Thanks for reaching out. Our team will get back to you within one business day.</p>
-              <button type="button" className="hp-btn hp-btn--ghost" onClick={() => { setFormStatus("idle"); setFormErrors({}); }}>
+              <button type="button" className="hp-btn hp-btn--primary" onClick={() => { setFormStatus("idle"); setFormErrors({}); }}>
                 Send another message
               </button>
             </div>
           ) : (
             <form className="hp-contact__form hp-reveal" ref={registerReveal} onSubmit={handleSubmit} noValidate>
+              {/* Honeypot — invisible to real visitors (off-screen, not
+                  display:none, since some spam bots specifically skip
+                  display:none fields), excluded from tab order and screen
+                  readers. Spam bots that blindly fill every input in a form
+                  fill this too; a real person never sees or touches it. If
+                  it arrives non-empty, the server (api/contact.js) silently
+                  drops the submission instead of sending an email. */}
+              <input
+                type="text"
+                name="company"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", opacity: 0 }}
+              />
+
               <label htmlFor="f-name">Name <span aria-hidden="true">*</span></label>
               <input id="f-name" type="text" name="name" autoComplete="name" aria-required="true" aria-describedby={formErrors.name ? "f-name-err" : undefined} aria-invalid={!!formErrors.name} />
               {formErrors.name && <span id="f-name-err" className="hp-field-error" role="alert">{formErrors.name}</span>}
