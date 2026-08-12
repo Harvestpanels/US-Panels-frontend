@@ -12,8 +12,10 @@ import whiteImg from "../assets/images/Color Palette/White.webp";
 // Each swatch's `hex` is only the small chip color — `img` is the real
 // panel photo in that finish (see the Color Palette folder), shown full
 // size in the section's preview pane when that swatch is selected.
+// `inStock` drives the availability badge on each swatch — Grey White is
+// the only finish kept on hand, every other color is made to order.
 export const COLOR_PALETTE = [
-  { name: "Grey White", hex: "#e4e2d8", img: greyWhiteImg },
+  { name: "Grey White", hex: "#e4e2d8", img: greyWhiteImg, inStock: true },
   { name: "White", hex: "#faf9f5", img: whiteImg },
   { name: "White Aluminum", hex: "#c7cbce", img: whiteAluminumImg },
   { name: "Ivory", hex: "#e3cba0", img: ivoryImg },
@@ -74,6 +76,11 @@ export const PERFORMANCE_HIGHLIGHTS = [
 ];
 
 export const CERTIFICATIONS = [
+  {
+    code: "UL",
+    name: "Underwriters Laboratories",
+    desc: "Our insulated metal panels are tested and listed by Underwriters Laboratories, an independent safety science organization, verifying that panel and door assemblies meet recognized fire, life-safety, and performance standards.",
+  },
   {
     code: "ISO 9001",
     name: "Quality Management",

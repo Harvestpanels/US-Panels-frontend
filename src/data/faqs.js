@@ -57,7 +57,7 @@ export const FAQS = [
   },
   {
     question: "Insulation Value?",
-    answer: "Our panels deliver R-8 per square foot. Insulation values (R-values) vary by panel thickness and core material, our team can recommend the right spec for your climate and use case.",
+    answer: "Our panels deliver R-8 per inch of thickness. Insulation values (R-values) vary by panel thickness and core material, our team can recommend the right spec for your climate and use case.",
   },
   {
     question: "Can Panels support hanging of equipment?",

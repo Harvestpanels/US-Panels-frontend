@@ -72,7 +72,7 @@ export const BOT_INTENTS = [
   {
     id: "insulation",
     keywords: ["rvalue", "r value", "insulation", "insulating", "insulated", "thermal", "r8", "energy efficiency", "energy efficient", "how insulated", "thermal performance"],
-    answer: "Our panels deliver about R-8 per square foot. Exact insulation values (R-values) depend on panel thickness and core material, thicker panels and PIR cores give the highest values. Our team can recommend the right spec for your climate and use case.",
+    answer: "Our panels deliver about R-8 per inch of thickness. Exact insulation values (R-values) depend on panel thickness and core material, thicker panels and PIR cores give the highest values. Our team can recommend the right spec for your climate and use case.",
     links: [{ label: "See thermal specs", href: "/specs#engineering" }],
   },
   {

@@ -157,6 +157,13 @@
   padding: 16px;
   background: linear-gradient(180deg, transparent, rgba(10, 10, 10, 0.88) 55%);
   z-index: 1;
+  /* Promotes this gradient to its own compositing layer. Without it, this
+     element gets rasterized as part of its ancestor .hp-gallery-track's
+     own moving layer (that track slides via `transform`, with its own
+     `will-change: transform` — see above) instead of as a stable texture
+     of its own — on mobile GPUs that shows up as the gradient visibly
+     banding/tearing while the track is mid-slide from a swipe. */
+  transform: translateZ(0);
 }
 
 .hp-gallery-card__use {

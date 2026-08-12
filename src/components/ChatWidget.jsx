@@ -49,7 +49,7 @@ function isPointOnVisiblePixel(imgEl, clientX, clientY) {
 // unread nudge) cycles through these rather than sitting on one static
 // line forever — reads as a little more alive/attentive while idle,
 // looping back to the start once it reaches the end.
-const RESTING_MESSAGES = ["Ask me anything!", "Let me know your concerns.", "I am always available, feel free to reach out!"];
+const RESTING_MESSAGES = ["Ask me anything!", "Let me know your concerns.", "Feel free to reach out!"];
 const RESTING_MESSAGE_INTERVAL_MS = 4000;
 
 // Knowledge-base links to "/#contact" are written generically (the intent

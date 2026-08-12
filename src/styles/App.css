@@ -49,16 +49,16 @@ body {
 /* The floating chat widget (see ChatWidget.css) is fixed to the bottom-
    right corner on every page and, on mobile, stretches edge-to-edge with
    its "unread"/"online" pill. Without reserving space for it, scrolling a
-   page all the way down leaves its last content (a FAQ answer, the
-   contact form's file input, etc.) permanently sitting behind the widget's
-   footprint — there's nowhere further to scroll to clear it. This adds
-   just enough breathing room at the very bottom of every page so the last
-   bit of real content can always be scrolled clear above the widget. */
-@media (max-width: 640px) {
-  body {
-    padding-bottom: 120px;
-  }
-}
+   page all the way down leaves its last content permanently sitting behind
+   the widget's footprint — there's nowhere further to scroll to clear it.
+   This clearance now lives on .hp-footer itself (see its own mobile rule
+   in Footer.css) rather than here on `body`: every page ends in <Footer>,
+   and reserving the space as bare `body` padding left it sitting below the
+   footer's frosted glass card as an orphaned strip of raw page background
+   with the chat widget floating over it, disconnected from any content —
+   moving the same amount of space into the footer's own bottom padding
+   means that clearance is now part of its visible card instead of a dead
+   gap after it. */
 
 a,
 button {

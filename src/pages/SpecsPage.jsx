@@ -450,6 +450,9 @@ export default function SpecsPage() {
                     <span className={i === selectedColorIndex ? "hp-specs-swatch__inner is-selected" : "hp-specs-swatch__inner"}>
                       <span className="hp-specs-swatch__chip" style={{ background: color.hex }} aria-hidden="true" />
                       <span className="hp-specs-swatch__name">{color.name}</span>
+                      <span className={`hp-specs-swatch__badge${color.inStock ? " is-in-stock" : ""}`}>
+                        {color.inStock ? "In Stock" : "Custom"}
+                      </span>
                     </span>
                   </button>
                 ))}

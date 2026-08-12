@@ -90,7 +90,11 @@
   .hp-footer__inner { padding: 0 16px; flex-direction: column; align-items: flex-start; gap: 20px; }
   .hp-footer__legal { padding: 20px 16px 0; font-size: 11px; }
   .hp-footer__social { flex-wrap: wrap; gap: 14px; }
-  .hp-footer { padding: 48px 0 24px; }
+  /* Bottom padding absorbs the chat widget's clearance (used to be a bare
+     `body` padding-bottom — see App.css) directly into the footer's own
+     frosted glass card, so that space reads as part of the footer instead
+     of a dead strip of raw background with the widget floating over it. */
+  .hp-footer { padding: 48px 0 144px; }
 }
 
 /* Also matched by max-width, not just hover: none — a desktop browser

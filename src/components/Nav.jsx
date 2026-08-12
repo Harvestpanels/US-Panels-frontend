@@ -350,6 +350,12 @@ export default function Nav({
   // unmounted (not just hidden) once it does — so no later viewport change
   // can resurrect either one.
   const [folding, setFolding] = useState(true);
+  // Marks the mobile circle's one-time entrance bounce (see
+  // hp-nav-mobile-pop-in in Nav.css) as finished, permanently — without
+  // this, closing the mobile menu removes the `.hp-nav--open` override
+  // that cancels the animation and the base pop-in rule takes over again,
+  // replaying the bounce on every open/close instead of just once on load.
+  const [poppedIn, setPoppedIn] = useState(false);
   // How far the fold overlay's logo needs to slide (translateX) to land
   // exactly on the real logo underneath it — see the layout effect below.
   // Recomputed on window resize too, so the fold/slide sequence (which can
@@ -655,7 +661,7 @@ export default function Nav({
         </div>
       )}
       <div
-        className={`hp-nav__pill${folding ? " hp-nav__pill--fold" : ""}`}
+        className={`hp-nav__pill${folding ? " hp-nav__pill--fold" : ""}${poppedIn ? " has-popped-in" : ""}`}
         onAnimationEnd={(e) => {
           // Plays once on every mount — i.e. every page navigation, since
           // each page mounts its own fresh Nav — folding the pill in and
@@ -664,6 +670,7 @@ export default function Nav({
           // transform-driven states (the solid-on-scroll effect, the
           // mobile hover scale), so it's stripped once it finishes.
           if (e.animationName === "hp-nav-fold-in") setFolding(false);
+          if (e.animationName === "hp-nav-mobile-pop-in") setPoppedIn(true);
         }}
       >
         <div className="hp-nav__inner">

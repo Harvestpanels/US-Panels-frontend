@@ -204,7 +204,13 @@
    orphaned trailing row, regardless of viewport width. */
 .hp-specs-swatches {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  /* minmax(0, 1fr), not bare 1fr (which grid tracks implicitly treat as
+     minmax(auto, 1fr)) — bare 1fr lets a nowrap child (the availability
+     badge below) force every column to grow to fit its text, which pushed
+     this whole grid wider than its allotted half of .hp-specs-color-layout
+     and spilled the last column out from under the preview panel beside
+     it. The explicit 0 minimum lets columns actually shrink to fit. */
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 16px;
   align-content: start;
 }
@@ -293,6 +299,23 @@
 
 .hp-specs-swatch__inner.is-selected .hp-specs-swatch__name {
   color: var(--hp-red);
+}
+
+.hp-specs-swatch__badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+  color: rgba(var(--hp-navy-rgb), 0.55);
+  background: rgba(var(--hp-navy-rgb), 0.08);
+  white-space: nowrap;
+}
+
+.hp-specs-swatch__badge.is-in-stock {
+  color: #0d7a4c;
+  background: rgba(18, 166, 110, 0.14);
 }
 
 /* Every panel photo is stacked in the same box (absolute + inset:0) and
@@ -781,7 +804,7 @@
      keeps chips a comfortable size down to ~480px; below that they'd get
      too small, so the ≤480 block further down drops to 2 columns (still an
      even divisor of 10). */
-  .hp-specs-swatches { grid-template-columns: repeat(5, 1fr); gap: 14px; }
+  .hp-specs-swatches { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
 
   /* Below 640px, a long label (e.g. "Misalignment of internal metal
      surfaces") and a long value (e.g. the Length/Thickness tolerance
