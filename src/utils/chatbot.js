@@ -9,6 +9,15 @@ const STOPWORDS = new Set([
   "should", "will", "what", "which", "who", "how", "when", "where", "why", "this", "that", "these", "those",
   "there", "here", "please", "tell", "give", "want", "need", "get", "any", "some", "more", "much", "many",
   "kind", "sort", "type",
+  // Apostrophe-free contractions ("whats", "hows", ...) of stopwords already
+  // above — normalize() only strips punctuation, it doesn't rejoin "what's"
+  // into "what", so a query/keyword typed without the apostrophe ("whats
+  // the price") left "whats" surviving as its own token instead of being
+  // filtered like its apostrophized twin. An unfiltered "whats"/"hows" is
+  // pure noise (matches nothing meaningful) but was still a real shared
+  // token wherever a keyword phrase happened to use the same spelling —
+  // enough to occasionally outscore the actually-relevant intent.
+  "whats", "hows", "whos", "wheres", "whens", "whys", "thats", "theres",
 ]);
 
 // Query-side synonym expansion: when a token on the left appears in the
@@ -97,7 +106,13 @@ function normalize(text) {
     .replace(/\br 8\b/g, "rvalue");
 }
 
-function tokenize(text) {
+// Used only for indexing the knowledge base itself (see buildKnowledgeBase
+// below), NOT for scoring a query — an entry is static content, so it's
+// harmless for its own token set to carry both "panels" and "panel" as
+// separate entries; the singularization only becomes a problem when it's
+// the QUERY side effectively saying the same one word twice (see
+// tokenizeQuery below, which exists specifically to avoid that).
+function tokenizeForIndex(text) {
   const words = normalize(text)
     .split(" ")
     .filter((w) => w.length > 1 && !STOPWORDS.has(w));
@@ -113,56 +128,121 @@ function tokenize(text) {
   return out;
 }
 
-// Expands a query's tokens with their synonyms (one hop) and, for any token
-// that still doesn't match a known synonym, a one-typo-away correction
-// against the real vocabulary (see VOCAB/isOneEditAway below). Returns a Set
-// so the same term added from two sources is only counted once.
-function expandTokens(tokens) {
-  const set = new Set(tokens);
-  for (const t of tokens) {
-    const syns = SYNONYMS[t];
-    if (syns) syns.forEach((s) => set.add(s));
-    if (!syns && t.length >= 5) {
-      const corrected = VOCAB.find((v) => isOneEditAway(t, v));
-      if (corrected) set.add(corrected);
-    }
+// The distinct, meaningful words in a query — deduped, and deliberately
+// WITHOUT tokenizeForIndex's singular-duplication. That distinction matters:
+// scoring below counts at most one point per distinct word the visitor
+// actually typed (see wordVariants/scoreEntry). If the query side also
+// emitted "panels" AND "panel" as two separate entries, or dumped every
+// synonym of a word straight into one flat bag alongside it, one real word
+// could silently rack up several points against an entry that happens to
+// list multiple of its variants — enough, in practice, to outscore a much
+// more specific match elsewhere (confirmed: "are you human" was answering
+// as the wrong intent because "human" alone expands to 5 synonyms that are
+// ALL literal keywords of one particular intent, inflating its score to
+// 6.9 against a more relevant intent's 3.65).
+function tokenizeQuery(text) {
+  return Array.from(new Set(
+    normalize(text).split(" ").filter((w) => w.length > 1 && !STOPWORDS.has(w))
+  ));
+}
+
+// Every form a single query word could plausibly match under: itself, its
+// singular (if it's a plural), its declared synonyms, and — only as a last
+// resort — a one-typo-away vocabulary correction. All of these represent
+// the SAME one thing the visitor said, so the caller (scoreEntry) counts a
+// hit via any of them as exactly 1 point, never more.
+//
+// The typo correction specifically only runs when `word` isn't already a
+// real, recognized vocabulary word (see VOCAB_SET below) — without that
+// guard, a correctly-spelled word like "estimate" could still get
+// "corrected" into a coincidentally-similar-but-unrelated real word (its
+// own plural "estimates", as indexed from a completely different FAQ's
+// question text) purely because they're one edit apart, handing that
+// unrelated entry extra, undeserved points even though nothing was
+// actually misspelled.
+function wordVariants(word) {
+  const variants = new Set([word]);
+  if (word.length > 3 && word.endsWith("s") && !word.endsWith("ss")) variants.add(word.slice(0, -1));
+  const syns = SYNONYMS[word];
+  if (syns) syns.forEach((s) => variants.add(s));
+  else if (word.length >= 5 && !VOCAB_SET.has(word)) {
+    const corrected = VOCAB.find((v) => isOneEditAway(word, v));
+    if (corrected) variants.add(corrected);
   }
-  return set;
+  return variants;
 }
 
 // Turns the raw knowledge sources into a uniform scored-lookup shape. Each
 // entry keeps: a Set of significant tokens (drawn from its explicit keywords
 // AND, for FAQs, the question text), the multi-word keyword phrases (for a
 // phrase-contains bonus), the answer, and any links. Built once at import.
+// Words so generic to this domain (this is a company that sells nothing
+// but panels) that treating them as ordinary bag-of-words tokens let
+// whichever intent happened to mention them win ties against much more
+// specific, correct answers — confirmed: "are your panels fire resistant?"
+// was answering with the generic product list instead of fire/certification
+// info, purely because "panels" was one of products-overview's own tokens
+// (from keyword phrases like "panel types"). Excluded here from the TOKEN
+// set only — an exact keyword PHRASE containing one of these ("panel
+// types", "what panels") still gets its full phrase-bonus if a visitor
+// types that phrase verbatim (see the `phrases` array below, built
+// independently of this filter).
+const WEAK_TOKENS = new Set(["panel", "panels"]);
+
 function buildKnowledgeBase() {
   const kb = [];
 
   for (const intent of BOT_INTENTS) {
     const tokenSet = new Set();
     const phrases = [];
+    // Single bare-word keywords ("contact", "phone", "foam"), as opposed to
+    // multi-word phrases — these are the intent's own deliberately curated
+    // primary terms, so a query that IS exactly one of them (see the
+    // primaryTerms bonus below) is the strongest possible signal short of a
+    // full phrase match. Without distinguishing these from a token that
+    // only showed up as a byproduct of tokenizing some unrelated longer
+    // phrase (e.g. "contact" is also a stray token of the `human` intent's
+    // "contact sales" keyword), a single-word query like "contact" or
+    // "phone" tied 1-for-1 against whichever intent happened to pick up
+    // that same incidental token, instead of clearly favoring the intent
+    // that word actually belongs to.
+    const primaryTerms = new Set();
     for (const kw of intent.keywords) {
-      tokenize(kw).forEach((t) => tokenSet.add(t));
+      tokenizeForIndex(kw).forEach((t) => { if (!WEAK_TOKENS.has(t)) tokenSet.add(t); });
       if (kw.includes(" ")) phrases.push(normalize(kw));
+      else primaryTerms.add(normalize(kw));
     }
-    kb.push({ id: intent.id, tokens: tokenSet, phrases, answer: intent.answer, links: intent.links || null, weight: 1.15 });
+    kb.push({ id: intent.id, tokens: tokenSet, phrases, primaryTerms, answer: intent.answer, links: intent.links || null, weight: 1.15 });
   }
 
   FAQS.forEach((faq, i) => {
-    const tokenSet = new Set(tokenize(faq.question));
-    kb.push({ id: `faq-${i}`, tokens: tokenSet, phrases: [normalize(faq.question)], answer: faq.answer, links: null, weight: 1 });
+    const tokenSet = new Set(tokenizeForIndex(faq.question).filter((t) => !WEAK_TOKENS.has(t)));
+    kb.push({ id: `faq-${i}`, tokens: tokenSet, phrases: [normalize(faq.question)], primaryTerms: new Set(), answer: faq.answer, links: null, weight: 1 });
   });
 
   return kb;
+}
+
+// An entry's `answer` is either a single string or, for intents that come
+// up often enough in one session that repeating the exact same line would
+// read as scripted (greetings, thanks, small talk), an array of equally
+// valid phrasings — picked randomly here so the caller never has to care
+// which shape a given entry uses.
+function resolveAnswer(answer) {
+  return Array.isArray(answer) ? answer[Math.floor(Math.random() * answer.length)] : answer;
 }
 
 const KNOWLEDGE_BASE = buildKnowledgeBase();
 
 // Every significant token any knowledge entry actually listens for — used
 // to correct a query token that doesn't match anything outright but is one
-// typo away from a real one (see isOneEditAway and its use in expandTokens
-// below). Only words of length >= 5 are worth candidates for: short words
+// typo away from a real one (see isOneEditAway and its use in wordVariants
+// above). Only words of length >= 5 are worth candidates for: short words
 // ("fit", "load") have too many one-edit neighbors to fuzzy-match safely.
 const VOCAB = Array.from(new Set(KNOWLEDGE_BASE.flatMap((e) => Array.from(e.tokens)))).filter((w) => w.length >= 5);
+// Same set, for an O(1) "is this already a real word, not a typo" check —
+// see wordVariants' guard before it ever attempts a fuzzy correction.
+const VOCAB_SET = new Set(VOCAB);
 
 // Minimum score an entry must reach to be treated as a confident answer.
 // Below this we return a graceful fallback instead of a weak guess. Set to
@@ -178,7 +258,7 @@ const MATCH_THRESHOLD = 1.0;
 // canned sentence twice in a row, which is one of the fastest ways a bot
 // reads as a script instead of something actually listening.
 const FALLBACK_REPLIES = [
-  "I'm not sure I have an answer for that one. I can help with our products, pricing, specs, certifications, colors, delivery, and contact info, try one of the suggestions below, or reach our team directly.",
+  "I'm not sure I have an answer for that one. I can help with our products, pricing, specs, certifications, colors, delivery, and contact info, ask me about any of those, or reach our team directly.",
   "Hmm, that one's outside what I can help with directly. I know our products, pricing, specs, certifications, colors, and delivery well though, ask me about any of those, or I can point you to our team.",
   "I don't have a good answer for that. Happy to help with panels, doors, pricing, specs, certifications, or delivery though, or I can connect you with someone on our team who can dig deeper.",
 ];
@@ -205,12 +285,12 @@ const CONTINUATION_REPLIES = [
 // brand-new, unmatched question every time — a real person keeps track of
 // what "that" refers to; a stateless keyword matcher otherwise can't.
 export function getBotResponse(rawInput, context = {}) {
-  const queryTokens = tokenize(rawInput);
+  const queryWords = tokenizeQuery(rawInput);
   const normalizedQuery = normalize(rawInput);
 
-  // Checked before the empty-tokens fallback below: phrases like "tell me
+  // Checked before the empty-words fallback below: phrases like "tell me
   // more" or "go ahead" are made entirely of stopwords ("tell", "me",
-  // "more"), so tokenize() strips them down to nothing — without this
+  // "more"), so tokenizeQuery() strips them down to nothing — without this
   // ordering they'd hit that generic empty-input fallback before ever
   // getting a chance to be read as a continuation of the last topic.
   if (context.lastId && CONTINUATION_PHRASES.has(normalizedQuery)) {
@@ -226,7 +306,14 @@ export function getBotResponse(rawInput, context = {}) {
     }
   }
 
-  if (queryTokens.length === 0) {
+  // Checked against the normalized string itself, not queryWords — a
+  // phrase like "how are you" is made entirely of stopwords ("how", "are",
+  // "you"), so it tokenizes down to nothing even though it's a perfectly
+  // meaningful message. Bailing out here only for genuinely blank/
+  // punctuation-only input lets an all-stopword phrase keep going below
+  // and still get credit for a whole-phrase match (e.g. against the
+  // small-talk intent's own "how are you" keyword).
+  if (!normalizedQuery) {
     return {
       id: null,
       text: "Ask me anything about US Panels, our products, pricing, specs, certifications, or delivery.",
@@ -235,36 +322,91 @@ export function getBotResponse(rawInput, context = {}) {
     };
   }
 
-  const expanded = expandTokens(queryTokens);
-
-  let best = null;
-  let bestScore = 0;
+  const scored = [];
 
   for (const entry of KNOWLEDGE_BASE) {
+    // Each distinct word the visitor typed contributes at most 1 point to
+    // this entry, no matter how many of its synonyms/variants happen to
+    // match (see wordVariants) — a query only ever said one thing, and
+    // scoring it as more than that is what let a single word like "human"
+    // (5 synonyms, all coincidentally keywords of one particular intent)
+    // outscore a far more specific match elsewhere.
     let overlap = 0;
-    for (const token of expanded) {
-      if (entry.tokens.has(token)) overlap += 1;
+    const matchedWords = new Set();
+    for (const word of queryWords) {
+      const variants = wordVariants(word);
+      for (const v of variants) {
+        if (entry.tokens.has(v)) {
+          overlap += 1;
+          matchedWords.add(word);
+          break;
+        }
+      }
     }
-    if (overlap === 0) continue;
 
     let score = overlap * entry.weight;
+    // The visitor's entire message IS one of this entry's own deliberately
+    // curated single-word keywords ("contact", "phone", "foam") — the
+    // strongest signal short of a full phrase match, and specifically what
+    // keeps a short query from tying against some other entry that only
+    // picked up that same word as an incidental token of an unrelated
+    // longer phrase (see primaryTerms in buildKnowledgeBase above).
+    if (entry.primaryTerms.has(normalizedQuery)) score += 2.0;
     // Whole-phrase hit (e.g. the user typed "how much do panels cost" and the
-    // FAQ question is literally that) is a strong signal — bump it.
+    // FAQ question is literally that) is a strong signal on its own — worth
+    // checking even with zero token overlap, since an all-stopword phrase
+    // like "how are you" only ever has this to go on.
     for (const phrase of entry.phrases) {
       if (phrase.length > 4 && normalizedQuery.includes(phrase)) {
         score += 2.5;
         break;
       }
     }
-
-    if (score > bestScore) {
-      bestScore = score;
-      best = entry;
-    }
+    if (score === 0) continue;
+    scored.push({ entry, score, matchedWords });
   }
 
+  scored.sort((a, b) => b.score - a.score);
+  const best = scored[0]?.entry ?? null;
+  const bestScore = scored[0]?.score ?? 0;
+
   if (best && bestScore >= MATCH_THRESHOLD) {
-    return { id: best.id, text: best.answer, links: best.links, fallback: false };
+    // A single-best-match answer silently drops the rest of a multi-topic
+    // question ("what colors do you have AND how much do panels cost"
+    // used to only ever answer pricing, with no sign the colors half was
+    // even noticed). A genuinely separate second topic gets a short
+    // follow-on mention instead of being dropped entirely — but ONLY when
+    // it's actually driven by a different word than the top match. Score
+    // alone isn't enough to tell "second topic" apart from "a different KB
+    // entry about the very same topic": this site auto-folds each FAQ in
+    // as its own entry, so a query like "how much do panels cost" matches
+    // both the curated `quote` intent AND FAQ "How much do Panels Cost?"
+    // — both driven by the exact same word ("cost"), not two different
+    // things the visitor asked about. Requiring the second entry to have
+    // matched via a word the top entry did NOT is what tells those two
+    // situations apart.
+    const secondCandidate = scored[1]?.score >= MATCH_THRESHOLD * 2 ? scored[1] : null;
+    const second = secondCandidate && [...secondCandidate.matchedWords].some((w) => !scored[0].matchedWords.has(w))
+      ? secondCandidate.entry
+      : null;
+    const text = second
+      ? `${resolveAnswer(best.answer)}\n\nYou also asked about that: ${resolveAnswer(second.answer)}`
+      : resolveAnswer(best.answer);
+    const links = second ? [...(best.links || []), ...(second.links || [])] : best.links;
+    return { id: best.id, text, links: links?.length ? links : null, fallback: false };
+  }
+
+  // Nothing else matched, but the visitor did say "panel(s)" somewhere —
+  // WEAK_TOKENS deliberately keeps that word from tipping scoring in favor
+  // of whichever entry incidentally mentions it (see WEAK_TOKENS above),
+  // but that shouldn't mean a plain "panels?" gets the same blank shrug as
+  // genuinely unrelated input: products-overview is a perfectly sensible
+  // default for a company whose entire business is panels.
+  if (queryWords.some((w) => w === "panel" || w === "panels")) {
+    const productsEntry = KNOWLEDGE_BASE.find((e) => e.id === "products-overview");
+    if (productsEntry) {
+      return { id: productsEntry.id, text: resolveAnswer(productsEntry.answer), links: productsEntry.links, fallback: false };
+    }
   }
 
   return {

@@ -95,6 +95,14 @@ const ENGAGEMENT_MESSAGES = [
 
 const ENGAGEMENT_INTERVAL_MS = 2 * 60 * 1000;
 
+// Once this many messages have piled up unread while the visitor isn't
+// looking, further proactive check-ins stop scheduling themselves — past
+// this point they've clearly stepped away, and a check-in every 2 minutes
+// forever would just be piling up noise (and unread-count inflation) for
+// no one. Real replies to something the visitor actually typed are never
+// capped this way, only the unsolicited engagement nudges are.
+const MAX_UNREAD_ENGAGEMENT_MESSAGES = 5;
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([GREETING]);
@@ -153,6 +161,10 @@ export default function ChatWidget() {
   // the closure captures whatever `open` was when send() was called, not
   // whatever it is by the time the delayed reply actually arrives.
   const openRef = useRef(open);
+  // Mirrors `unreadCount` for the same reason — scheduleEngagement's
+  // setTimeout closure needs the CURRENT unread count when it fires, not
+  // whatever it was back when that timeout was scheduled.
+  const unreadCountRef = useRef(unreadCount);
   // Tracks whether the panel has actually been open, so focus only returns
   // to the launcher on a real close (open → closed transition) — never on
   // the initial page load. Keyed on the state transition rather than a
@@ -270,6 +282,10 @@ export default function ChatWidget() {
     openRef.current = open;
   }, [open]);
 
+  useEffect(() => {
+    unreadCountRef.current = unreadCount;
+  }, [unreadCount]);
+
   // Cycles the resting "online" pill's message on a loop, only while it's
   // actually the thing showing (panel closed, unread already dismissed,
   // no fresher reply waiting) — no point ticking a hidden timer the rest
@@ -291,6 +307,14 @@ export default function ChatWidget() {
   function scheduleEngagement() {
     clearTimeout(engagementTimer.current);
     engagementTimer.current = setTimeout(() => {
+      // The visitor hasn't looked back at the chat in a while and unread
+      // messages have already piled up past the cap — stop scheduling
+      // further check-ins rather than continuing to nudge every 2 minutes
+      // forever. Left unopened, this loop starts right back up the next
+      // time they open the panel (see the launcher's onClick below) or send
+      // a new message, both of which reset `unreadCount` to 0 first.
+      if (!openRef.current && unreadCountRef.current >= MAX_UNREAD_ENGAGEMENT_MESSAGES) return;
+
       let idx = lastEngagementIndex.current;
       if (ENGAGEMENT_MESSAGES.length > 1) {
         while (idx === lastEngagementIndex.current) {
@@ -322,8 +346,13 @@ export default function ChatWidget() {
       lastIntentId.current = res.id;
       setTyping(false);
       setMessages((m) => [
+        // Suggestion chips only ever appear on the initial GREETING now, not
+        // on every fallback — a fallback's own reply text already lists the
+        // same topics in prose ("I can help with our products, pricing,
+        // specs..."), so repeating that exact list again as tappable chips
+        // right underneath just read as redundant, not helpful.
         ...m,
-        { role: "bot", text: res.text, links: res.links, showSuggestions: res.fallback },
+        { role: "bot", text: res.text, links: res.links, showSuggestions: false },
       ]);
       if (!openRef.current) {
         setHasNewReply(true);
@@ -499,6 +528,11 @@ export default function ChatWidget() {
             const next = !open;
             setOpen(next);
             if (next) {
+              // If unread messages had piled up to the cap, scheduleEngagement's
+              // own timeout already stopped rescheduling itself (see there) —
+              // opening the panel is what should bring the hospitality back,
+              // same as it would for a visitor who just replied.
+              if (unreadCountRef.current >= MAX_UNREAD_ENGAGEMENT_MESSAGES) scheduleEngagement();
               setHasNewReply(false);
               setUnreadCount(0);
               setUnread(false);

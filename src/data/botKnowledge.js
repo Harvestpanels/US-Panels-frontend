@@ -15,17 +15,51 @@ export const BOT_INTENTS = [
   {
     id: "greeting",
     keywords: ["hi", "hello", "hey", "howdy", "greetings", "good morning", "good afternoon", "good evening", "yo", "sup"],
-    answer: "Hi! I'm the US Panels assistant. I can answer questions about our insulated metal panels and doors, products, specs, pricing, certifications, delivery, and more. What would you like to know?",
+    // Picked at random each time (see resolveAnswer in utils/chatbot.js) so
+    // a visitor who re-opens the chat, or says hi again mid-conversation,
+    // doesn't hear the exact same opening line twice in a row.
+    answer: [
+      "Hi! I'm the US Panels assistant. I can answer questions about our insulated metal panels and doors, products, specs, pricing, certifications, delivery, and more. What would you like to know?",
+      "Hey there! Happy to help with anything about our panels or doors, products, pricing, specs, certifications, colors, delivery, you name it. What can I help with?",
+      "Hello! I'm here to help with questions about US Panels, products, pricing, specs, certifications, delivery, and more. What are you working on?",
+    ],
   },
   {
     id: "thanks",
     keywords: ["thanks", "thank you", "thx", "appreciate it", "cheers", "ty"],
-    answer: "You're welcome! Anything else I can help you with about our panels or doors?",
+    answer: [
+      "You're welcome! Anything else I can help you with about our panels or doors?",
+      "Anytime! Let me know if anything else comes up.",
+      "Happy to help. Feel free to ask if anything else comes to mind.",
+    ],
   },
   {
     id: "bot-identity",
     keywords: ["who are you", "what are you", "are you a bot", "are you human", "are you real", "what is this", "chatbot", "assistant"],
     answer: "I'm the US Panels virtual assistant, an automated helper for common questions about our insulated metal panels and doors. For anything I can't answer, I'll point you to our team.",
+  },
+  {
+    id: "small-talk",
+    keywords: ["how are you", "how are you doing", "how's it going", "hows it going", "what's up", "whats up", "how have you been"],
+    answer: [
+      "Doing great, thanks for asking! Ready to help with anything about our panels or doors, what can I do for you?",
+      "Can't complain, always happy to talk panels! What's on your mind?",
+    ],
+  },
+  {
+    id: "compliment",
+    keywords: ["good bot", "great bot", "you're helpful", "youre helpful", "nice bot", "you're the best", "youre the best", "you're great", "youre great", "good job"],
+    answer: "That's kind of you to say, thank you! Let me know if there's anything else I can help you track down.",
+  },
+  {
+    id: "frustration",
+    keywords: [
+      "this isn't working", "this is not working", "not helpful", "useless", "stupid bot", "you're useless", "youre useless",
+      "not working", "you don't understand", "you dont understand", "this is frustrating", "i'm frustrated", "im frustrated",
+      "you're not helping", "youre not helping", "waste of time",
+    ],
+    answer: "Sorry about that, I know that's frustrating. Let's get you to someone who can help directly.",
+    links: [{ label: "Contact our team", href: "/#contact" }],
   },
   {
     id: "human",
@@ -44,6 +78,24 @@ export const BOT_INTENTS = [
     keywords: ["quote", "get a quote", "estimate", "free estimate", "pricing", "price", "how much", "cost", "budget", "request pricing"],
     answer: "Every project is priced to spec, so the fastest way to get an accurate number is a free estimate. As a rough guide, panels typically run $3–$10 per square foot depending on type, thickness, finish, and project size. Send us your specs and we'll put together a no-cost estimate.",
     links: [{ label: "Request a free estimate", href: "/#contact" }],
+  },
+  {
+    id: "order",
+    // Deliberately no "buy panels"/"purchase panels"/"how to buy" style
+    // phrasing here — tokenizing those left the bare, generic word "panel"
+    // as one of THIS intent's own matchable tokens, and since virtually
+    // every query on this site mentions "panel" somewhere, that alone was
+    // enough to win by default against completely unrelated questions
+    // ("how you panel looks like?" was answering with order info). "buy"/
+    // "purchase" already reach this intent through the existing buy -> order
+    // synonym expansion (see SYNONYMS in utils/chatbot.js), so coverage
+    // doesn't need the word "panel" spelled out here at all.
+    keywords: [
+      "order", "place an order", "make an order", "put in an order", "how do i order", "how to order",
+      "start an order", "ordering process", "minimum order", "can i order",
+    ],
+    answer: "You bet. We don't sell directly through the website, our team specs every order to your project (panel type, thickness, finish, quantities) so it's cut and priced right the first time. Send us your project details or floor plan and we'll turn around a free estimate, then get your order moving.",
+    links: [{ label: "Start your order", href: "/#contact" }],
   },
   {
     id: "products-overview",
@@ -88,21 +140,91 @@ export const BOT_INTENTS = [
     links: [{ label: "Learn about panel foam", href: "/specs#foam-core" }],
   },
   {
+    // Placed before `delivery` and given country-name keywords as its own
+    // primary terms specifically so it outscores that intent for a
+    // region-specific question — without this, "do you ship to Canada?"
+    // matched the plain `delivery` intent and answered with the domestic
+    // 48-hour U.S. timeline as if it directly answered the question, no
+    // caveat that it doesn't actually cover international shipping at all.
+    id: "international-shipping",
+    keywords: [
+      "canada", "mexico", "international shipping", "ship internationally", "international delivery",
+      "overseas", "export", "outside the us", "other countries", "ship abroad", "ship outside the us",
+      "worldwide shipping", "global shipping",
+    ],
+    answer: "Our stocked delivery timelines (48-hour U.S. shipping) are for domestic delivery only. For shipments outside the U.S., reach out to our team directly, they can confirm what's feasible for your location.",
+    links: [{ label: "Ask about international shipping", href: "/#contact" }],
+  },
+  {
     id: "delivery",
     keywords: ["delivery", "deliver", "shipping", "ship", "how fast", "lead time", "lead times", "how long to get", "when can i get", "availability", "in stock", "stock"],
-    answer: "We keep consistent stock in pre-cut lengths and ship from our centrally located Oklahoma distribution center, delivery anywhere in the U.S. within 48 hours of departure. Custom orders can typically be fulfilled within 30 days.",
+    answer: "We keep consistent stock in pre-cut lengths and ship from our centrally located Oklahoma distribution center, delivery anywhere in the U.S. within 48 hours of departure. Custom orders can typically be fulfilled within 30 days. Let me know your timeline and I can point you the right direction.",
   },
   {
     id: "warranty",
     keywords: ["warranty", "guarantee", "guaranteed", "how long do panels last", "lifespan", "durability"],
-    answer: "Insulated metal panels are built to hold up over decades of use, low-maintenance, moisture-resistant, and durable. For specific warranty terms on your product and project, reach out to our team.",
+    answer: "Insulated metal panels are built to hold up over decades of use, low-maintenance, moisture-resistant, and durable. For specific warranty terms on your product and project, our team can walk you through the exact coverage.",
     links: [{ label: "Ask about warranty", href: "/#contact" }],
+  },
+  {
+    id: "sustainability",
+    keywords: [
+      "sustainability", "sustainable", "eco friendly", "environmentally friendly", "green building",
+      "recycled", "recyclable", "carbon", "environmental impact", "leed",
+    ],
+    answer: "Sustainability shows up in the panels themselves: recycled steel content and responsibly sourced materials, high R-value insulation that cuts a building's energy use for its whole life, and steel cores that are fully recyclable at end of life, with take-back options to keep panels out of landfills.",
+    links: [{ label: "See our sustainability approach", href: "/#sustainability" }],
+  },
+  {
+    id: "memberships",
+    keywords: [
+      "memberships", "membership", "affiliations", "associations", "industry association", "trade association",
+      "bbb", "better business bureau", "gcca", "global cold chain alliance", "ceba",
+      "mbcea", "metal building contractors", "accredited", "member of",
+    ],
+    answer: "We're proud members of several industry organizations: MBCEA (Metal Building Contractors & Erectors Association), GCCA (Global Cold Chain Alliance), BBB (Better Business Bureau), and CEBA (Controlled Environment Building Association), reflecting our commitment to industry standards and ethical business practices.",
+    links: [{ label: "See our memberships", href: "/#memberships" }],
+  },
+  {
+    id: "gallery",
+    // Deliberately no "see panels"/"what do panels look like" phrasing —
+    // same trap as the order intent above: tokenizing those would leave
+    // the bare, generic word "panel" as one of this intent's own matchable
+    // tokens, and since nearly every query on this site mentions "panel",
+    // that alone would win by default against unrelated questions.
+    keywords: [
+      "photo gallery", "photos", "pictures", "images", "gallery", "see examples", "past projects",
+      "project photos", "show me pictures", "what does it look like",
+      "visual examples", "portfolio",
+    ],
+    answer: "You can see real installs, panels, doors, and finished interiors from projects we've shipped nationwide, in our Photo Gallery. There's also a live preview on the Specs page where you can see any color finish rendered on an actual panel.",
+    links: [{ label: "View photo gallery", href: "/#gallery" }, { label: "Preview color finishes", href: "/specs#colors" }],
+  },
+  {
+    id: "market-segments",
+    keywords: [
+      "data center", "data centers", "cold storage", "cold room", "refrigeration", "freezer",
+      "pre engineered", "pre-engineered", "pemb", "metal building", "clean room", "cleanroom",
+      "industrial building", "commercial building", "residential", "what industries",
+    ],
+    answer: "We work across a wide range of building types: data centers, cold storage & refrigeration facilities, pre-engineered metal buildings, and industrial, commercial, and residential construction. Each has its own recommended panel specs (fire rating, insulation, and finish), our team can match one to your project.",
+    links: [{ label: "See building types", href: "/#panels" }],
+  },
+  {
+    id: "trim-hardware",
+    keywords: [
+      "trim", "hardware", "trim and hardware", "accessories", "flashing", "flashings", "screws",
+      "nuts", "washers", "t bar", "t-bar", "butyl", "corner angle", "corner angles",
+    ],
+    answer: "We also supply the trim & hardware to finish out an installation: flashings, screws, nuts, washers, T-bars, butyl sealant, and corner angles, so everything comes from one source instead of piecing it together separately.",
+    links: [{ label: "Browse trim & hardware", href: "/products" }],
   },
 ];
 
-// Shown as tappable starter chips when the chat first opens, and again as
-// suggestions after a fallback ("I'm not sure...") reply — chosen to steer
-// visitors toward the highest-value, best-covered topics.
+// Shown as tappable starter chips when the chat first opens (only there —
+// a fallback reply already lists these same topics in its own prose, so
+// repeating them as chips too read as redundant) — chosen to steer visitors
+// toward the highest-value, best-covered topics.
 export const SUGGESTED_QUESTIONS = [
   "What products do you offer?",
   "How much do panels cost?",
