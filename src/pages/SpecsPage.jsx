@@ -115,6 +115,37 @@ function FoamTraitCard({ name, desc }) {
   );
 }
 
+// Same navy-fill hover as #why's own cards (see WhoWeAre.css) and the same
+// tap-driven equivalent as FoamTraitCard above, for the External Face
+// Profile cards — desktop gets the effect for free via :hover (see
+// .hp-specs-profile:hover in SpecsPage.css); touch devices get it via tap,
+// toggled on an *inner* wrapper rather than this card itself (see
+// FoamTraitCard's own comment for why the card's own className can't
+// change).
+function FaceProfileCard({ name, desc }) {
+  const [active, setActive] = useState(false);
+  return (
+    <div
+      className="hp-specs-profile hp-anim-item" onAnimationEnd={clearAnimOnEnd}
+      onClick={() => setActive((a) => !a)}
+      role="button"
+      tabIndex={0}
+      aria-pressed={active}
+      aria-label={`${name}, tap to show details`}
+      onKeyDown={(e) => {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        setActive((a) => !a);
+      }}
+    >
+      <div className={active ? "is-active" : undefined}>
+        <h4>{name}</h4>
+        <p>{desc}</p>
+      </div>
+    </div>
+  );
+}
+
 // Mirrors Faq.jsx's own accordion exactly — same single-open-at-a-time
 // list (activeCertIndex, not per-item state), same "+" rotating to "×"
 // via aria-expanded, same grid-template-rows 0fr->1fr open/close. Passed
@@ -578,10 +609,7 @@ export default function SpecsPage() {
             <p className="hp-specs-subheading hp-anim-item" onAnimationEnd={clearAnimOnEnd}>External face profile</p>
             <div className="hp-specs-profiles">
               {FACE_PROFILES.map((profile) => (
-                <div className="hp-specs-profile hp-anim-item" onAnimationEnd={clearAnimOnEnd} key={profile.name}>
-                  <h4>{profile.name}</h4>
-                  <p>{profile.desc}</p>
-                </div>
+                <FaceProfileCard key={profile.name} name={profile.name} desc={profile.desc} />
               ))}
             </div>
 

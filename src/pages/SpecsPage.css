@@ -662,9 +662,27 @@
 }
 
 .hp-specs-profile {
+  position: relative;
+  overflow: hidden;
   border: 1px solid rgba(var(--hp-navy-rgb), 0.12);
   border-radius: 12px;
   padding: 18px 20px;
+  cursor: default;
+  /* Same navy-wipe-from-the-bottom hover as #why's own cards (see
+     WhoWeAre.css's #why .hp-card) — a background-size trick on a 1x1
+     solid-color gradient rather than a flat background swap. */
+  background-color: transparent;
+  background-image: linear-gradient(var(--hp-navy), var(--hp-navy));
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: 100% 0%;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s ease, background-size 0.45s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hp-specs-profile:hover {
+  transform: translateY(-8px);
+  border-color: var(--hp-navy);
+  background-size: 100% 100%;
 }
 
 .hp-specs-profile h4 {
@@ -672,6 +690,7 @@
   text-transform: none;
   color: var(--hp-navy);
   margin: 0 0 6px;
+  transition: color 0.3s ease;
 }
 
 .hp-specs-profile p {
@@ -679,6 +698,38 @@
   line-height: 1.55;
   color: rgba(var(--hp-navy-rgb), 0.68);
   margin: 0;
+  transition: color 0.3s ease;
+}
+
+.hp-specs-profile:hover h4 { color: var(--hp-cream); }
+.hp-specs-profile:hover p { color: rgba(243, 241, 236, 0.8); }
+
+/* Also matched by max-width, not just hover: none — a desktop browser
+   window resized/emulated narrow still reports (hover: hover), so a mouse
+   there would still trigger this effect. */
+@media (hover: none), (max-width: 1024px) {
+  .hp-specs-profile:hover {
+    transform: none;
+    border-color: rgba(var(--hp-navy-rgb), 0.12);
+    background-size: 100% 0%;
+  }
+  .hp-specs-profile:hover h4 { color: var(--hp-navy); }
+  .hp-specs-profile:hover p { color: rgba(var(--hp-navy-rgb), 0.68); }
+}
+
+/* Tap-driven equivalent for touch devices, which have no hover at all —
+   "is-active" is toggled by local state in FaceProfileCard (SpecsPage.jsx)
+   on tap, on an *inner* wrapper rather than this card itself, same pattern
+   as #why .hp-card:has(.is-active) in WhoWeAre.css. */
+@media (hover: none) {
+  .hp-specs-profile:has(.is-active) {
+    transform: translateY(-8px);
+    border-color: var(--hp-navy);
+    background-size: 100% 100%;
+  }
+  .hp-specs-profile:has(.is-active) h4 { color: var(--hp-cream); }
+  .hp-specs-profile:has(.is-active) p { color: rgba(243, 241, 236, 0.8); }
+  .hp-specs-profile { cursor: pointer; }
 }
 
 @media (max-width: 900px) {
