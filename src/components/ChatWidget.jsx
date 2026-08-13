@@ -143,6 +143,12 @@ export default function ChatWidget() {
   const engagementTimer = useRef(null);
   // Avoids repeating the exact same check-in twice in a row.
   const lastEngagementIndex = useRef(-1);
+  // The knowledge-base id the bot last answered from (null after a
+  // fallback) — passed back into getBotResponse so a short, topic-free
+  // follow-up ("yes", "tell me more") can be read as a continuation of that
+  // same topic instead of an unmatched new question. See CONTINUATION_
+  // PHRASES in utils/chatbot.js.
+  const lastIntentId = useRef(null);
   // Read inside the reply timeout to check the *current* open state, since
   // the closure captures whatever `open` was when send() was called, not
   // whatever it is by the time the delayed reply actually arrives.
@@ -312,7 +318,8 @@ export default function ChatWidget() {
     setTyping(true);
     clearTimeout(replyTimer.current);
     replyTimer.current = setTimeout(() => {
-      const res = getBotResponse(text);
+      const res = getBotResponse(text, { lastId: lastIntentId.current });
+      lastIntentId.current = res.id;
       setTyping(false);
       setMessages((m) => [
         ...m,
@@ -375,7 +382,13 @@ export default function ChatWidget() {
                     </div>
                   )}
                 </div>
-                {msg.showSuggestions && (
+                {/* Only the most recent bot message ever shows its suggestion
+                    chips — without this, every past fallback ("I'm not sure
+                    I have an answer...") kept its own chip row forever, so a
+                    conversation with a few unanswered questions stacked the
+                    exact same "What products do you offer?" / "How much do
+                    panels cost?" chips over and over down the transcript. */}
+                {msg.showSuggestions && i === messages.length - 1 && !typing && (
                   <div className="hp-chat__suggestions">
                     {SUGGESTED_QUESTIONS.map((q) => (
                       <button
