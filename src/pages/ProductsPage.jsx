@@ -95,8 +95,8 @@ function productMatchesQuery(product, query) {
   return words.every((word) => textMatchesWord(searchableText, word));
 }
 
-// Subtle cursor-tracked 3D tilt + glare. Ancestor `.hp-products-grid`
-// supplies the perspective; this just drives the per-card CSS variables.
+// Subtle cursor-tracked 3D tilt. Ancestor `.hp-products-grid` supplies the
+// perspective; this just drives the per-card CSS variables.
 function handleCardMouseMove(e) {
   if (window.matchMedia("(hover: none)").matches) return;
   const card = e.currentTarget;
@@ -105,8 +105,6 @@ function handleCardMouseMove(e) {
   const py = (e.clientY - rect.top) / rect.height;
   card.style.setProperty("--tilt-x", `${(0.5 - py) * 12}deg`);
   card.style.setProperty("--tilt-y", `${(px - 0.5) * 12}deg`);
-  card.style.setProperty("--glare-x", `${px * 100}%`);
-  card.style.setProperty("--glare-y", `${py * 100}%`);
 }
 
 function handleCardMouseLeave(e) {
@@ -142,7 +140,6 @@ function ProductCard({ product, hidden, showCategory, onOpen }) {
           decoding="async"
         />
       </div>
-      <div className="hp-product-card__glare" aria-hidden="true" />
       <div className="hp-product-card__body">
         <span className="hp-product-card__spec">
           {showCategory ? `${product.categoryName} · ${product.spec}` : product.spec}

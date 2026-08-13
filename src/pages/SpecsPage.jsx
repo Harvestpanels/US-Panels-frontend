@@ -603,7 +603,7 @@ export default function SpecsPage() {
             <h2 className="hp-anim-item" onAnimationEnd={clearAnimOnEnd}>Span, weight &amp; tolerance charts</h2>
             <p className="hp-panel-section__desc hp-anim-item" onAnimationEnd={clearAnimOnEnd}>
               Full engineering reference data for steel sheets 24/26 gauge,
-              4â…" bearing, across every panel thickness we offer.
+              4⅜" bearing, across every panel thickness we offer.
             </p>
 
             <p className="hp-specs-subheading hp-anim-item" onAnimationEnd={clearAnimOnEnd}>External face profile</p>

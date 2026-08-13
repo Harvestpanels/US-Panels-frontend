@@ -771,14 +771,14 @@
     top: 0;
     right: 0;
     bottom: 0;
-    /* Wider and considerably stronger than the first attempt (28px /
-       0.14 navy) — that was too faint over the light frosted card to
-       actually read as a "more columns off-screen" cue, defeating its
-       whole purpose. 40px and a 0.34 navy end-stop makes the fade
-       plainly visible while still fading fully to transparent on the
-       left so it never looks like a hard border. */
-    width: 40px;
-    background: linear-gradient(to right, transparent, rgba(var(--hp-navy-rgb), 0.34));
+    /* Softer and narrower than an earlier version (40px / flat 0.34 navy
+       end-stop) — with several of these tables stacked close together on
+       this page, that stronger flat fade read as one heavy, continuous
+       dark bar running down the whole card instead of a subtle per-table
+       "more columns" cue. A gentler mid-stop keeps the taper smooth
+       instead of ending abruptly at a visibly darker edge. */
+    width: 28px;
+    background: linear-gradient(to right, transparent, rgba(var(--hp-navy-rgb), 0.1) 60%, rgba(var(--hp-navy-rgb), 0.16));
     pointer-events: none;
   }
 }

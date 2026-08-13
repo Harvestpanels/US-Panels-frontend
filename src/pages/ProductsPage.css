@@ -387,24 +387,6 @@
   display: none;
 }
 
-.hp-product-card__glare {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  background: radial-gradient(
-    circle at var(--glare-x, 50%) var(--glare-y, 50%),
-    rgba(255, 255, 255, 0.35),
-    transparent 55%
-  );
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.hp-product-card:hover .hp-product-card__glare {
-  opacity: 1;
-}
-
 .hp-product-card__body {
   padding: 18px 20px 22px;
 }
