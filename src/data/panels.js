@@ -10,9 +10,9 @@ import dataCenterBenefitsImg from "../assets/images/Sections/Data Centers/Data C
 import coldStorageExteriorImg from "../assets/images/Sections/Cold Storage/Cold Storage - Exterior Panels.webp";
 import coldStorageInteriorImg from "../assets/images/Sections/Cold Storage/Cold Storage - Interior Panels.webp";
 import coldStorageBenefitsImg from "../assets/images/Sections/Cold Storage/Cold Storage - Benefits.webp";
-import pharmaceuticalExteriorImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical1 - 1.png";
-import pharmaceuticalWallSystemsImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical2 - 1.png";
-import pharmaceuticalBenefitsImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical3 - 1.png";
+import pharmaceuticalExteriorImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical1 - 1.webp";
+import pharmaceuticalWallSystemsImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical2 - 1.webp";
+import pharmaceuticalBenefitsImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical3 - 1.webp";
 import pembFrameStructureImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Frame & Structure.webp";
 import pembWallRoofImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Wall & Roof Panels.webp";
 import pembCustomOptionsImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Custom Options.webp";
