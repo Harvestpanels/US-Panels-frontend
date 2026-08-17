@@ -8,6 +8,7 @@ import {
   DOOR_PANELS,
   GALLERY_IMAGES,
   PEMB_PANELS,
+  PHARMACEUTICAL_PANELS,
   ROOF_PANELS,
   TRIM_HARDWARE_PANELS,
 } from "../data/panels";
@@ -52,6 +53,7 @@ const OVERVIEW_SECTIONS = [
   { id: "exterior", label: "Roof Panels" },
   { id: "data-center", label: "Data Centers" },
   { id: "cold-storage", label: "Cold Storage" },
+  { id: "pharmaceutical", label: "Pharmaceutical" },
   { id: "pemb", label: "Pre-Engineered Metal Buildings" },
   { id: "doors", label: "Doors" },
   { id: "trim-hardware", label: "Trim & Hardware" },
@@ -174,6 +176,14 @@ function HomePage() {
         heading="Insulated panels for cold storage facilities"
         description="Exterior and interior panel systems engineered to hold a consistent thermal envelope for refrigerated and frozen storage."
         panels={COLD_STORAGE_PANELS}
+        registerReveal={registerReveal}
+      />
+      <PanelSection
+        id="pharmaceutical"
+        eyebrow="Pharmaceutical industry"
+        heading="Insulated panels for pharmaceutical facilities"
+        description="Sanitary, temperature-controlled panel systems engineered for GMP-compliant pharmaceutical manufacturing, cleanrooms, and storage environments."
+        panels={PHARMACEUTICAL_PANELS}
         registerReveal={registerReveal}
       />
       <PanelSection

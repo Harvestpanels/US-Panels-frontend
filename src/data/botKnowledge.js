@@ -206,8 +206,9 @@ export const BOT_INTENTS = [
       "data center", "data centers", "cold storage", "cold room", "refrigeration", "freezer",
       "pre engineered", "pre-engineered", "pemb", "metal building", "clean room", "cleanroom",
       "industrial building", "commercial building", "residential", "what industries",
+      "pharmaceutical", "pharma", "gmp", "drug manufacturing",
     ],
-    answer: "We work across a wide range of building types: data centers, cold storage & refrigeration facilities, pre-engineered metal buildings, and industrial, commercial, and residential construction. Each has its own recommended panel specs (fire rating, insulation, and finish), our team can match one to your project.",
+    answer: "We work across a wide range of building types: data centers, cold storage & refrigeration facilities, pharmaceutical manufacturing & cleanrooms, pre-engineered metal buildings, and industrial, commercial, and residential construction. Each has its own recommended panel specs (fire rating, insulation, and finish), our team can match one to your project.",
     links: [{ label: "See building types", href: "/#panels" }],
   },
   {

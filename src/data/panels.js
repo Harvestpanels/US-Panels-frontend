@@ -10,6 +10,9 @@ import dataCenterBenefitsImg from "../assets/images/Sections/Data Centers/Data C
 import coldStorageExteriorImg from "../assets/images/Sections/Cold Storage/Cold Storage - Exterior Panels.webp";
 import coldStorageInteriorImg from "../assets/images/Sections/Cold Storage/Cold Storage - Interior Panels.webp";
 import coldStorageBenefitsImg from "../assets/images/Sections/Cold Storage/Cold Storage - Benefits.webp";
+import pharmaceuticalExteriorImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical1 - 1.png";
+import pharmaceuticalWallSystemsImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical2 - 1.png";
+import pharmaceuticalBenefitsImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical3 - 1.png";
 import pembFrameStructureImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Frame & Structure.webp";
 import pembWallRoofImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Wall & Roof Panels.webp";
 import pembCustomOptionsImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Custom Options.webp";
@@ -245,6 +248,27 @@ export const COLD_STORAGE_PANELS = [
     category: "Cold Storage",
     desc: "Superior insulation values, moisture resistance, and low-maintenance surfaces keep cold storage facilities efficient year-round.",
     img: coldStorageBenefitsImg,
+  },
+];
+
+export const PHARMACEUTICAL_PANELS = [
+  {
+    name: "Exterior Panels",
+    category: "Pharmaceutical",
+    desc: "Heavy-duty insulated exterior panels forming a controlled, weather-tight envelope, engineered to integrate cleanly with the rooftop mechanical and HVAC systems pharmaceutical manufacturing depends on.",
+    img: pharmaceuticalExteriorImg,
+  },
+  {
+    name: "Exterior Wall Systems",
+    category: "Pharmaceutical",
+    desc: "Continuous insulated wall systems that hold a tight, consistent thermal envelope across large pharmaceutical manufacturing and storage buildings, resisting moisture and temperature swings year-round.",
+    img: pharmaceuticalWallSystemsImg,
+  },
+  {
+    name: "Benefits",
+    category: "Pharmaceutical",
+    desc: "Consistent temperature and humidity control, seamless sanitary surfaces, and fast installation keep pharmaceutical facilities compliant and production-ready.",
+    img: pharmaceuticalBenefitsImg,
   },
 ];
 
