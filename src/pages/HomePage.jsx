@@ -2,11 +2,13 @@ import { useState } from "react";
 import "../styles/App.css";
 import logo from "../assets/images/General/us-panels-logo.webp";
 import {
+  AIRPLANE_HANGARS_PANELS,
   BUILDING_ENVELOPE_PANELS,
   COLD_STORAGE_PANELS,
   DATA_CENTER_PANELS,
   DOOR_PANELS,
   GALLERY_IMAGES,
+  LABORATORIES_PANELS,
   PEMB_PANELS,
   PHARMACEUTICAL_PANELS,
   ROOF_PANELS,
@@ -54,6 +56,8 @@ const OVERVIEW_SECTIONS = [
   { id: "data-center", label: "Data Centers" },
   { id: "cold-storage", label: "Cold Storage" },
   { id: "pharmaceutical", label: "Pharmaceutical" },
+  { id: "laboratories", label: "Laboratories" },
+  { id: "airplane-hangars", label: "Airplane Hangars" },
   { id: "pemb", label: "Pre-Engineered Metal Buildings" },
   { id: "doors", label: "Doors" },
   { id: "trim-hardware", label: "Trim & Hardware" },
@@ -184,6 +188,22 @@ function HomePage() {
         heading="Insulated panels for pharmaceutical facilities"
         description="Sanitary, temperature-controlled panel systems engineered for GMP-compliant pharmaceutical manufacturing, cleanrooms, and storage environments."
         panels={PHARMACEUTICAL_PANELS}
+        registerReveal={registerReveal}
+      />
+      <PanelSection
+        id="laboratories"
+        eyebrow="Laboratories"
+        heading="Insulated panels for laboratory facilities"
+        description="Precision-controlled panel systems engineered for research and testing laboratories, holding tight temperature, humidity, and contamination tolerances."
+        panels={LABORATORIES_PANELS}
+        registerReveal={registerReveal}
+      />
+      <PanelSection
+        id="airplane-hangars"
+        eyebrow="Airplane hangars"
+        heading="Insulated panels for airplane hangar facilities"
+        description="Long-span insulated panel systems built for the scale of aviation hangars, covering wide clear spans while holding a consistent, weather-tight envelope."
+        panels={AIRPLANE_HANGARS_PANELS}
         registerReveal={registerReveal}
       />
       <PanelSection

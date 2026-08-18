@@ -13,6 +13,12 @@ import coldStorageBenefitsImg from "../assets/images/Sections/Cold Storage/Cold 
 import pharmaceuticalExteriorImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical1 - 1.webp";
 import pharmaceuticalWallSystemsImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical2 - 1.webp";
 import pharmaceuticalBenefitsImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical3 - 1.webp";
+import laboratoriesExteriorImg from "../assets/images/Sections/Laboratories/AI Photo - Laboratories1 - 1.webp";
+import laboratoriesWallSystemsImg from "../assets/images/Sections/Laboratories/AI Photo - Laboratories2 - 1.webp";
+import laboratoriesBenefitsImg from "../assets/images/Sections/Laboratories/AI Photo - Laboratories3 - 1.webp";
+import airplaneHangarsExteriorImg from "../assets/images/Sections/Airplane Hangars/AI Photo - Airplane Hangars1 - 1.webp";
+import airplaneHangarsWallSystemsImg from "../assets/images/Sections/Airplane Hangars/AI Photo - Airplane Hangars3 - 1.webp";
+import airplaneHangarsBenefitsImg from "../assets/images/Sections/Airplane Hangars/AI Photo - Airplane Hangars2 - 1.webp";
 import pembFrameStructureImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Frame & Structure.webp";
 import pembWallRoofImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Wall & Roof Panels.webp";
 import pembCustomOptionsImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Custom Options.webp";
@@ -269,6 +275,48 @@ export const PHARMACEUTICAL_PANELS = [
     category: "Pharmaceutical",
     desc: "Consistent temperature and humidity control, seamless sanitary surfaces, and fast installation keep pharmaceutical facilities compliant and production-ready.",
     img: pharmaceuticalBenefitsImg,
+  },
+];
+
+export const LABORATORIES_PANELS = [
+  {
+    name: "Exterior Panels",
+    category: "Laboratories",
+    desc: "Heavy-duty insulated exterior panels forming a secure, weather-tight envelope engineered to hold the tight environmental tolerances laboratory research and testing require.",
+    img: laboratoriesExteriorImg,
+  },
+  {
+    name: "Exterior Wall Systems",
+    category: "Laboratories",
+    desc: "Continuous insulated wall systems that hold a tight, consistent thermal envelope across laboratory buildings, engineered to integrate cleanly with rooftop mechanical and HVAC equipment.",
+    img: laboratoriesWallSystemsImg,
+  },
+  {
+    name: "Benefits",
+    category: "Laboratories",
+    desc: "Precise temperature and humidity control, seamless sanitary surfaces, and fast installation keep laboratory facilities compliant and research-ready.",
+    img: laboratoriesBenefitsImg,
+  },
+];
+
+export const AIRPLANE_HANGARS_PANELS = [
+  {
+    name: "Exterior Panels",
+    category: "Airplane Hangars",
+    desc: "Heavy-duty, long-span insulated exterior panels clad large-format hangar structures with wide clear-span bay door openings, holding a tight, weather-tight envelope for the aircraft inside.",
+    img: airplaneHangarsExteriorImg,
+  },
+  {
+    name: "Exterior Wall Systems",
+    category: "Airplane Hangars",
+    desc: "Continuous insulated wall systems engineered to span the full height and length of a hangar's exterior, holding a tight thermal envelope while standing up to heavy equipment traffic and daily wear.",
+    img: airplaneHangarsWallSystemsImg,
+  },
+  {
+    name: "Benefits",
+    category: "Airplane Hangars",
+    desc: "Wide clear-span coverage, consistent climate control, and low-maintenance surfaces keep hangar facilities operational and protected year-round.",
+    img: airplaneHangarsBenefitsImg,
   },
 ];
 
