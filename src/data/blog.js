@@ -1,8 +1,8 @@
 import facilityImg from "../assets/images/General/US Panels Facility2.webp";
-import flatProfileImg from "../assets/images/Sections/Panel Profiles/Flat Panel Profile.webp";
+import industrialBuildingImg from "../assets/images/Sections/Building Envelope/Industrial.webp";
 import coldStorageImg from "../assets/images/Sections/Cold Storage/Cold Storage - Exterior Panels.webp";
 import photoGalleryImg from "../assets/images/Sections/Photo Gallery/PG5.webp";
-import embossedProfileImg from "../assets/images/Sections/Panel Profiles/Embossed Panel Profile.webp";
+import commercialBuildingImg from "../assets/images/Sections/Building Envelope/Commercial.webp";
 import pebWallRoofImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Wall & Roof Panels.webp";
 
 // Placeholder editorial content for the Blog page — no CMS/backend exists
@@ -25,7 +25,7 @@ export const BLOG_POSTS = [
     title: "Choosing the Right Core: PIR vs. PUR vs. Mineral Wool",
     date: "2026-05-18",
     excerpt: "A breakdown of how each foam core performs on fire rating, thermal efficiency, and cost, so you can match the right one to your project's requirements.",
-    image: flatProfileImg,
+    image: industrialBuildingImg,
   },
   {
     category: "Case Study",
@@ -46,7 +46,7 @@ export const BLOG_POSTS = [
     title: "New Embossed Panel Finish Now Available",
     date: "2026-03-21",
     excerpt: "A textured, imperfection-hiding finish joins our standard Box and Flat face profiles, now available across the full panel lineup.",
-    image: embossedProfileImg,
+    image: commercialBuildingImg,
   },
   {
     category: "Case Study",

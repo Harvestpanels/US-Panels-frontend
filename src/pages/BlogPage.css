@@ -155,8 +155,8 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--hp-red);
-  background: rgba(var(--hp-red-rgb), 0.1);
+  color: var(--hp-cream);
+  background: var(--hp-red);
   border-radius: 999px;
   padding: 4px 12px;
   margin-bottom: 14px;
