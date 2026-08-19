@@ -210,26 +210,13 @@
   color: var(--hp-navy);
   font-size: 14px;
   font-weight: 700;
-  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
-}
-
-@media (hover: hover) {
-  .hp-specs-profile-pill:hover {
-    border-color: rgba(var(--hp-navy-rgb), 0.35);
-    transform: translateY(-1px);
-  }
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
 .hp-specs-profile-pill.is-selected {
   background: var(--hp-red);
   border-color: var(--hp-red);
   color: var(--hp-cream);
-}
-
-@media (hover: hover) {
-  .hp-specs-profile-pill.is-selected:hover {
-    transform: translateY(-1px);
-  }
 }
 
 .hp-specs-profile-desc {
