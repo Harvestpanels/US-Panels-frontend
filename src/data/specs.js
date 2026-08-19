@@ -8,6 +8,10 @@ import pureOrangeImg from "../assets/images/Color Palette/Pure Orange.webp";
 import signalGreenImg from "../assets/images/Color Palette/Signal Green.webp";
 import whiteAluminumImg from "../assets/images/Color Palette/White Aluminum.webp";
 import whiteImg from "../assets/images/Color Palette/White.webp";
+import flatProfileImg from "../assets/images/Sections/Panel Profiles/Flat Panel Profile.webp";
+import boxProfileImg from "../assets/images/Sections/Panel Profiles/Box Panel Profile.webp";
+import trapezoidalProfileImg from "../assets/images/Sections/Panel Profiles/Trapezoidal Panel Profile.webp";
+import embossedProfileImg from "../assets/images/Sections/Panel Profiles/Embossed Panel Profile.webp";
 
 // Each swatch's `hex` is only the small chip color — `img` is the real
 // panel photo in that finish (see the Color Palette folder), shown full
@@ -155,6 +159,20 @@ export const FACE_PROFILES = [
   { name: "Box", desc: "Flat pans separated by narrow ribs, the cleanest, most contemporary look." },
   { name: "Wave", desc: "Continuous rounded corrugations for added stiffness and a classic industrial profile." },
   { name: "Flat", desc: "A smooth, unribbed face for the most minimal, monolithic appearance." },
+];
+
+// Standard panel face profiles, shown near the top of the Specs page
+// alongside the construction-efficiency pitch — a separate, more prominent
+// listing than FACE_PROFILES above (which lives further down inside the
+// Engineering Data section's own external-face-profile subsection). Each
+// carries a real photo (see PanelSection-style img imports in
+// SpecsPage.jsx) shown in a live preview pane that swaps when its pill is
+// selected, the same interaction pattern COLOR_PALETTE already uses below.
+export const PANEL_PROFILES = [
+  { name: "Flat", desc: "A smooth, unribbed face for the most minimal, monolithic appearance.", img: flatProfileImg },
+  { name: "Box", desc: "Flat pans separated by narrow ribs, the cleanest, most contemporary look.", img: boxProfileImg },
+  { name: "Trapezoidal", desc: "Repeating angular ribs for a bold, structured profile with added rigidity, common on exterior wall and roof panels.", img: trapezoidalProfileImg },
+  { name: "Embossed", desc: "A subtle textured stucco finish that hides minor surface imperfections and reduces the appearance of oil-canning.", img: embossedProfileImg },
 ];
 
 // Every column these engineering tables share — panel nominal thickness,

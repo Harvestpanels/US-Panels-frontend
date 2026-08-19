@@ -201,6 +201,15 @@ export const BOT_INTENTS = [
     links: [{ label: "View photo gallery", href: "/#gallery" }, { label: "Preview color finishes", href: "/specs#colors" }],
   },
   {
+    id: "blog",
+    keywords: [
+      "blog", "news", "articles", "read more", "testimonials", "reviews", "customer reviews",
+      "case studies", "case study", "company news", "latest news",
+    ],
+    answer: "Yes, our Blog has company news, industry insights, project case studies, and customer testimonials, all in one place.",
+    links: [{ label: "Visit the blog", href: "/blog" }],
+  },
+  {
     id: "market-segments",
     keywords: [
       "data center", "data centers", "cold storage", "cold room", "refrigeration", "freezer",
@@ -208,8 +217,10 @@ export const BOT_INTENTS = [
       "industrial building", "commercial building", "residential", "what industries",
       "pharmaceutical", "pharma", "gmp", "drug manufacturing", "laboratory", "laboratories", "research lab", "testing lab",
       "airplane hangar", "airplane hangars", "hangar", "hangars", "aviation", "aircraft storage",
+      "prefabricated house", "prefabricated houses", "prefab house", "prefab housing", "modular housing",
+      "modular home", "sip panels", "structural insulated panels", "affordable housing", "disaster relief housing",
     ],
-    answer: "We work across a wide range of building types: data centers, cold storage & refrigeration facilities, pharmaceutical manufacturing & cleanrooms, research and testing laboratories, airplane hangars, pre-engineered metal buildings, and industrial, commercial, and residential construction. Each has its own recommended panel specs (fire rating, insulation, and finish), our team can match one to your project.",
+    answer: "We work across a wide range of building types: data centers, cold storage & refrigeration facilities, pharmaceutical manufacturing & cleanrooms, research and testing laboratories, airplane hangars, pre-engineered metal buildings, prefabricated & modular housing, and industrial, commercial, and residential construction. Each has its own recommended panel specs (fire rating, insulation, and finish), our team can match one to your project.",
     links: [{ label: "See building types", href: "/#panels" }],
   },
   {

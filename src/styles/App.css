@@ -338,7 +338,7 @@ h3 {
 /* Every home-page section: eyebrow scaled up to read as a huge red
    sub-headline (originally just the panel sections — Building Envelope,
    Roof Panels, Data Center, Cold Storage, Pharmaceutical, Laboratories,
-   Airplane Hangars, PEMB, Doors, Trim & Hardware —
+   Airplane Hangars, PEMB, Prefabricated Houses, Doors, Trim & Hardware —
    now applied site-wide to Who We Are/Sustainability/Gallery/Memberships/
    FAQ/Contact too, for one consistent look across the whole page instead
    of two different heading styles). */
@@ -350,6 +350,7 @@ h3 {
 #laboratories .hp-section__eyebrow,
 #airplane-hangars .hp-section__eyebrow,
 #pemb .hp-section__eyebrow,
+#prefabricated-houses .hp-section__eyebrow,
 #doors .hp-section__eyebrow,
 #trim-hardware .hp-section__eyebrow,
 #why .hp-section__eyebrow,
@@ -358,13 +359,17 @@ h3 {
 #memberships .hp-section__eyebrow,
 #faq .hp-section__eyebrow,
 #contact .hp-section__eyebrow,
+#social-media .hp-section__eyebrow,
 #efficiency .hp-section__eyebrow,
+#profiles .hp-section__eyebrow,
 #colors .hp-section__eyebrow,
 #foam-core .hp-section__eyebrow,
 #certifications .hp-section__eyebrow,
 #structural .hp-section__eyebrow,
 #engineering .hp-section__eyebrow,
-#production-video .hp-section__eyebrow {
+#production-video .hp-section__eyebrow,
+#posts .hp-section__eyebrow,
+#testimonials .hp-section__eyebrow {
   font-family: "Big Shoulders Display", sans-serif;
   font-size: clamp(32px, 5vw, 52px);
   font-weight: 800;
@@ -383,6 +388,7 @@ h3 {
 #laboratories h2,
 #airplane-hangars h2,
 #pemb h2,
+#prefabricated-houses h2,
 #doors h2,
 #trim-hardware h2,
 #why h2,
@@ -391,13 +397,17 @@ h3 {
 #memberships h2,
 #faq h2,
 #contact h2,
+#social-media h2,
 #efficiency h2,
+#profiles h2,
 #colors h2,
 #foam-core h2,
 #certifications h2,
 #structural h2,
 #engineering h2,
-#production-video h2 {
+#production-video h2,
+#posts h2,
+#testimonials h2 {
   font-size: clamp(20px, 2.5vw, 26px);
 }
 

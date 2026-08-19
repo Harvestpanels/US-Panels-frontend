@@ -17,6 +17,7 @@ import {
   FOAM_INFO,
   OVERLOAD_WHEELBASE_TABLES,
   PANEL_FEATURES,
+  PANEL_PROFILES,
   PANEL_WEIGHT,
   PERFORMANCE_HIGHLIGHTS,
   STRUCTURAL_SPECS,
@@ -29,22 +30,25 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useScrollSpy } from "../hooks/useScrollSpy";
 import { useToast } from "../hooks/useToast";
-import { scrollCenter, scrollToTop } from "../utils/scroll";
+import { scrollCenter } from "../utils/scroll";
 import Nav from "../components/Nav";
 import Faq from "../components/Faq";
 import Contact from "../components/Contact";
+import SocialMedia from "../components/SocialMedia";
 import Footer from "../components/Footer";
 import Lightbox from "../components/Lightbox";
 import Toast from "../components/Toast";
 
 // Plain top-level nav links, matching the pattern every other page's own
 // nav config uses (see HOME_TOP_LINKS in HomePage.jsx, productsTopLinks in
-// ProductsPage.jsx) — "Specs" scrolls to top rather than navigating, since
-// this page already is /specs.
+// ProductsPage.jsx). No plain "Specs" entry here, unlike Home's/Products'
+// own "Specs" link — on THIS page, that slot is the "Specs" dropdown below
+// (see specsNavDropdowns) instead of a second, redundant link that would
+// have just scrolled to the top of the page you're already on.
 const specsLinks = [
   { to: "/", label: "Home" },
+  { to: "/blog", label: "Blog" },
   { to: "/products", label: "Products" },
-  { id: "specs-top", label: "Specs", onClick: scrollToTop },
 ];
 
 // Every scrollable spec section, top to bottom — Color Palette through Our
@@ -53,6 +57,7 @@ const specsLinks = [
 // ProductsPage.jsx.
 const SPECS_SECTIONS = [
   { id: "efficiency", label: "Efficiency" },
+  { id: "profiles", label: "Profiles" },
   { id: "colors", label: "Color Palette" },
   { id: "foam-core", label: "Panel Foam" },
   { id: "certifications", label: "Certifications" },
@@ -61,7 +66,7 @@ const SPECS_SECTIONS = [
   { id: "production-video", label: "Our Process" },
 ];
 
-const SPECS_SCROLL_SPY_IDS = [...SPECS_SECTIONS.map((s) => s.id), "faq", "contact"];
+const SPECS_SCROLL_SPY_IDS = [...SPECS_SECTIONS.map((s) => s.id), "faq", "contact", "social-media"];
 
 // Once the entrance animation finishes, swap it for a plain "done" class
 // that holds the final opacity — same handler as ProductsPage.jsx's own
@@ -199,6 +204,8 @@ export default function SpecsPage() {
   const activeSectionId = useScrollSpy(SPECS_SCROLL_SPY_IDS);
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const colorLightbox = useLightbox(COLOR_PALETTE.length);
+  const [selectedProfileIndex, setSelectedProfileIndex] = useState(0);
+  const profileLightbox = useLightbox(PANEL_PROFILES.length);
   const [activeCertIndex, setActiveCertIndex] = useState(null);
 
   // Same scroll-scrubbed background video technique the Home and Products
@@ -374,15 +381,17 @@ export default function SpecsPage() {
     });
   }, []);
 
-  // Same collapsed-dropdown pattern as the Products/Home nav — a "Sections"
-  // popover grouping every spec section (Color Palette through Our
-  // Process) and an "Inquiry" popover for FAQ/Contact Us — instead of a
-  // long flat row of links. Mobile still uses the flat `specsLinks` list
-  // above.
+  // Same collapsed-dropdown pattern as the Products/Home nav, except this
+  // first one is labeled "Specs" rather than "Sections"/"Categories" — on
+  // Home/Products, "Specs" is a plain link over to this page; here, since
+  // the visitor is already on it, that same nav slot instead opens this
+  // popover of every spec section (Color Palette through Our Process). An
+  // "Inquiry" popover covers FAQ/Contact Us/Follow Us the same way.
+  // Mobile still uses the flat `specsLinks` list above for Home/Products.
   const specsNavDropdowns = [
     {
       key: "sections",
-      label: "Class",
+      label: "Specs",
       items: SPECS_SECTIONS.map((section) => ({
         label: section.label,
         onClick: () => scrollCenter(section.id),
@@ -395,6 +404,7 @@ export default function SpecsPage() {
       items: [
         { label: "FAQ", onClick: () => scrollCenter("faq"), active: activeSectionId === "faq" },
         { label: "Contact Us", onClick: () => scrollCenter("contact"), active: activeSectionId === "contact" },
+        { label: "Follow Us", onClick: () => scrollCenter("social-media"), active: activeSectionId === "social-media" },
       ],
     },
   ];
@@ -454,6 +464,59 @@ export default function SpecsPage() {
               ))}
             </ul>
             <p className="hp-specs-note hp-anim-item" onAnimationEnd={clearAnimOnEnd}>{CONSTRUCTION_EFFICIENCY.note}</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="hp-section" id="profiles">
+        <div className="hp-section__inner">
+          <div className="hp-glass">
+            <p className="hp-section__eyebrow hp-anim-item" onAnimationEnd={clearAnimOnEnd}>Profiles</p>
+            <h2 className="hp-anim-item" onAnimationEnd={clearAnimOnEnd}>Panel face profiles</h2>
+            <p className="hp-panel-section__desc hp-anim-item" onAnimationEnd={clearAnimOnEnd}>
+              Four standard face profiles to match the look of any project, select
+              one to preview it on an actual panel.
+            </p>
+            <div
+              className="hp-specs-profile-pills hp-anim-item" onAnimationEnd={clearAnimOnEnd}
+              role="group"
+              aria-label="Panel face profiles"
+            >
+              {PANEL_PROFILES.map((profile, i) => (
+                <button
+                  type="button"
+                  key={profile.name}
+                  className={`hp-specs-profile-pill${i === selectedProfileIndex ? " is-selected" : ""}`}
+                  onClick={() => setSelectedProfileIndex(i)}
+                  aria-pressed={i === selectedProfileIndex}
+                >
+                  {profile.name}
+                </button>
+              ))}
+            </div>
+            <p className="hp-specs-profile-desc hp-anim-item" onAnimationEnd={clearAnimOnEnd}>
+              {PANEL_PROFILES[selectedProfileIndex].desc}
+            </p>
+            <button
+              type="button"
+              className="hp-specs-profile-preview hp-anim-item" onAnimationEnd={clearAnimOnEnd}
+              onClick={() => profileLightbox.openLightbox(selectedProfileIndex)}
+              aria-label={`View ${PANEL_PROFILES[selectedProfileIndex].name} profile full screen`}
+            >
+              {PANEL_PROFILES.map((profile, i) => (
+                <img
+                  key={profile.name}
+                  src={profile.img}
+                  alt={`${profile.name} panel face profile`}
+                  className={`hp-specs-profile-preview__img${i === selectedProfileIndex ? " is-active" : ""}`}
+                  loading={i === 0 ? "eager" : "lazy"}
+                />
+              ))}
+              <span className="hp-specs-profile-preview__label">{PANEL_PROFILES[selectedProfileIndex].name}</span>
+              <span className="hp-specs-profile-preview__zoom" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M20 20l-4.5-4.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
+              </span>
+            </button>
           </div>
         </div>
       </section>
@@ -720,6 +783,8 @@ export default function SpecsPage() {
 
       <Contact registerReveal={registerReveal} onToast={setToast} />
 
+      <SocialMedia registerReveal={registerReveal} />
+
       <Footer logo={logo} />
 
       <Toast toast={toast} onClose={() => setToast(null)} />
@@ -736,6 +801,21 @@ export default function SpecsPage() {
           onClose={colorLightbox.closeLightbox}
           onNext={colorLightbox.lightboxNext}
           onPrev={colorLightbox.lightboxPrev}
+        />
+      )}
+
+      {profileLightbox.lightboxOpen && (
+        <Lightbox
+          images={PANEL_PROFILES.map((profile) => ({
+            src: profile.img,
+            title: profile.name,
+            category: "Panel face profile",
+            desc: profile.desc,
+          }))}
+          index={profileLightbox.lightboxIndex}
+          onClose={profileLightbox.closeLightbox}
+          onNext={profileLightbox.lightboxNext}
+          onPrev={profileLightbox.lightboxPrev}
         />
       )}
     </div>

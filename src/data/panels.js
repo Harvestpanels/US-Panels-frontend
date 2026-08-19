@@ -22,6 +22,9 @@ import airplaneHangarsBenefitsImg from "../assets/images/Sections/Airplane Hanga
 import pembFrameStructureImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Frame & Structure.webp";
 import pembWallRoofImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Wall & Roof Panels.webp";
 import pembCustomOptionsImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Custom Options.webp";
+import prefabModularHousingImg from "../assets/images/Sections/Prefabricated Houses/AI Photo - Pre-Fabricated House1 - 1.webp";
+import prefabStructuralPanelsImg from "../assets/images/Sections/Prefabricated Houses/AI Photo - Pre-Fabricated House2 - 1.webp";
+import prefabAffordableHousingImg from "../assets/images/Sections/Prefabricated Houses/AI Photo - Pre-Fabricated House3 - 1.webp";
 import hingeCoolerDoorImg from "../assets/images/Sections/Doors/Doors - Hinge Cooler Doors.webp";
 import metalDoorImg from "../assets/images/Sections/Doors/Doors - Metal Doors.webp";
 import slidingCoolerDoorImg from "../assets/images/Sections/Doors/Doors - Sliding Cooler Doors.webp";
@@ -338,6 +341,27 @@ export const PEMB_PANELS = [
     category: "Metal Building",
     desc: "Custom sizes, designs, and color options let every pre-engineered building match the look and footprint your project needs.",
     img: pembCustomOptionsImg,
+  },
+];
+
+export const PREFABRICATED_HOUSES_PANELS = [
+  {
+    name: "Modular Housing",
+    category: "Prefabricated Houses",
+    desc: "Factory-built multi-unit modular buildings assembled off-site for consistent quality, cutting the on-site construction time of a traditional multi-story build.",
+    img: prefabModularHousingImg,
+  },
+  {
+    name: "Structural Insulated Panels",
+    category: "Prefabricated Houses",
+    desc: "SIP wall and roof panels combine framing and insulation in one component, delivering a strong, energy-efficient envelope with fewer parts to install.",
+    img: prefabStructuralPanelsImg,
+  },
+  {
+    name: "Affordable Housing",
+    category: "Prefabricated Houses",
+    desc: "Fast, low-cost multi-unit housing for disaster relief, workforce housing, and affordable development, deployable quickly wherever it's needed most.",
+    img: prefabAffordableHousingImg,
   },
 ];
 

@@ -179,6 +179,155 @@
   #foam-core .hp-card { cursor: pointer; }
 }
 
+/* ===================== PANEL PROFILES (pill selector) ===================== */
+/* A row of pills plus a single live photo preview below — same
+   select-to-crossfade interaction as the Color Palette section right below
+   this one (swatches + one shared preview pane), just simplified to a
+   single row instead of a grid: these are 4 plain text options, not colors
+   needing their own visual chip, so a full swatch-grid layout would have
+   been a lot of empty chrome for four short labels. */
+.hp-specs-profile-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  /* 32px, matching the intro-paragraph-to-content spacing every other
+     section on THIS page uses (.hp-specs-color-layout, .hp-specs-cert-list,
+     .hp-specs-table, .hp-specs-video — see the comment on
+     .hp-specs-color-layout) — not the site-wide 24px other pages'
+     components use, which would have been a one-off mismatch here. */
+  margin-top: 32px;
+}
+
+.hp-specs-profile-pill {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  cursor: pointer;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.16);
+  background: rgba(var(--hp-navy-rgb), 0.05);
+  color: var(--hp-navy);
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, transform 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+
+@media (hover: hover) {
+  .hp-specs-profile-pill:hover {
+    border-color: rgba(var(--hp-navy-rgb), 0.35);
+    transform: translateY(-1px);
+  }
+}
+
+.hp-specs-profile-pill.is-selected {
+  background: var(--hp-red);
+  border-color: var(--hp-red);
+  color: var(--hp-cream);
+}
+
+@media (hover: hover) {
+  .hp-specs-profile-pill.is-selected:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.hp-specs-profile-desc {
+  margin: 14px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(var(--hp-navy-rgb), 0.72);
+  max-width: 640px;
+  /* Reserves room for the longest description (2 lines at this width) —
+     without it, switching to a shorter one-line description (e.g. "Flat")
+     shrank this element down, pulling the preview photo up with it and
+     visibly resizing the whole section on every pill click instead of
+     just swapping the text/photo in place. */
+  min-height: 3.2em;
+}
+
+.hp-specs-profile-preview {
+  display: block;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  width: 100%;
+  position: relative;
+  margin-top: 24px;
+  aspect-ratio: 2.4 / 1;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--hp-navy);
+  box-shadow: 0 24px 48px -20px rgba(var(--hp-navy-rgb), 0.4);
+}
+
+.hp-specs-profile-preview__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.03);
+  transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+}
+
+.hp-specs-profile-preview__img.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hp-specs-profile-preview__label {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(var(--hp-navy-rgb), 0.72);
+  color: var(--hp-cream);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.hp-specs-profile-preview__zoom {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(var(--hp-navy-rgb), 0.55);
+  color: var(--hp-cream);
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.hp-specs-profile-preview:hover .hp-specs-profile-preview__zoom,
+.hp-specs-profile-preview:focus-visible .hp-specs-profile-preview__zoom {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (max-width: 640px) {
+  .hp-specs-profile-preview { aspect-ratio: 4 / 3; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-specs-profile-preview__img { transition: opacity 0.2s linear; transform: none; }
+}
+
 /* ===================== COLOR PALETTE ===================== */
 /* Swatch grid on the left, live panel-photo preview on the right — picking
    a swatch crossfades the preview to that color's real panel photo (see
@@ -922,6 +1071,7 @@
    snap-back. */
 .hp-specs-hero .hp-anim-item,
 #efficiency .hp-anim-item,
+#profiles .hp-anim-item,
 #colors .hp-anim-item,
 #foam-core .hp-anim-item,
 #certifications .hp-anim-item,
@@ -934,6 +1084,7 @@
 
 .hp-specs-hero .hp-anim-item.hp-anim-done,
 #efficiency .hp-anim-item.hp-anim-done,
+#profiles .hp-anim-item.hp-anim-done,
 #colors .hp-anim-item.hp-anim-done,
 #foam-core .hp-anim-item.hp-anim-done,
 #certifications .hp-anim-item.hp-anim-done,

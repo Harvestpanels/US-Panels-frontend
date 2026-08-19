@@ -11,6 +11,7 @@ import {
   LABORATORIES_PANELS,
   PEMB_PANELS,
   PHARMACEUTICAL_PANELS,
+  PREFABRICATED_HOUSES_PANELS,
   ROOF_PANELS,
   TRIM_HARDWARE_PANELS,
 } from "../data/panels";
@@ -31,6 +32,7 @@ import Gallery from "../components/Gallery";
 import Memberships from "../components/Memberships";
 import Faq from "../components/Faq";
 import Contact from "../components/Contact";
+import SocialMedia from "../components/SocialMedia";
 import Footer from "../components/Footer";
 import Lightbox from "../components/Lightbox";
 import Toast from "../components/Toast";
@@ -39,6 +41,7 @@ import Toast from "../components/Toast";
 // to top rather than navigating (this page already is "/").
 const HOME_TOP_LINKS = [
   { id: "top", label: "Home", onClick: scrollToTop },
+  { to: "/blog", label: "Blog" },
   { to: "/products", label: "Products" },
   { to: "/specs", label: "Specs" },
 ];
@@ -59,6 +62,7 @@ const OVERVIEW_SECTIONS = [
   { id: "laboratories", label: "Laboratories" },
   { id: "airplane-hangars", label: "Airplane Hangars" },
   { id: "pemb", label: "Pre-Engineered Metal Buildings" },
+  { id: "prefabricated-houses", label: "Prefabricated Houses" },
   { id: "doors", label: "Doors" },
   { id: "trim-hardware", label: "Trim & Hardware" },
   { id: "gallery", label: "Photo Gallery" },
@@ -69,6 +73,7 @@ const OVERVIEW_SECTIONS = [
 const INQUIRY_SECTIONS = [
   { id: "faq", label: "FAQ" },
   { id: "contact", label: "Contact Us" },
+  { id: "social-media", label: "Follow Us" },
 ];
 
 const SCROLL_SPY_IDS = [...OVERVIEW_SECTIONS, ...INQUIRY_SECTIONS].map((s) => s.id);
@@ -215,6 +220,14 @@ function HomePage() {
         registerReveal={registerReveal}
       />
       <PanelSection
+        id="prefabricated-houses"
+        eyebrow="Prefabricated houses"
+        heading="Prefabricated housing solutions"
+        description="Factory-built, panelized housing systems engineered for fast deployment, energy efficiency, and reliable performance, from modular homes to disaster relief and affordable housing."
+        panels={PREFABRICATED_HOUSES_PANELS}
+        registerReveal={registerReveal}
+      />
+      <PanelSection
         id="doors"
         eyebrow="Insulated Doors"
         heading="Insulated Doors"
@@ -235,6 +248,7 @@ function HomePage() {
       <Sustainability registerReveal={registerReveal} />
       <Faq registerReveal={registerReveal} />
       <Contact registerReveal={registerReveal} onToast={setToast} />
+      <SocialMedia registerReveal={registerReveal} />
       <Footer logo={logo} />
 
       {lightbox.lightboxOpen && (
