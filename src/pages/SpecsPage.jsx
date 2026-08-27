@@ -195,6 +195,7 @@ export default function SpecsPage() {
   usePageMeta({
     title: "Panel Specs | US Panels",
     description: "PIR foam core details, color options, certifications, fire rating tolerances, and construction efficiency for US Panels insulated metal panels.",
+    path: "/specs",
   });
 
   const [menuOpen, setMenuOpen] = useState(false);

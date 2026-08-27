@@ -156,6 +156,7 @@ export default function ProductsPage() {
   usePageMeta({
     title: "Products | US Panels",
     description: "Browse our complete line of insulated wall panels, roof panels, fire-rated panels, cold storage panels, doors, and trim & hardware.",
+    path: "/products",
   });
 
   const [menuOpen, setMenuOpen] = useState(false);

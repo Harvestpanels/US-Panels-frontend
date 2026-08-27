@@ -82,6 +82,7 @@ function HomePage() {
   usePageMeta({
     title: "US Panels | Insulated Metal Panels & Doors",
     description: "Global distributor of exterior Insulated Metal Panels and Doors for Industrial, Commercial, and Residential projects. Immediate availability, delivered anywhere in the U.S. within 48 hours.",
+    path: "/",
   });
 
   const [menuOpen, setMenuOpen] = useState(false);

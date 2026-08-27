@@ -86,6 +86,7 @@ export default function BlogPage() {
   usePageMeta({
     title: "Blog & News | US Panels",
     description: "Company news, industry insights, case studies, and customer testimonials from US Panels, manufacturer and distributor of insulated metal panels and doors.",
+    path: "/blog",
   });
 
   const [menuOpen, setMenuOpen] = useState(false);
