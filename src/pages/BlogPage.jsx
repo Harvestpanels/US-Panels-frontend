@@ -2,9 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import "../styles/App.css";
 import "./BlogPage.css";
 import logo from "../assets/images/General/us-panels-logo.webp";
+import bgVideoSrc from "../assets/videos/AI Video - Blog BG1 - 1.mp4";
+import bgVideoPoster from "../assets/images/General/blog-bg-poster.webp";
 import { BLOG_POSTS, TESTIMONIALS } from "../data/blog";
 import { useNavScroll } from "../hooks/useNavScroll";
 import { usePageMeta } from "../hooks/usePageMeta";
+import { usePageReady } from "../hooks/usePageReady";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useScrollSpy } from "../hooks/useScrollSpy";
 import { useToast } from "../hooks/useToast";
@@ -12,19 +15,30 @@ import { scrollCenter, scrollToTop } from "../utils/scroll";
 import Nav from "../components/Nav";
 import Faq from "../components/Faq";
 import Contact from "../components/Contact";
+import PageLoader from "../components/PageLoader";
 import Footer from "../components/Footer";
 import SocialMedia from "../components/SocialMedia";
 import Toast from "../components/Toast";
 
+// This page's own critical first-view assets (see usePageReady) —
+// module-level constants, not recreated per render, since usePageReady's
+// effect depends on these arrays by reference.
+const BLOG_CRITICAL_IMAGES = [bgVideoPoster, logo];
+const BLOG_CRITICAL_VIDEOS = [bgVideoSrc];
+
 // How long each slide holds before auto-advancing to the next post.
 const SLIDE_INTERVAL_MS = 6000;
 
-// Plain top-level nav links, matching the pattern every other page's own
-// nav config uses (see HOME_TOP_LINKS in HomePage.jsx) — "Blog" sits right
-// next to "Home", "Products", and "Specs" on every page's navbar.
+// This page's own destination links, shown as the "Menu" nav dropdown's
+// items (see blogNavDropdowns below) — matches the pattern every other
+// page's own nav config uses (see HOME_TOP_LINKS in HomePage.jsx). "Blog"
+// scrolls to top rather than navigating (this page already is /blog), and
+// is marked `active` so the Menu dropdown highlights it the same red
+// ".is-current" mark (see Nav.css) the Contents/Inquiry dropdowns already
+// use for the current in-page section.
 const blogTopLinks = [
   { to: "/", label: "Home" },
-  { id: "blog-top", label: "Blog", onClick: scrollToTop },
+  { id: "blog-top", label: "Blog", onClick: scrollToTop, active: true },
   { to: "/products", label: "Products" },
   { to: "/specs", label: "Specs" },
 ];
@@ -90,16 +104,159 @@ export default function BlogPage() {
   });
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loaderDone, setLoaderDone] = useState(false);
   const navRef = useNavScroll(menuOpen);
-  const { registerReveal } = useRevealOnScroll();
+  // Gated on `loaderDone` — see HomePage.jsx's own comment on this same
+  // call for why.
+  const { registerReveal } = useRevealOnScroll(loaderDone);
   const activeSectionId = useScrollSpy(BLOG_SCROLL_SPY_IDS);
   const [toast, setToast] = useToast();
+  const pageReady = usePageReady(BLOG_CRITICAL_IMAGES, BLOG_CRITICAL_VIDEOS);
+
+  // Same scroll-scrubbed video technique the Products/Specs page
+  // backgrounds use (see ProductsPage.jsx) — the video stays paused and
+  // its currentTime is driven directly off scroll progress through the
+  // whole page, so the footage itself visibly advances as you scroll
+  // instead of just playing on a loop regardless of what you're doing.
+  // Kept as a local effect (not a shared hook) since each page's copy only
+  // needs to stay in sync on the parts that matter (unlock/seek/threshold/
+  // touch-smoothing/resize-safety), not on any page-specific behavior.
+  const bgVideoRef = useRef(null);
+  // Cached viewport height, not re-read from window.innerHeight on every
+  // scroll tick — mobile Chrome/Safari collapse their toolbar as the page
+  // scrolls, changing innerHeight mid-gesture independent of the user
+  // resizing anything, which would otherwise make the same scroll
+  // position map to a different point in the video from one tick to the
+  // next. Updated only on a genuine resize (width also changes), not on
+  // that toolbar-driven noise.
+  const vhRef = useRef(window.innerHeight);
+  const vwRef = useRef(window.innerWidth);
+  useEffect(() => {
+    const video = bgVideoRef.current;
+    if (!video) return;
+    let raf = null;
+    let lastVideoTime = -1;
+    let videoSeeking = false;
+    let pendingTarget = null;
+    let videoUnlocked = false;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isTouch = window.matchMedia("(hover: none)").matches;
+    const SEEK_THRESHOLD = isTouch ? 0.08 : 0.03;
+    // Chases the raw scroll-mapped target with a capped per-tick step on
+    // touch — a fast flick can jump the raw target across several seconds
+    // of footage in one tick, and snapping straight there reads as the
+    // background suddenly zooming/lurching.
+    let smoothedTouchTime = null;
+    const MAX_TOUCH_STEP_SEC = 0.06;
+
+    function seekVideo(target) {
+      if (reducedMotion) return;
+      if (videoSeeking) { pendingTarget = target; return; }
+      lastVideoTime = target;
+      videoSeeking = true;
+      video.currentTime = target;
+    }
+
+    function onSeeked() {
+      videoSeeking = false;
+      if (pendingTarget !== null) {
+        const t = pendingTarget;
+        pendingTarget = null;
+        seekVideo(t);
+      }
+    }
+
+    // Requires the video to have actually played once before seeking is
+    // allowed — play it silently then immediately pause to "unlock" it,
+    // same as the home/Products page's video.
+    function unlockVideo() {
+      if (videoUnlocked) return;
+      videoUnlocked = true;
+      video.muted = true;
+      const p = video.play();
+      // Pause immediately/synchronously too (not just once the play()
+      // promise resolves) — on mobile browsers that promise can take
+      // noticeably longer to settle than actual decode start, which left
+      // the video visibly autoplaying for a real stretch on load/refresh.
+      video.pause();
+      if (p && typeof p.then === "function") {
+        p.then(() => { video.pause(); video.currentTime = 0; }).catch(() => {});
+      } else {
+        video.pause();
+        video.currentTime = 0;
+      }
+    }
+
+    video.addEventListener("seeked", onSeeked);
+    video.load();
+    video.addEventListener("canplay", unlockVideo, { once: true });
+    window.addEventListener("touchstart", unlockVideo, { passive: true, once: true });
+
+    function onScroll() {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        if (reducedMotion || !videoUnlocked || !video.duration || !isFinite(video.duration)) return;
+        const scrollable = document.documentElement.scrollHeight - vhRef.current;
+        if (scrollable <= 0) return;
+        const progress = Math.max(0, Math.min(1, window.scrollY / scrollable));
+        const rawTarget = progress * video.duration;
+        let target = rawTarget;
+        if (isTouch) {
+          // Seeded from the video's actual current time, not the raw
+          // target — seeding it at the target would let the very first
+          // scroll tick (if it happens to already be a big flick) skip
+          // the clamp entirely on that one tick.
+          if (smoothedTouchTime === null) smoothedTouchTime = video.currentTime || 0;
+          const diff = rawTarget - smoothedTouchTime;
+          const step = Math.max(-MAX_TOUCH_STEP_SEC, Math.min(MAX_TOUCH_STEP_SEC, diff));
+          smoothedTouchTime += step;
+          target = smoothedTouchTime;
+        }
+        if (Math.abs(target - lastVideoTime) > SEEK_THRESHOLD) seekVideo(target);
+      });
+    }
+    function onResize() {
+      if (window.innerWidth !== vwRef.current) {
+        vwRef.current = window.innerWidth;
+        vhRef.current = window.innerHeight;
+      }
+    }
+    window.addEventListener("resize", onResize);
+
+    // touchmove, not just scroll — mobile Safari/Chrome can throttle/delay
+    // `scroll` events until an active touch-drag gesture settles, so
+    // scrubbing only on `scroll` reads as the video "catching up" in one
+    // jump once you lift your finger rather than tracking the drag
+    // continuously. touchmove fires throughout the gesture itself,
+    // closing that gap.
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("touchmove", onScroll, { passive: true });
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("touchmove", onScroll);
+      window.removeEventListener("touchstart", unlockVideo);
+      window.removeEventListener("resize", onResize);
+      video.removeEventListener("seeked", onSeeked);
+      video.removeEventListener("canplay", unlockVideo);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
 
   // Same collapsed-dropdown pattern as the Products/Specs/Home nav —
-  // "Contents" jumps to any section on this page, "Inquiry" covers FAQ/
-  // Contact Us, both now sections on this page too (see <Faq>/<Contact>
-  // below), so both dropdowns scroll rather than navigate.
+  // "Menu" for the site's own pages, "Contents" jumps to any section on
+  // this page, "Inquiry" covers FAQ/Contact Us, both now sections on this
+  // page too (see <Faq>/<Contact> below), so both dropdowns scroll rather
+  // than navigate.
   const blogNavDropdowns = [
+    {
+      key: "menu",
+      label: "Menu",
+      items: blogTopLinks,
+    },
     {
       key: "contents",
       label: "Contents",
@@ -138,18 +295,35 @@ export default function BlogPage() {
   }, [slideIndex]);
 
   return (
-    <div className="hp-blog-page">
+    <div className={`hp-blog-page${loaderDone ? " hp-anim-ready" : ""}`}>
+      <PageLoader ready={pageReady} onDone={() => setLoaderDone(true)} />
+
       <Nav
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
         navRef={navRef}
         logo={logo}
         logoTo="/"
-        links={blogTopLinks}
-        desktopLinks={blogTopLinks}
+        desktopLinks={[]}
         dropdowns={blogNavDropdowns}
         ctaTo="/#contact"
+        entranceReady={loaderDone}
       />
+
+      <div className="hp-bgvideo-layer" aria-hidden="true">
+        <video
+          className="hp-bgvideo"
+          ref={bgVideoRef}
+          src={bgVideoSrc}
+          poster={bgVideoPoster}
+          muted
+          playsInline
+          webkit-playsinline="true"
+          preload="auto"
+          disablePictureInPicture
+          disableRemotePlayback
+        />
+      </div>
 
       <section className="hp-blog-hero">
         <div className="hp-section__inner">

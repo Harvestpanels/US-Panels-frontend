@@ -9,6 +9,7 @@ import { useCountUp } from "../hooks/useCountUp";
 import { useLightbox } from "../hooks/useLightbox";
 import { useNavScroll } from "../hooks/useNavScroll";
 import { usePageMeta } from "../hooks/usePageMeta";
+import { usePageReady } from "../hooks/usePageReady";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useScrollSpy } from "../hooks/useScrollSpy";
 import { useToast } from "../hooks/useToast";
@@ -18,8 +19,15 @@ import Footer from "../components/Footer";
 import Lightbox from "../components/Lightbox";
 import Faq from "../components/Faq";
 import Contact from "../components/Contact";
+import PageLoader from "../components/PageLoader";
 import SocialMedia from "../components/SocialMedia";
 import Toast from "../components/Toast";
+
+// This page's own critical first-view assets (see usePageReady) —
+// module-level constants, not recreated per render, since usePageReady's
+// effect depends on these arrays by reference.
+const PRODUCTS_CRITICAL_IMAGES = [dataCenterVideoPoster, logo];
+const PRODUCTS_CRITICAL_VIDEOS = [dataCenterVideo];
 
 // Maps a product into the { src, title, category, desc } shape Lightbox
 // expects (the same shape the photo gallery already feeds it).
@@ -160,7 +168,9 @@ export default function ProductsPage() {
   });
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loaderDone, setLoaderDone] = useState(false);
   const navRef = useNavScroll(menuOpen);
+  const pageReady = usePageReady(PRODUCTS_CRITICAL_IMAGES, PRODUCTS_CRITICAL_VIDEOS);
 
   // Same scroll-scrubbed video technique the home page's background uses
   // (see useHeroParallax.js) — the video stays paused and its currentTime
@@ -311,7 +321,9 @@ export default function ProductsPage() {
   const [query, setQuery] = useState("");
   const [activeCategoryId, setActiveCategoryId] = useState("all");
   const [pendingScrollId, setPendingScrollId] = useState(null);
-  const { registerReveal } = useRevealOnScroll();
+  // Gated on `loaderDone` — see HomePage.jsx's own comment on this same
+  // call for why.
+  const { registerReveal } = useRevealOnScroll(loaderDone);
   const [toast, setToast] = useToast();
   const activeSectionId = useScrollSpy(PRODUCTS_SCROLL_SPY_IDS);
 
@@ -352,37 +364,33 @@ export default function ProductsPage() {
     setPendingScrollId(id);
   }
 
-  const productsNavLinks = [
-    { to: "/", label: "Home" },
-    { to: "/blog", label: "Blog" },
-    { to: "/specs", label: "Specs" },
-    ...PRODUCTS_NAV_SECTIONS.map((section) => ({
-      id: section.id,
-      label: section.label,
-      onClick: () => handleNavSectionClick(section.id),
-    })),
-    { id: "faq", label: "FAQ" },
-    { id: "contact", label: "Contact Us" },
-    { id: "social-media", label: "Follow Us" },
-  ];
-
-  // Plain top-level nav links, not tucked inside a dropdown — "Products"
-  // scrolls to top rather than navigating (this page already is /products).
+  // This page's own destination links, shown as the "Menu" nav dropdown's
+  // items (see productsNavDropdowns below) — "Products" scrolls to top
+  // rather than navigating (this page already is /products), and is marked
+  // `active` so the Menu dropdown highlights it the same red ".is-current"
+  // mark (see Nav.css) the Categories/Inquiry dropdowns already use for the
+  // current in-page section.
   const productsTopLinks = [
     { to: "/", label: "Home" },
     { to: "/blog", label: "Blog" },
-    { id: "products-top", label: "Products", onClick: scrollToTop },
+    { id: "products-top", label: "Products", onClick: scrollToTop, active: true },
     { to: "/specs", label: "Specs" },
   ];
 
-  // Same collapsed-dropdown pattern as the homepage nav — a "Categories"
-  // popover grouping every product section, and an "Inquiry" popover for
-  // Contact Us — instead of a long flat row of links. Mobile still uses the
-  // flat `productsNavLinks` list above.
+  // Same collapsed-dropdown pattern as the homepage nav — "Menu" for the
+  // site's own pages, "Contents" grouping every product section, and
+  // "Inquiry" for FAQ/Contact Us/Follow Us — instead of a long flat row of
+  // links. Dropdowns are always present here, so both desktop and mobile
+  // (see Nav.jsx) render from these three, never a separate flat list.
   const productsNavDropdowns = [
     {
-      key: "categories",
-      label: "Categories",
+      key: "menu",
+      label: "Menu",
+      items: productsTopLinks,
+    },
+    {
+      key: "contents",
+      label: "Contents",
       items: PRODUCTS_NAV_SECTIONS.map((section) => ({
         label: section.label,
         onClick: () => handleNavSectionClick(section.id),
@@ -449,6 +457,13 @@ export default function ProductsPage() {
   // (which only happens after real async delay) correctly sees it as false.
   const isFirstRun = useRef(true);
   useEffect(() => {
+    // Gated on `loaderDone` (see usePageReady/PageLoader) — the first,
+    // cascading run of this effect is what plays the whole page's initial
+    // entrance, so it needs to wait until the loading overlay has actually
+    // faded away, or the visitor never gets to see the cascade at all.
+    // Later reruns (search/filter changes) can only happen after that
+    // anyway, since the overlay blocks all interaction until then.
+    if (!loaderDone) return;
     const cascade = isFirstRun.current;
     const timer = setTimeout(() => {
       isFirstRun.current = false;
@@ -480,19 +495,21 @@ export default function ProductsPage() {
     }
 
     return () => clearTimeout(timer);
-  }, [normalizedQuery, activeCategoryId]);
+  }, [normalizedQuery, activeCategoryId, loaderDone]);
 
   return (
-    <div className="hp-products-page">
+    <div className={`hp-products-page${loaderDone ? " hp-anim-ready" : ""}`}>
+      <PageLoader ready={pageReady} onDone={() => setLoaderDone(true)} />
+
       <Nav
         menuOpen={menuOpen}
         setMenuOpen={setMenuOpen}
         navRef={navRef}
         logo={logo}
-        links={productsNavLinks}
         dropdowns={productsNavDropdowns}
-        desktopLinks={productsTopLinks}
+        desktopLinks={[]}
         ctaLabel="Request pricing"
+        entranceReady={loaderDone}
       />
 
       <div className="hp-bgvideo-layer" aria-hidden="true">

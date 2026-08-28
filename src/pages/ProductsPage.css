@@ -87,11 +87,17 @@
 
 /* Staggered per-word reveal on load — each word's delay is set inline
    (see ProductsPage.jsx) so it scales with however many words are in the
-   heading instead of a fixed set of nth-child rules. */
+   heading instead of a fixed set of nth-child rules. Gated behind
+   ".hp-anim-ready" (added by ProductsPage.jsx once PageLoader's onDone
+   fires) — without this, the whole cascade would play out hidden behind
+   the loader overlay instead of where the visitor can actually see it. */
 .hp-hero-word {
   display: inline-block;
   opacity: 0;
   transform: translateY(26px);
+}
+
+.hp-anim-ready .hp-hero-word {
   animation: hp-word-in 0.65s cubic-bezier(0.16,1,0.3,1) both;
 }
 
@@ -106,10 +112,14 @@
 /* Plain, once-per-visit fade for the hero eyebrow/subtext and the filter
    bar — deliberately simpler than .hp-filter-anim's pop, and never
    re-triggered by searching or switching categories (see the effect in
-   ProductsPage.jsx, which is scoped to leave these alone). */
+   ProductsPage.jsx, which is scoped to leave these alone). Same
+   ".hp-anim-ready" gating as .hp-hero-word above. */
 .hp-hero-fade {
   opacity: 0;
   transform: translateY(14px);
+}
+
+.hp-anim-ready .hp-hero-fade {
   animation: hp-fade-in 0.7s cubic-bezier(0.16,1,0.3,1) both;
 }
 
