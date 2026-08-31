@@ -32,6 +32,7 @@ import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useScrollSpy } from "../hooks/useScrollSpy";
 import { useToast } from "../hooks/useToast";
 import { scrollCenter, scrollToTop } from "../utils/scroll";
+import { clearAnimOnEnd } from "../utils/animation";
 import Nav from "../components/Nav";
 import Faq from "../components/Faq";
 import Contact from "../components/Contact";
@@ -86,21 +87,6 @@ const SPECS_SECTIONS = [
 ];
 
 const SPECS_SCROLL_SPY_IDS = [...SPECS_SECTIONS.map((s) => s.id), "faq", "contact", "social-media"];
-
-// Once the entrance animation finishes, swap it for a plain "done" class
-// that holds the final opacity — same handler as ProductsPage.jsx's own
-// copy, verbatim. Just removing the animation class would revert the
-// element to .hp-anim-item's base (opacity: 0) since nothing else would be
-// left declaring opacity: 1; and leaving the animation class in place
-// isn't an option either: a held (fill-mode: both) animation outranks
-// normal author rules in the cascade, including :hover, which would
-// otherwise permanently block the tilt/fill-wipe hover effects on foam
-// cards and swatches after their entrance plays.
-function clearAnimOnEnd(e) {
-  if (e.animationName !== "hp-filter-pop") return;
-  e.currentTarget.classList.remove("hp-filter-anim");
-  e.currentTarget.classList.add("hp-anim-done");
-}
 
 // Mirrors WhoWeAreCard in WhoWeAre.jsx exactly, so this section's hover/
 // tap behavior matches Who We Are 100% — desktop gets the navy-fill

@@ -14,6 +14,7 @@ import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useScrollSpy } from "../hooks/useScrollSpy";
 import { useToast } from "../hooks/useToast";
 import { scrollCenter, scrollToTop } from "../utils/scroll";
+import { clearAnimOnEnd } from "../utils/animation";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import Lightbox from "../components/Lightbox";
@@ -44,20 +45,6 @@ function toAlbumItem(product) {
     category: product.categoryName ? `${product.categoryName} · ${product.spec}` : product.spec,
     desc: product.desc,
   };
-}
-
-// Once the entrance animation finishes, swap it for a plain "done" class
-// that holds the final opacity. Just removing the animation class would
-// revert the element to .hp-anim-item's base (opacity: 0) since nothing
-// else would be left declaring opacity: 1 — and leaving the animation
-// class in place isn't an option either: a held (fill-mode: both)
-// animation outranks normal author rules in the cascade, including
-// :hover, which would otherwise permanently block the tilt-on-hover
-// effect on product cards after their entrance plays.
-function clearAnimOnEnd(e) {
-  if (e.animationName !== "hp-filter-pop") return;
-  e.currentTarget.classList.remove("hp-filter-anim");
-  e.currentTarget.classList.add("hp-anim-done");
 }
 
 const PRODUCTS_NAV_SECTIONS = [
