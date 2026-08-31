@@ -56,6 +56,10 @@ export function usePageReady(imageSrcs, videoSrcs = []) {
         })
     );
 
+    // Throwaway probe elements, each torn down as soon as it has answered
+    // "is this video renderable yet" — see `finish` below.
+    const releaseProbes = [];
+
     const videos = videoSrcs.map(
       (src) =>
         new Promise((resolve) => {
@@ -63,8 +67,28 @@ export function usePageReady(imageSrcs, videoSrcs = []) {
           const video = document.createElement("video");
           video.preload = "auto";
           video.muted = true;
-          video.addEventListener("loadeddata", resolve, { once: true });
-          video.addEventListener("error", resolve, { once: true });
+          // `preload="auto"` is what gets us as far as `loadeddata`, but it
+          // also means this detached probe keeps pulling the *whole* file
+          // long after that — while the real <video> on the page downloads
+          // the very same file itself. On the Specs page that is a 6.3MB
+          // production clip fetched twice over, and the probe's leftover
+          // request only ever stopped whenever garbage collection got
+          // around to it (which surfaced as a stream of stray
+          // net::ERR_ABORTED media requests). Releasing it here ends that
+          // download at a deterministic point instead, right after it has
+          // served its only purpose. Gating on `loadeddata` rather than a
+          // complete download is the same contract as before — the frame
+          // is decoded and the video is genuinely renderable.
+          const finish = () => {
+            video.removeEventListener("loadeddata", finish);
+            video.removeEventListener("error", finish);
+            video.removeAttribute("src");
+            video.load();
+            resolve();
+          };
+          releaseProbes.push(finish);
+          video.addEventListener("loadeddata", finish);
+          video.addEventListener("error", finish);
           video.src = src;
           video.load();
         })
@@ -83,6 +107,9 @@ export function usePageReady(imageSrcs, videoSrcs = []) {
 
     return () => {
       cancelled = true;
+      // Navigating away mid-load: stop any probe still downloading rather
+      // than leaving it to finish a file nobody is waiting on any more.
+      releaseProbes.forEach((release) => release());
     };
   }, [imageSrcs, videoSrcs]);
 

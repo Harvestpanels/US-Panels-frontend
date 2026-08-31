@@ -98,11 +98,19 @@
      logo's real, current rendered size — not a hardcoded pixel value. That
      means this keeps landing exactly on the logo at any desktop width, or
      if a user resizes the window while this is still mid-flight, instead
-     of being tuned for one specific width. -402px only survives here as
-     the fallback for the very first frame, before the layout effect has
-     had a chance to run. */
-  88%  { opacity: 1; transform: translate(-50%, -50%) translateX(var(--fold-slide-x, -402px)); animation-timing-function: steps(1, end); }
-  100% { opacity: 0; transform: translate(-50%, -50%) translateX(var(--fold-slide-x, -402px)); }
+     of being tuned for one specific width.
+     The 0px fallback is deliberately inert rather than a real distance.
+     This element is only rendered once that measurement exists (see the
+     foldSlideX gate in Nav.jsx), so the fallback is unreachable in
+     practice — but it previously held a real, hardcoded distance tuned for
+     an older, narrower pill, and that is exactly what shipped the "logo
+     teleports on a first visit" bug: on a cold cache the logo image had
+     not decoded yet, so the measurement bailed, this stale number was used
+     instead, and the logo landed nowhere near its real resting spot. An
+     inert fallback can only ever degrade to "no slide", never to a wrong
+     one. */
+  88%  { opacity: 1; transform: translate(-50%, -50%) translateX(var(--fold-slide-x, 0px)); animation-timing-function: steps(1, end); }
+  100% { opacity: 0; transform: translate(-50%, -50%) translateX(var(--fold-slide-x, 0px)); }
 }
 
 @keyframes hp-nav-content-in {
