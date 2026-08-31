@@ -11,7 +11,6 @@ import {
   INSULATED_BOOTHS_PANELS,
   LABORATORIES_PANELS,
   PEMB_PANELS,
-  PHARMACEUTICAL_PANELS,
   MODULAR_HOUSING_PANELS,
   ROOF_PANELS,
   TRIM_HARDWARE_PANELS,
@@ -66,7 +65,6 @@ const OVERVIEW_SECTIONS = [
   { id: "exterior", label: "Roof Panels" },
   { id: "data-center", label: "Data Centers" },
   { id: "cold-storage", label: "Cold Storage" },
-  { id: "pharmaceutical", label: "Pharmaceutical" },
   { id: "laboratories", label: "Laboratories" },
   { id: "airplane-hangars", label: "Airplane Hangars" },
   { id: "insulated-booths", label: "Insulated Booths" },
@@ -100,7 +98,6 @@ const HOME_CRITICAL_IMAGES = [
   ...ROOF_PANELS.map((p) => p.img),
   ...DATA_CENTER_PANELS.map((p) => p.img),
   ...COLD_STORAGE_PANELS.map((p) => p.img),
-  ...PHARMACEUTICAL_PANELS.map((p) => p.img),
   ...LABORATORIES_PANELS.map((p) => p.img),
   ...AIRPLANE_HANGARS_PANELS.map((p) => p.img),
   ...INSULATED_BOOTHS_PANELS.map((p) => p.img),
@@ -229,14 +226,6 @@ function HomePage() {
         heading="Insulated panels for cold storage facilities"
         description="Exterior and interior panel systems engineered to hold a consistent thermal envelope for refrigerated and frozen storage."
         panels={COLD_STORAGE_PANELS}
-        registerReveal={registerReveal}
-      />
-      <PanelSection
-        id="pharmaceutical"
-        eyebrow="Pharmaceutical industry"
-        heading="Insulated panels for pharmaceutical facilities"
-        description="Sanitary, temperature-controlled panel systems engineered for GMP-compliant pharmaceutical manufacturing, cleanrooms, and storage environments."
-        panels={PHARMACEUTICAL_PANELS}
         registerReveal={registerReveal}
       />
       <PanelSection

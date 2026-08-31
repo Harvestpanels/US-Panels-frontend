@@ -12,10 +12,7 @@ import coldStorageInteriorImg from "../assets/images/Sections/Cold Storage/Cold 
 import coldStorageBenefitsImg from "../assets/images/Sections/Cold Storage/Cold Storage - Benefits.webp";
 import pharmaceuticalCleanroomImg from "../assets/images/Sections/Pharmaceutical/Pharmaceutical - GMP Cleanroom Panels.webp";
 import pharmaceuticalCompoundingImg from "../assets/images/Sections/Pharmaceutical/Pharmaceutical - USP Compounding Panels.webp";
-import pharmaceuticalBenefitsImg from "../assets/images/Sections/Pharmaceutical/Pharmaceutical - Benefits New.webp";
 import laboratoriesWetLabImg from "../assets/images/Sections/Laboratories/Laboratories - Wet Lab Containment Panels.webp";
-import laboratoriesVivariumImg from "../assets/images/Sections/Laboratories/Laboratories - Vivarium Research Panels.webp";
-import laboratoriesBenefitsImg from "../assets/images/Sections/Laboratories/Laboratories - Benefits.webp";
 import airplaneHangarsExteriorImg from "../assets/images/Sections/Airplane Hangars/Airplane Hangars - Exterior Wall Roof Panels.webp";
 import airplaneHangarsInteriorImg from "../assets/images/Sections/Airplane Hangars/Airplane Hangars - Interior Wall Systems.webp";
 import airplaneHangarsBenefitsImg from "../assets/images/Sections/Airplane Hangars/Airplane Hangars - Benefits.webp";
@@ -263,47 +260,31 @@ export const COLD_STORAGE_PANELS = [
   },
 ];
 
-export const PHARMACEUTICAL_PANELS = [
+export const LABORATORIES_PANELS = [
   {
     name: "GMP & Cleanroom Panels",
-    category: "Pharmaceutical",
+    category: "Laboratories",
     desc: "Seamless, non-shedding panel systems built to ISO 14644 cleanroom classifications and EU GMP Annex 1 grades, with coved wall-to-floor transitions and factory-notched joints that reduce on-site cutting and particulate generation during installation.",
     img: pharmaceuticalCleanroomImg,
   },
   {
     name: "USP 797/800 Compounding Panels",
-    category: "Pharmaceutical",
+    category: "Laboratories",
     desc: "Panel envelopes suited to both sterile compounding suites (positive-pressure rooms that protect the product from contamination under USP <797>) and hazardous drug compounding rooms (negative-pressure containment under USP <800>), holding the airtight seal each pressure cascade depends on.",
     img: pharmaceuticalCompoundingImg,
   },
   {
-    name: "Benefits",
-    category: "Pharmaceutical",
-    desc: "An airtight, validated envelope supports the pressure differentials GMP and USP compounding rooms are built around, while seamless surfaces reduce microbial and particulate harborage — shortening the path from construction to validation and production.",
-    img: pharmaceuticalBenefitsImg,
+    // The former "Wet Lab & Containment Panels" and "Vivarium & Research
+    // Panels" cards, merged into one — both sets of detail kept verbatim,
+    // just carried on a single card in place of the Benefits card this
+    // section used to end on.
+    name: "Wet Lab, Containment, Vivarium & Research Panels",
+    category: "Laboratories",
+    desc: "Sealed floor, wall, and window junctions built for BSL-rated containment labs, supporting the directional (inward) airflow BSL-3 and BSL-4 spaces require, alongside chemical-resistant surface options for general wet lab use. Wipe-clean, sanitary panel surfaces for vivariums and animal research spaces, built to pair with ASHRAE 170-compatible ventilation and hold the species-specific environmental control AAALAC-accredited facilities are evaluated against.",
+    img: laboratoriesWetLabImg,
   },
 ];
 
-export const LABORATORIES_PANELS = [
-  {
-    name: "Wet Lab & Containment Panels",
-    category: "Laboratories",
-    desc: "Sealed floor, wall, and window junctions built for BSL-rated containment labs, supporting the directional (inward) airflow BSL-3 and BSL-4 spaces require, alongside chemical-resistant surface options for general wet lab use.",
-    img: laboratoriesWetLabImg,
-  },
-  {
-    name: "Vivarium & Research Panels",
-    category: "Laboratories",
-    desc: "Wipe-clean, sanitary panel surfaces for vivariums and animal research spaces, built to pair with ASHRAE 170-compatible ventilation and hold the species-specific environmental control AAALAC-accredited facilities are evaluated against.",
-    img: laboratoriesVivariumImg,
-  },
-  {
-    name: "Benefits",
-    category: "Laboratories",
-    desc: "An airtight panel envelope supports the negative-pressure containment and precise environmental control that research and testing facilities are audited on, with seamless surfaces that simplify decontamination between studies.",
-    img: laboratoriesBenefitsImg,
-  },
-];
 
 export const AIRPLANE_HANGARS_PANELS = [
   {
