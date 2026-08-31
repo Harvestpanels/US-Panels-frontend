@@ -13,18 +13,21 @@ import coldStorageBenefitsImg from "../assets/images/Sections/Cold Storage/Cold 
 import pharmaceuticalCleanroomImg from "../assets/images/Sections/Pharmaceutical/Pharmaceutical - GMP Cleanroom Panels.webp";
 import pharmaceuticalCompoundingImg from "../assets/images/Sections/Pharmaceutical/Pharmaceutical - USP Compounding Panels.webp";
 import pharmaceuticalBenefitsImg from "../assets/images/Sections/Pharmaceutical/Pharmaceutical - Benefits New.webp";
-import laboratoriesExteriorImg from "../assets/images/Sections/Laboratories/AI Photo - Laboratories1 - 1.webp";
-import laboratoriesWallSystemsImg from "../assets/images/Sections/Laboratories/AI Photo - Laboratories2 - 1.webp";
-import laboratoriesBenefitsImg from "../assets/images/Sections/Laboratories/AI Photo - Laboratories3 - 1.webp";
-import airplaneHangarsExteriorImg from "../assets/images/Sections/Airplane Hangars/AI Photo - Airplane Hangars1 - 1.webp";
-import airplaneHangarsWallSystemsImg from "../assets/images/Sections/Airplane Hangars/AI Photo - Airplane Hangars3 - 1.webp";
-import airplaneHangarsBenefitsImg from "../assets/images/Sections/Airplane Hangars/AI Photo - Airplane Hangars2 - 1.webp";
+import laboratoriesWetLabImg from "../assets/images/Sections/Laboratories/Laboratories - Wet Lab Containment Panels.webp";
+import laboratoriesVivariumImg from "../assets/images/Sections/Laboratories/Laboratories - Vivarium Research Panels.webp";
+import laboratoriesBenefitsImg from "../assets/images/Sections/Laboratories/Laboratories - Benefits.webp";
+import airplaneHangarsExteriorImg from "../assets/images/Sections/Airplane Hangars/Airplane Hangars - Exterior Wall Roof Panels.webp";
+import airplaneHangarsInteriorImg from "../assets/images/Sections/Airplane Hangars/Airplane Hangars - Interior Wall Systems.webp";
+import airplaneHangarsBenefitsImg from "../assets/images/Sections/Airplane Hangars/Airplane Hangars - Benefits.webp";
 import pembFrameStructureImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Frame & Structure.webp";
 import pembWallRoofImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Wall & Roof Panels.webp";
 import pembCustomOptionsImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Custom Options.webp";
-import prefabModularHousingImg from "../assets/images/Sections/Prefabricated Houses/AI Photo - Pre-Fabricated House1 - 1.webp";
-import prefabStructuralPanelsImg from "../assets/images/Sections/Prefabricated Houses/AI Photo - Pre-Fabricated House2 - 1.webp";
-import prefabAffordableHousingImg from "../assets/images/Sections/Prefabricated Houses/AI Photo - Pre-Fabricated House3 - 1.webp";
+import insulatedBoothsHuntingImg from "../assets/images/Sections/Insulated Booths/Insulated Booths - Hunting Huts.webp";
+import insulatedBoothsGuardImg from "../assets/images/Sections/Insulated Booths/Insulated Booths - Guard Shacks.webp";
+import insulatedBoothsShedsImg from "../assets/images/Sections/Insulated Booths/Insulated Booths - Lawn Sheds.webp";
+import modularDisasterReliefImg from "../assets/images/Sections/Modular IMP Housing/Modular IMP Housing - Disaster Relief.webp";
+import modularAffordableHousingImg from "../assets/images/Sections/Modular IMP Housing/Modular IMP Housing - Affordable Housing.webp";
+import modularWeatherproofHousingImg from "../assets/images/Sections/Modular IMP Housing/Modular IMP Housing - Weatherproof Housing.webp";
 import hingeCoolerDoorImg from "../assets/images/Sections/Doors/Doors - Hinge Cooler Doors.webp";
 import metalDoorImg from "../assets/images/Sections/Doors/Doors - Metal Doors.webp";
 import slidingCoolerDoorImg from "../assets/images/Sections/Doors/Doors - Sliding Cooler Doors.webp";
@@ -283,42 +286,42 @@ export const PHARMACEUTICAL_PANELS = [
 
 export const LABORATORIES_PANELS = [
   {
-    name: "Exterior Panels",
+    name: "Wet Lab & Containment Panels",
     category: "Laboratories",
-    desc: "Heavy-duty insulated exterior panels forming a secure, weather-tight envelope engineered to hold the tight environmental tolerances laboratory research and testing require.",
-    img: laboratoriesExteriorImg,
+    desc: "Sealed floor, wall, and window junctions built for BSL-rated containment labs, supporting the directional (inward) airflow BSL-3 and BSL-4 spaces require, alongside chemical-resistant surface options for general wet lab use.",
+    img: laboratoriesWetLabImg,
   },
   {
-    name: "Exterior Wall Systems",
+    name: "Vivarium & Research Panels",
     category: "Laboratories",
-    desc: "Continuous insulated wall systems that hold a tight, consistent thermal envelope across laboratory buildings, engineered to integrate cleanly with rooftop mechanical and HVAC equipment.",
-    img: laboratoriesWallSystemsImg,
+    desc: "Wipe-clean, sanitary panel surfaces for vivariums and animal research spaces, built to pair with ASHRAE 170-compatible ventilation and hold the species-specific environmental control AAALAC-accredited facilities are evaluated against.",
+    img: laboratoriesVivariumImg,
   },
   {
     name: "Benefits",
     category: "Laboratories",
-    desc: "Precise temperature and humidity control, seamless sanitary surfaces, and fast installation keep laboratory facilities compliant and research-ready.",
+    desc: "An airtight panel envelope supports the negative-pressure containment and precise environmental control that research and testing facilities are audited on, with seamless surfaces that simplify decontamination between studies.",
     img: laboratoriesBenefitsImg,
   },
 ];
 
 export const AIRPLANE_HANGARS_PANELS = [
   {
-    name: "Exterior Panels",
+    name: "Exterior Wall & Roof Panels",
     category: "Airplane Hangars",
-    desc: "Heavy-duty, long-span insulated exterior panels clad large-format hangar structures with wide clear-span bay door openings, holding a tight, weather-tight envelope for the aircraft inside.",
+    desc: "Insulated metal wall and roof panels form the hangar's weather-tight shell, standing up to wind, hail, and UV exposure across wide clear-span steel frames, while continuous, factory-sealed seams hold the building envelope airtight from ridge to eave.",
     img: airplaneHangarsExteriorImg,
   },
   {
-    name: "Exterior Wall Systems",
+    name: "Interior Wall Systems",
     category: "Airplane Hangars",
-    desc: "Continuous insulated wall systems engineered to span the full height and length of a hangar's exterior, holding a tight thermal envelope while standing up to heavy equipment traffic and daily wear.",
-    img: airplaneHangarsWallSystemsImg,
+    desc: "Impact-resistant interior wall panels stand up to tow tractors, tugs, and ground equipment traffic along the hangar floor, while sealed joints keep the shop's conditioned air from leaking out around the bay door.",
+    img: airplaneHangarsInteriorImg,
   },
   {
     name: "Benefits",
     category: "Airplane Hangars",
-    desc: "Wide clear-span coverage, consistent climate control, and low-maintenance surfaces keep hangar facilities operational and protected year-round.",
+    desc: "A sealed envelope and insulated roof liner hold a consistent shop temperature, keeping maintenance crews productive and protecting avionics and composite work from condensation, while a dry ceiling and wipe-clean walls cut the corrosion risk bare metal framing carries.",
     img: airplaneHangarsBenefitsImg,
   },
 ];
@@ -344,24 +347,45 @@ export const PEMB_PANELS = [
   },
 ];
 
-export const PREFABRICATED_HOUSES_PANELS = [
+export const INSULATED_BOOTHS_PANELS = [
   {
-    name: "Modular Housing",
-    category: "Prefabricated Houses",
-    desc: "Factory-built multi-unit modular buildings assembled off-site for consistent quality, cutting the on-site construction time of a traditional multi-story build.",
-    img: prefabModularHousingImg,
+    name: "Hunting Huts",
+    category: "Insulated Booths",
+    desc: "Compact, fully insulated hunting huts built to hold a stable interior temperature through cold-weather sits, with a weather-tight panel envelope that resists condensation.",
+    img: insulatedBoothsHuntingImg,
   },
   {
-    name: "Structural Insulated Panels",
-    category: "Prefabricated Houses",
-    desc: "SIP wall and roof panels combine framing and insulation in one component, delivering a strong, energy-efficient envelope with fewer parts to install.",
-    img: prefabStructuralPanelsImg,
+    name: "Guard Shacks",
+    category: "Insulated Booths",
+    desc: "Prefabricated guard shacks and security booths with insulated walls and roof for year-round comfort at gatehouses, checkpoints, and jobsite entrances.",
+    img: insulatedBoothsGuardImg,
+  },
+  {
+    name: "Lawn Sheds",
+    category: "Insulated Booths",
+    desc: "Insulated lawn and equipment sheds that keep stored tools and equipment protected from temperature swings and moisture, available in custom sizes.",
+    img: insulatedBoothsShedsImg,
+  },
+];
+
+export const MODULAR_HOUSING_PANELS = [
+  {
+    name: "Disaster Relief",
+    category: "Modular IMP Housing",
+    desc: "Rapidly deployable modular units built from insulated metal panels, shipped ready to assemble for emergency and disaster relief housing.",
+    img: modularDisasterReliefImg,
   },
   {
     name: "Affordable Housing",
-    category: "Prefabricated Houses",
-    desc: "Fast, low-cost multi-unit housing for disaster relief, workforce housing, and affordable development, deployable quickly wherever it's needed most.",
-    img: prefabAffordableHousingImg,
+    category: "Modular IMP Housing",
+    desc: "Cost-effective modular housing units that use insulated panel construction to cut build time and materials cost without sacrificing durability.",
+    img: modularAffordableHousingImg,
+  },
+  {
+    name: "Weatherproof Housing",
+    category: "Modular IMP Housing",
+    desc: "Fully sealed insulated panel envelopes engineered to hold up against wind, rain, and extreme temperatures in any climate.",
+    img: modularWeatherproofHousingImg,
   },
 ];
 

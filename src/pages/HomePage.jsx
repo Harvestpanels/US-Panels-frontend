@@ -8,10 +8,11 @@ import {
   DATA_CENTER_PANELS,
   DOOR_PANELS,
   GALLERY_IMAGES,
+  INSULATED_BOOTHS_PANELS,
   LABORATORIES_PANELS,
   PEMB_PANELS,
   PHARMACEUTICAL_PANELS,
-  PREFABRICATED_HOUSES_PANELS,
+  MODULAR_HOUSING_PANELS,
   ROOF_PANELS,
   TRIM_HARDWARE_PANELS,
 } from "../data/panels";
@@ -68,8 +69,9 @@ const OVERVIEW_SECTIONS = [
   { id: "pharmaceutical", label: "Pharmaceutical" },
   { id: "laboratories", label: "Laboratories" },
   { id: "airplane-hangars", label: "Airplane Hangars" },
+  { id: "insulated-booths", label: "Insulated Booths" },
   { id: "pemb", label: "Pre-Engineered Metal Buildings" },
-  { id: "prefabricated-houses", label: "Prefabricated Houses" },
+  { id: "modular-housing", label: "Modular IMP Housing" },
   { id: "doors", label: "Doors" },
   { id: "trim-hardware", label: "Trim & Hardware" },
   { id: "gallery", label: "Photo Gallery" },
@@ -101,8 +103,9 @@ const HOME_CRITICAL_IMAGES = [
   ...PHARMACEUTICAL_PANELS.map((p) => p.img),
   ...LABORATORIES_PANELS.map((p) => p.img),
   ...AIRPLANE_HANGARS_PANELS.map((p) => p.img),
+  ...INSULATED_BOOTHS_PANELS.map((p) => p.img),
   ...PEMB_PANELS.map((p) => p.img),
-  ...PREFABRICATED_HOUSES_PANELS.map((p) => p.img),
+  ...MODULAR_HOUSING_PANELS.map((p) => p.img),
   ...DOOR_PANELS.map((p) => p.img),
   ...TRIM_HARDWARE_PANELS.map((p) => p.img),
 ];
@@ -248,8 +251,16 @@ function HomePage() {
         id="airplane-hangars"
         eyebrow="Airplane hangars"
         heading="Insulated panels for airplane hangar facilities"
-        description="Long-span insulated panel systems built for the scale of aviation hangars, covering wide clear spans while holding a consistent, weather-tight envelope."
+        description="Long-span insulated panel systems built for the scale of aviation hangars, covering wide clear spans while holding a consistent, weather-tight interior envelope."
         panels={AIRPLANE_HANGARS_PANELS}
+        registerReveal={registerReveal}
+      />
+      <PanelSection
+        id="insulated-booths"
+        eyebrow="Insulated booths"
+        heading="Insulated panels for booths, huts, and shacks"
+        description="Compact insulated panel structures built for hunting huts, guard shacks, and lawn sheds, keeping small standalone spaces sealed and temperature-stable."
+        panels={INSULATED_BOOTHS_PANELS}
         registerReveal={registerReveal}
       />
       <PanelSection
@@ -261,11 +272,11 @@ function HomePage() {
         registerReveal={registerReveal}
       />
       <PanelSection
-        id="prefabricated-houses"
-        eyebrow="Prefabricated houses"
-        heading="Prefabricated housing solutions"
-        description="Factory-built, panelized housing systems engineered for fast deployment, energy efficiency, and reliable performance, from modular homes to disaster relief and affordable housing."
-        panels={PREFABRICATED_HOUSES_PANELS}
+        id="modular-housing"
+        eyebrow="Modular IMP housing"
+        heading="Modular housing built from insulated metal panels"
+        description="Fast-assembling modular units for disaster relief, affordable housing, and weatherproof housing, all built from the same insulated panel envelope."
+        panels={MODULAR_HOUSING_PANELS}
         registerReveal={registerReveal}
       />
       <PanelSection
