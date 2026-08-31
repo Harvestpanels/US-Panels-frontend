@@ -23,10 +23,16 @@ import PageLoader from "../components/PageLoader";
 import SocialMedia from "../components/SocialMedia";
 import Toast from "../components/Toast";
 
-// This page's own critical first-view assets (see usePageReady) —
-// module-level constants, not recreated per render, since usePageReady's
-// effect depends on these arrays by reference.
-const PRODUCTS_CRITICAL_IMAGES = [dataCenterVideoPoster, logo];
+// Every photo actually used on this page (see usePageReady) — not just the
+// hero's own poster/logo, but every product photo across every category,
+// so nothing on the page is still loading once a visitor is let in.
+// Module-level constant, not recreated per render, since usePageReady's
+// effect depends on this array by reference.
+const PRODUCTS_CRITICAL_IMAGES = [
+  dataCenterVideoPoster,
+  logo,
+  ...PRODUCT_CATEGORIES.flatMap((category) => category.products.map((p) => p.img)),
+];
 const PRODUCTS_CRITICAL_VIDEOS = [dataCenterVideo];
 
 // Maps a product into the { src, title, category, desc } shape Lightbox
@@ -377,17 +383,12 @@ export default function ProductsPage() {
     { to: "/specs", label: "Specs" },
   ];
 
-  // Same collapsed-dropdown pattern as the homepage nav — "Menu" for the
-  // site's own pages, "Contents" grouping every product section, and
-  // "Inquiry" for FAQ/Contact Us/Follow Us — instead of a long flat row of
-  // links. Dropdowns are always present here, so both desktop and mobile
-  // (see Nav.jsx) render from these three, never a separate flat list.
+  // Same collapsed-dropdown pattern as the homepage nav — "Contents"
+  // grouping every product section, and "Inquiry" for FAQ/Contact Us/
+  // Follow Us — instead of a long flat row of links. The site's own pages
+  // (Home/Blog/Products/Specs) are a flat row via desktopLinks below, not
+  // tucked into a dropdown.
   const productsNavDropdowns = [
-    {
-      key: "menu",
-      label: "Menu",
-      items: productsTopLinks,
-    },
     {
       key: "contents",
       label: "Contents",
@@ -507,7 +508,7 @@ export default function ProductsPage() {
         navRef={navRef}
         logo={logo}
         dropdowns={productsNavDropdowns}
-        desktopLinks={[]}
+        desktopLinks={productsTopLinks}
         ctaLabel="Request pricing"
         entranceReady={loaderDone}
       />

@@ -10,9 +10,9 @@ import dataCenterBenefitsImg from "../assets/images/Sections/Data Centers/Data C
 import coldStorageExteriorImg from "../assets/images/Sections/Cold Storage/Cold Storage - Exterior Panels.webp";
 import coldStorageInteriorImg from "../assets/images/Sections/Cold Storage/Cold Storage - Interior Panels.webp";
 import coldStorageBenefitsImg from "../assets/images/Sections/Cold Storage/Cold Storage - Benefits.webp";
-import pharmaceuticalExteriorImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical1 - 1.webp";
-import pharmaceuticalWallSystemsImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical2 - 1.webp";
-import pharmaceuticalBenefitsImg from "../assets/images/Sections/Pharmaceutical/AI Photo - Pharmaceutical3 - 1.webp";
+import pharmaceuticalCleanroomImg from "../assets/images/Sections/Pharmaceutical/Pharmaceutical - GMP Cleanroom Panels.webp";
+import pharmaceuticalCompoundingImg from "../assets/images/Sections/Pharmaceutical/Pharmaceutical - USP Compounding Panels.webp";
+import pharmaceuticalBenefitsImg from "../assets/images/Sections/Pharmaceutical/Pharmaceutical - Benefits New.webp";
 import laboratoriesExteriorImg from "../assets/images/Sections/Laboratories/AI Photo - Laboratories1 - 1.webp";
 import laboratoriesWallSystemsImg from "../assets/images/Sections/Laboratories/AI Photo - Laboratories2 - 1.webp";
 import laboratoriesBenefitsImg from "../assets/images/Sections/Laboratories/AI Photo - Laboratories3 - 1.webp";
@@ -262,21 +262,21 @@ export const COLD_STORAGE_PANELS = [
 
 export const PHARMACEUTICAL_PANELS = [
   {
-    name: "Exterior Panels",
+    name: "GMP & Cleanroom Panels",
     category: "Pharmaceutical",
-    desc: "Heavy-duty insulated exterior panels forming a controlled, weather-tight envelope, engineered to integrate cleanly with the rooftop mechanical and HVAC systems pharmaceutical manufacturing depends on.",
-    img: pharmaceuticalExteriorImg,
+    desc: "Seamless, non-shedding panel systems built to ISO 14644 cleanroom classifications and EU GMP Annex 1 grades, with coved wall-to-floor transitions and factory-notched joints that reduce on-site cutting and particulate generation during installation.",
+    img: pharmaceuticalCleanroomImg,
   },
   {
-    name: "Exterior Wall Systems",
+    name: "USP 797/800 Compounding Panels",
     category: "Pharmaceutical",
-    desc: "Continuous insulated wall systems that hold a tight, consistent thermal envelope across large pharmaceutical manufacturing and storage buildings, resisting moisture and temperature swings year-round.",
-    img: pharmaceuticalWallSystemsImg,
+    desc: "Panel envelopes suited to both sterile compounding suites (positive-pressure rooms that protect the product from contamination under USP <797>) and hazardous drug compounding rooms (negative-pressure containment under USP <800>), holding the airtight seal each pressure cascade depends on.",
+    img: pharmaceuticalCompoundingImg,
   },
   {
     name: "Benefits",
     category: "Pharmaceutical",
-    desc: "Consistent temperature and humidity control, seamless sanitary surfaces, and fast installation keep pharmaceutical facilities compliant and production-ready.",
+    desc: "An airtight, validated envelope supports the pressure differentials GMP and USP compounding rooms are built around, while seamless surfaces reduce microbial and particulate harborage — shortening the path from construction to validation and production.",
     img: pharmaceuticalBenefitsImg,
   },
 ];

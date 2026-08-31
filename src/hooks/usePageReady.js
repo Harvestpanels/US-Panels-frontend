@@ -16,18 +16,23 @@ function addPreloadLink(href, as) {
   document.head.appendChild(link);
 }
 
-// Waits for this page's critical first-view images (the hero background
-// image/poster, plus the site's web fonts) to actually finish loading
-// before flipping `ready` to true. `videoSrcs` gets the same <link
-// rel="preload"> treatment so the browser starts fetching each video at
-// high priority right away, but is deliberately NOT awaited — a
-// background video can be several MB, and blocking the reveal on a full
-// video download would trade a flash of missing content for several
-// seconds of blank loading screen, which is worse than what this hook
-// exists to fix. The video keeps loading/buffering in the background
-// regardless of `ready`; its own `poster` attribute (one of the images
-// this hook DOES wait for) already covers the gap until it has enough
-// buffered to actually play/scrub.
+// Waits for every one of this page's own photos to finish loading, plus
+// its video(s) reaching "ready to play" (not necessarily 100% of the file
+// — see below), plus the site's web fonts, before flipping `ready` to
+// true. Nothing on the page is reachable until this resolves (see
+// PageLoader, which blocks all interaction the whole time `ready` is
+// false) — the point is that a visitor never gets in before what's
+// actually on the page has loaded.
+//
+// Videos wait for `loadeddata` (the point a video has decoded and can
+// render its current frame — effectively "this video is real and ready",
+// the same bar a poster-image swap-in would clear) rather than the entire
+// file finishing download. A background video can run many MB; requiring
+// every last byte before reveal would frequently mean a much longer wait
+// for marginal benefit, since scroll-scrubbing only ever needs the frame
+// currently being seeked to, not the whole file at once — `loadeddata`
+// is the point playback is genuinely usable, which is what "loaded"
+// actually means for a video used this way.
 //
 // Both arrays must be stable references (module-level constants, same
 // convention useScrollSpy's `ids` param already uses) — fresh array
@@ -37,8 +42,6 @@ export function usePageReady(imageSrcs, videoSrcs = []) {
 
   useEffect(() => {
     let cancelled = false;
-
-    videoSrcs.forEach((src) => addPreloadLink(src, "video"));
 
     const images = imageSrcs.map(
       (src) =>
@@ -53,6 +56,20 @@ export function usePageReady(imageSrcs, videoSrcs = []) {
         })
     );
 
+    const videos = videoSrcs.map(
+      (src) =>
+        new Promise((resolve) => {
+          addPreloadLink(src, "video");
+          const video = document.createElement("video");
+          video.preload = "auto";
+          video.muted = true;
+          video.addEventListener("loadeddata", resolve, { once: true });
+          video.addEventListener("error", resolve, { once: true });
+          video.src = src;
+          video.load();
+        })
+    );
+
     // Resolves once the page's own @font-face downloads have settled (or
     // immediately, in browsers without the Font Loading API) — without
     // this, revealing before the fonts finish downloading would still
@@ -60,7 +77,7 @@ export function usePageReady(imageSrcs, videoSrcs = []) {
     // Inter/JetBrains Mono swap in.
     const fontsReady = document.fonts?.ready ?? Promise.resolve();
 
-    Promise.all([...images, fontsReady]).then(() => {
+    Promise.all([...images, ...videos, fontsReady]).then(() => {
       if (!cancelled) setReady(true);
     });
 

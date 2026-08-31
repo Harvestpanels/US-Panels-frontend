@@ -20,10 +20,12 @@ import Footer from "../components/Footer";
 import SocialMedia from "../components/SocialMedia";
 import Toast from "../components/Toast";
 
-// This page's own critical first-view assets (see usePageReady) —
-// module-level constants, not recreated per render, since usePageReady's
+// Every photo actually used on this page (see usePageReady) — not just the
+// hero's own poster/logo, but every post's own photo in the slideshow, so
+// nothing on the page is still loading once a visitor is let in.
+// Module-level constants, not recreated per render, since usePageReady's
 // effect depends on these arrays by reference.
-const BLOG_CRITICAL_IMAGES = [bgVideoPoster, logo];
+const BLOG_CRITICAL_IMAGES = [bgVideoPoster, logo, ...BLOG_POSTS.map((p) => p.image)];
 const BLOG_CRITICAL_VIDEOS = [bgVideoSrc];
 
 // How long each slide holds before auto-advancing to the next post.
@@ -247,16 +249,12 @@ export default function BlogPage() {
   }, []);
 
   // Same collapsed-dropdown pattern as the Products/Specs/Home nav —
-  // "Menu" for the site's own pages, "Contents" jumps to any section on
-  // this page, "Inquiry" covers FAQ/Contact Us, both now sections on this
-  // page too (see <Faq>/<Contact> below), so both dropdowns scroll rather
-  // than navigate.
+  // "Contents" jumps to any section on this page, "Inquiry" covers FAQ/
+  // Contact Us, both now sections on this page too (see <Faq>/<Contact>
+  // below), so both dropdowns scroll rather than navigate. The site's own
+  // pages (Home/Blog/Products/Specs) are a flat row via desktopLinks below,
+  // not tucked into a dropdown.
   const blogNavDropdowns = [
-    {
-      key: "menu",
-      label: "Menu",
-      items: blogTopLinks,
-    },
     {
       key: "contents",
       label: "Contents",
@@ -304,7 +302,7 @@ export default function BlogPage() {
         navRef={navRef}
         logo={logo}
         logoTo="/"
-        desktopLinks={[]}
+        desktopLinks={blogTopLinks}
         dropdowns={blogNavDropdowns}
         ctaTo="/#contact"
         entranceReady={loaderDone}

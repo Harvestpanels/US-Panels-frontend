@@ -41,13 +41,19 @@ import Footer from "../components/Footer";
 import Lightbox from "../components/Lightbox";
 import Toast from "../components/Toast";
 
-// This page's own critical first-view assets (see usePageReady) —
-// module-level constants, not recreated per render, since usePageReady's
-// effect depends on these arrays by reference. The production-process
-// video further down the page is not included — it's not above the fold,
-// so there's no reason to block the initial reveal on it.
-const SPECS_CRITICAL_IMAGES = [bgVideoPoster, logo];
-const SPECS_CRITICAL_VIDEOS = [bgVideoSrc];
+// Every photo and video actually used on this page (see usePageReady) —
+// not just the hero's own poster/logo, but every color swatch and panel
+// profile photo, plus the production-process video further down the page,
+// so nothing on the page is still loading once a visitor is let in.
+// Module-level constants, not recreated per render, since usePageReady's
+// effect depends on these arrays by reference.
+const SPECS_CRITICAL_IMAGES = [
+  bgVideoPoster,
+  logo,
+  ...COLOR_PALETTE.map((c) => c.img),
+  ...PANEL_PROFILES.map((p) => p.img),
+];
+const SPECS_CRITICAL_VIDEOS = [bgVideoSrc, productionVideoSrc];
 
 // This page's own destination links, shown as the "Menu" nav dropdown's
 // items (see specsNavDropdowns below) — matches the pattern every other
@@ -402,18 +408,12 @@ export default function SpecsPage() {
     });
   }, [loaderDone]);
 
-  // Same collapsed-dropdown pattern as the Products/Home nav — "Menu" for
-  // the site's own pages, "Contents" for every spec section on this page
-  // (Color Palette through Our Process), and "Inquiry" for FAQ/Contact Us/
-  // Follow Us. Dropdowns are always present here, so both desktop and
-  // mobile (see Nav.jsx) render from these three, never a separate flat
-  // list.
+  // Same collapsed-dropdown pattern as the Products/Home nav — "Contents"
+  // for every spec section on this page (Color Palette through Our
+  // Process), and "Inquiry" for FAQ/Contact Us/Follow Us. The site's own
+  // pages (Home/Blog/Products/Specs) are a flat row via desktopLinks below,
+  // not tucked into a dropdown.
   const specsNavDropdowns = [
-    {
-      key: "menu",
-      label: "Menu",
-      items: specsLinks,
-    },
     {
       key: "contents",
       label: "Contents",
@@ -444,7 +444,7 @@ export default function SpecsPage() {
         navRef={navRef}
         logo={logo}
         logoTo="/"
-        desktopLinks={[]}
+        desktopLinks={specsLinks}
         dropdowns={specsNavDropdowns}
         ctaLabel="Request details"
         entranceReady={loaderDone}

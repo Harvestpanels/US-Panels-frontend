@@ -85,12 +85,27 @@ const INQUIRY_SECTIONS = [
 
 const SCROLL_SPY_IDS = [...OVERVIEW_SECTIONS, ...INQUIRY_SECTIONS].map((s) => s.id);
 
-// This page's own critical first-view assets (see usePageReady) — the
-// hero's poster image (shown immediately, before the scroll-scrubbed
-// background video has buffered) and the logo used everywhere above the
-// fold. Module-level constants, not recreated per render, since
-// usePageReady's effect depends on these arrays by reference.
-const HOME_CRITICAL_IMAGES = [PARALLAX_BG_URL, logo];
+// Every photo actually used on this page (see usePageReady) — not just the
+// hero's own poster/logo, but every panel/door/trim photo and every photo
+// gallery shot too, so nothing on the page is still loading once a visitor
+// is let in. Module-level constant, not recreated per render, since
+// usePageReady's effect depends on this array by reference.
+const HOME_CRITICAL_IMAGES = [
+  PARALLAX_BG_URL,
+  logo,
+  ...GALLERY_IMAGES.map((g) => g.src),
+  ...BUILDING_ENVELOPE_PANELS.map((p) => p.img),
+  ...ROOF_PANELS.map((p) => p.img),
+  ...DATA_CENTER_PANELS.map((p) => p.img),
+  ...COLD_STORAGE_PANELS.map((p) => p.img),
+  ...PHARMACEUTICAL_PANELS.map((p) => p.img),
+  ...LABORATORIES_PANELS.map((p) => p.img),
+  ...AIRPLANE_HANGARS_PANELS.map((p) => p.img),
+  ...PEMB_PANELS.map((p) => p.img),
+  ...PREFABRICATED_HOUSES_PANELS.map((p) => p.img),
+  ...DOOR_PANELS.map((p) => p.img),
+  ...TRIM_HARDWARE_PANELS.map((p) => p.img),
+];
 const HOME_CRITICAL_VIDEOS = [VIDEO_URL];
 
 function HomePage() {
@@ -115,11 +130,6 @@ function HomePage() {
   const activeSectionId = useScrollSpy(SCROLL_SPY_IDS);
 
   const homeNavDropdowns = [
-    {
-      key: "menu",
-      label: "Menu",
-      items: HOME_TOP_LINKS,
-    },
     {
       key: "contents",
       label: "Contents",
@@ -155,7 +165,7 @@ function HomePage() {
         navRef={navRef}
         logo={logo}
         dropdowns={homeNavDropdowns}
-        desktopLinks={[]}
+        desktopLinks={HOME_TOP_LINKS}
         entranceReady={loaderDone}
       />
 
