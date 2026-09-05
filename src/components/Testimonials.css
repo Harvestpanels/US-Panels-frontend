@@ -1,0 +1,86 @@
+.hp-blog-testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 28px;
+  margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .hp-blog-testimonial-grid { grid-template-columns: 1fr; }
+}
+
+/* Same navy-fill-wipe hover treatment as #why .hp-card in WhoWeAre.css —
+   a solid navy fill grows up from the bottom edge on hover while the text
+   crossfades to cream, rather than a flat instant background swap. */
+.hp-blog-testimonial {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(var(--hp-navy-rgb), 0.12);
+  border-radius: 16px;
+  padding: 32px 28px 28px;
+  background-image: linear-gradient(var(--hp-navy), var(--hp-navy));
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  background-size: 100% 0%;
+  transition:
+    transform 0.4s cubic-bezier(0.16,1,0.3,1),
+    border-color 0.4s ease,
+    background-size 0.45s cubic-bezier(0.16,1,0.3,1);
+}
+
+@media (hover: hover) {
+  .hp-blog-testimonial:hover {
+    transform: translateY(-8px);
+    border-color: var(--hp-navy);
+    background-size: 100% 100%;
+  }
+
+  .hp-blog-testimonial:hover .hp-blog-testimonial__mark,
+  .hp-blog-testimonial:hover .hp-blog-testimonial__name {
+    color: var(--hp-cream);
+  }
+
+  .hp-blog-testimonial:hover .hp-blog-testimonial__quote {
+    color: rgba(243, 241, 236, 0.85);
+  }
+
+  .hp-blog-testimonial:hover .hp-blog-testimonial__role {
+    color: rgba(243, 241, 236, 0.6);
+  }
+}
+
+/* Solid, fully-opaque red rather than a translucent tint — a low-alpha
+   red on top of this card's own translucent glass background read as
+   washed-out/blurry instead of a crisp quotation mark. */
+.hp-blog-testimonial__mark {
+  display: block;
+  font-family: "Big Shoulders Display", sans-serif;
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--hp-red);
+  margin-bottom: 4px;
+  transition: color 0.3s ease;
+}
+
+.hp-blog-testimonial__quote {
+  font-size: 15px;
+  line-height: 1.65;
+  color: rgba(var(--hp-navy-rgb), 0.8);
+  margin: 0 0 20px;
+  transition: color 0.3s ease;
+}
+
+.hp-blog-testimonial__name {
+  font-weight: 700;
+  color: var(--hp-navy);
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.hp-blog-testimonial__role {
+  font-size: 13px;
+  color: rgba(var(--hp-navy-rgb), 0.55);
+  margin: 2px 0 0;
+  transition: color 0.3s ease;
+}

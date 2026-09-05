@@ -18,6 +18,8 @@ import Contact from "../components/Contact";
 import PageLoader from "../components/PageLoader";
 import Footer from "../components/Footer";
 import SocialMedia from "../components/SocialMedia";
+import BlogSlideshow from "../components/BlogSlideshow";
+import Testimonials from "../components/Testimonials";
 import Toast from "../components/Toast";
 
 // Every photo actually used on this page (see usePageReady) — not just the
@@ -28,8 +30,6 @@ import Toast from "../components/Toast";
 const BLOG_CRITICAL_IMAGES = [bgVideoPoster, logo, ...BLOG_POSTS.map((p) => p.image)];
 const BLOG_CRITICAL_VIDEOS = [bgVideoSrc];
 
-// How long each slide holds before auto-advancing to the next post.
-const SLIDE_INTERVAL_MS = 6000;
 
 // This page's own destination links, shown as the "Menu" nav dropdown's
 // items (see blogNavDropdowns below) — matches the pattern every other
@@ -63,40 +63,8 @@ const INQUIRY_SECTIONS = [
 
 const BLOG_SCROLL_SPY_IDS = [...BLOG_SECTIONS, ...INQUIRY_SECTIONS].map((s) => s.id);
 
-const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric" });
 
-function formatDate(isoDate) {
-  return DATE_FORMATTER.format(new Date(`${isoDate}T00:00:00`));
-}
 
-// A single large "now showing" slide — full-bleed photo with the copy
-// overlaid on a gradient scrim at the bottom, matching the same
-// image-forward treatment as .hp-panel-card (see PanelSection.jsx), rather
-// than splitting the slide into separate photo/text halves.
-function PostSlide({ post }) {
-  return (
-    <div className="hp-blog-slide">
-      <img src={post.image} alt={post.title} className="hp-blog-slide__img" loading="lazy" decoding="async" />
-      <span className="hp-blog-post__category hp-blog-slide__category">{post.category}</span>
-      <div className="hp-blog-slide__label">
-        <h3>{post.title}</h3>
-        <p>{post.excerpt}</p>
-        <time className="hp-blog-post__date" dateTime={post.date}>{formatDate(post.date)}</time>
-      </div>
-    </div>
-  );
-}
-
-function TestimonialCard({ testimonial, registerReveal }) {
-  return (
-    <article className="hp-blog-testimonial hp-reveal" ref={registerReveal}>
-      <span className="hp-blog-testimonial__mark" aria-hidden="true">&ldquo;</span>
-      <p className="hp-blog-testimonial__quote">{testimonial.quote}</p>
-      <p className="hp-blog-testimonial__name">{testimonial.name}</p>
-      <p className="hp-blog-testimonial__role">{testimonial.role}, {testimonial.company}</p>
-    </article>
-  );
-}
 
 export default function BlogPage() {
   usePageMeta({
@@ -275,22 +243,8 @@ export default function BlogPage() {
     },
   ];
 
-  const [slideIndex, setSlideIndex] = useState(0);
-  const slideTimerRef = useRef(null);
 
-  function goToSlide(i) {
-    setSlideIndex(((i % BLOG_POSTS.length) + BLOG_POSTS.length) % BLOG_POSTS.length);
-  }
 
-  // Auto-advances on an interval, restarted from zero on every manual dot
-  // click below so a visitor actively browsing isn't fighting the timer
-  // for control of what's on screen.
-  useEffect(() => {
-    slideTimerRef.current = setInterval(() => {
-      setSlideIndex((i) => (i + 1) % BLOG_POSTS.length);
-    }, SLIDE_INTERVAL_MS);
-    return () => clearInterval(slideTimerRef.current);
-  }, [slideIndex]);
 
   return (
     <div className={`hp-blog-page${loaderDone ? " hp-anim-ready" : ""}`}>
@@ -344,51 +298,12 @@ export default function BlogPage() {
             <p className="hp-panel-section__desc hp-reveal" ref={registerReveal}>
               Company news, industry insights, and project case studies from the US Panels team.
             </p>
-            <div className="hp-blog-slideshow hp-reveal" ref={registerReveal}>
-              <div className="hp-blog-slideshow__viewport">
-                <div
-                  className="hp-blog-slideshow__track"
-                  style={{ transform: `translateX(-${slideIndex * 100}%)` }}
-                >
-                  {BLOG_POSTS.map((post) => (
-                    <PostSlide key={post.title} post={post} />
-                  ))}
-                </div>
-
-                <div className="hp-blog-slideshow__dots">
-                  {BLOG_POSTS.map((post, i) => (
-                    <button
-                      type="button"
-                      key={post.title}
-                      className={`hp-blog-slideshow__dot${i === slideIndex ? " is-active" : ""}`}
-                      onClick={() => goToSlide(i)}
-                      aria-label={`Go to post: ${post.title}`}
-                      aria-current={i === slideIndex}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
+            <BlogSlideshow posts={BLOG_POSTS} registerReveal={registerReveal} />
           </div>
         </div>
       </section>
 
-      <section className="hp-section" id="testimonials">
-        <div className="hp-section__inner">
-          <div className="hp-glass">
-            <p className="hp-section__eyebrow hp-reveal" ref={registerReveal}>Customer testimonials</p>
-            <h2 className="hp-reveal" ref={registerReveal}>What our customers are saying</h2>
-            <p className="hp-panel-section__desc hp-reveal" ref={registerReveal}>
-              Real feedback from the contractors, builders, and facility teams we've worked with.
-            </p>
-            <div className="hp-blog-testimonial-grid">
-              {TESTIMONIALS.map((testimonial) => (
-                <TestimonialCard key={testimonial.name} testimonial={testimonial} registerReveal={registerReveal} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <Testimonials testimonials={TESTIMONIALS} registerReveal={registerReveal} />
 
       <Faq registerReveal={registerReveal} />
 
