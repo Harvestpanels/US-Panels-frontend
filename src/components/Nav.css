@@ -637,7 +637,7 @@
   border-top: 1px solid rgba(20, 30, 50, 0.1);
 }
 
-/* Expanding one of the accordion groups below (Overview/Inquiry) grows
+/* Expanding one of the accordion groups below (Menu/FAQs) grows
    the panel's real content past that fixed height — scrolling turns back
    on for as long as at least one group is actually expanded (see
    handleGroupExpandedChange in Nav.jsx), so whatever the expansion pushed
@@ -703,7 +703,7 @@
     max-height: 90px;
     opacity: 1;
     /* Top matches every row's own 14px padding exactly (see
-       .hp-nav__mobile-group-toggle) — combined with "Inquiry"'s own 14px
+       .hp-nav__mobile-group-toggle) — combined with "FAQs"'s own 14px
        bottom padding (and the container's own bottom padding now removed,
        see .hp-nav__mobile.is-open above), the gap before the CTA divider
        ends up the same 28px as the gap between any two other rows,
