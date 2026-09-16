@@ -11,7 +11,6 @@ import { usePageMeta } from "../hooks/usePageMeta";
 import { usePageReady } from "../hooks/usePageReady";
 import { useRevealOnScroll } from "../hooks/useRevealOnScroll";
 import { useScrollSpy } from "../hooks/useScrollSpy";
-import { useToast } from "../hooks/useToast";
 import { scrollCenter, scrollToTop } from "../utils/scroll";
 import Nav from "../components/Nav";
 import Faq from "../components/Faq";
@@ -21,7 +20,6 @@ import Footer from "../components/Footer";
 import SocialMedia from "../components/SocialMedia";
 import BlogSlideshow from "../components/BlogSlideshow";
 import Testimonials from "../components/Testimonials";
-import Toast from "../components/Toast";
 
 // Every photo actually used on this page (see usePageReady) — not just the
 // hero's own poster/logo, but every post's own photo in the slideshow, so
@@ -81,7 +79,6 @@ export default function BlogPage() {
   // call for why.
   const { registerReveal } = useRevealOnScroll(loaderDone);
   const activeSectionId = useScrollSpy(BLOG_SCROLL_SPY_IDS);
-  const [toast, setToast] = useToast();
   const pageReady = usePageReady(BLOG_CRITICAL_IMAGES, BLOG_CRITICAL_VIDEOS);
 
   // Scroll-scrubbed background video — the clip stays paused and its
@@ -182,13 +179,11 @@ export default function BlogPage() {
 
       <Faq registerReveal={registerReveal} />
 
-      <Contact registerReveal={registerReveal} onToast={setToast} />
+      <Contact registerReveal={registerReveal} />
 
       <SocialMedia registerReveal={registerReveal} />
 
       <Footer logo={logo} />
-
-      <Toast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 }

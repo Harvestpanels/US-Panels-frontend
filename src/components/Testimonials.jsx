@@ -13,13 +13,13 @@ export default function Testimonials({ testimonials, registerReveal }) {
           <p className="hp-panel-section__desc hp-reveal" ref={registerReveal}>
             Real feedback from the contractors, builders, and facility teams we've worked with.
           </p>
-          <div className="hp-blog-testimonial-grid">
+          <div className="hp-testimonial-grid">
             {testimonials.map((testimonial) => (
-              <article className="hp-blog-testimonial hp-reveal" key={testimonial.name} ref={registerReveal}>
-                <span className="hp-blog-testimonial__mark" aria-hidden="true">&ldquo;</span>
-                <p className="hp-blog-testimonial__quote">{testimonial.quote}</p>
-                <p className="hp-blog-testimonial__name">{testimonial.name}</p>
-                <p className="hp-blog-testimonial__role">{testimonial.role}, {testimonial.company}</p>
+              <article className="hp-testimonial hp-reveal" key={testimonial.name} ref={registerReveal}>
+                <span className="hp-testimonial__mark" aria-hidden="true">&ldquo;</span>
+                <p className="hp-testimonial__quote">{testimonial.quote}</p>
+                <p className="hp-testimonial__name">{testimonial.name}</p>
+                <p className="hp-testimonial__role">{testimonial.role}, {testimonial.company}</p>
               </article>
             ))}
           </div>

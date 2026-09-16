@@ -440,7 +440,6 @@
 @media (hover: none) {
   .hp-products-grid:has(.hp-product-card:hover) .hp-product-card:not(:hover) { opacity: 1; transform: none; }
   .hp-product-card:hover { transform: none; }
-  .hp-product-card:hover .hp-product-card__glare { opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
