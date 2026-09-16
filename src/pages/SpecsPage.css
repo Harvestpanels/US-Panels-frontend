@@ -214,8 +214,8 @@
 }
 
 .hp-specs-profile-pill.is-selected {
-  background: var(--hp-red);
-  border-color: var(--hp-red);
+  background: var(--hp-accent);
+  border-color: var(--hp-accent);
   color: var(--hp-cream);
 }
 
@@ -421,7 +421,7 @@
 .hp-specs-swatch__inner.is-selected .hp-specs-swatch__chip {
   box-shadow:
     0 0 0 3px var(--hp-cream),
-    0 0 0 5px var(--hp-red),
+    0 0 0 5px var(--hp-accent),
     0 10px 24px -10px rgba(var(--hp-navy-rgb), 0.45);
   transform: translateY(-2px);
 }
@@ -434,7 +434,7 @@
 }
 
 .hp-specs-swatch__inner.is-selected .hp-specs-swatch__name {
-  color: var(--hp-red);
+  color: var(--hp-accent);
 }
 
 /* 10px is legible enough at desktop reading distance for a short
@@ -668,7 +668,7 @@
   font-family: "JetBrains Mono", monospace;
   font-size: 12px;
   letter-spacing: 0.06em;
-  color: var(--hp-red);
+  color: var(--hp-accent);
 }
 
 .hp-specs-cert-item__icon {
@@ -677,7 +677,7 @@
   top: 50%;
   transform: translateY(-50%);
   font-family: "JetBrains Mono", monospace;
-  color: var(--hp-red);
+  color: var(--hp-accent);
   font-size: 18px;
   flex-shrink: 0;
   will-change: transform;
@@ -938,7 +938,7 @@
 .hp-specs-datatable-caption {
   font-size: 13px;
   font-weight: 700;
-  color: var(--hp-red);
+  color: var(--hp-accent);
   margin: 0 0 8px;
 }
 
@@ -972,7 +972,7 @@
 }
 
 .hp-specs-datatable tbody th {
-  color: var(--hp-red);
+  color: var(--hp-accent);
   font-weight: 700;
 }
 

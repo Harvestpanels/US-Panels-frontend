@@ -37,7 +37,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  border-left: 2px solid var(--hp-red);
+  border-left: 2px solid var(--hp-accent);
   padding-left: 14px;
 }
 
@@ -60,7 +60,7 @@
   transition: color 0.2s ease;
 }
 
-.hp-contact__details a:hover { color: var(--hp-red); }
+.hp-contact__details a:hover { color: var(--hp-accent); }
 
 /* Secondary facts under the contact details, filling the column beside the
    taller form. Two columns on desktop so six short items read as a tidy

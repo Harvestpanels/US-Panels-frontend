@@ -119,7 +119,7 @@
 }
 
 .hp-blog-slideshow__dot.is-active {
-  background: var(--hp-red);
+  background: var(--hp-accent);
   transform: scale(1.2);
 }
 
@@ -168,7 +168,7 @@
   }
 
   .hp-blog-slideshow__dot.is-active::before {
-    background: var(--hp-red);
+    background: var(--hp-accent);
     transform: scale(1.2);
   }
 }
@@ -182,7 +182,7 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--hp-cream);
-  background: var(--hp-red);
+  background: var(--hp-accent);
   border-radius: 999px;
   padding: 4px 12px;
   margin-bottom: 14px;

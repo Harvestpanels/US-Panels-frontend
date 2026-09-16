@@ -452,7 +452,7 @@
    (.hp-nav__quote, active filter chips), plus a small dot so it also reads
    correctly for color-blind users, not by color alone. */
 .hp-nav__menu-item.is-current {
-  color: #c8262e;
+  color: var(--hp-accent);
   font-weight: 700;
 }
 
@@ -464,12 +464,12 @@
   margin-right: 8px;
   margin-bottom: 1px;
   border-radius: 50%;
-  background: #c8262e;
+  background: var(--hp-accent);
   vertical-align: middle;
 }
 
 .hp-nav__menu-item.is-current:hover {
-  color: #a81f26;
+  color: var(--hp-accent-hover);
   background: rgba(200, 38, 46, 0.08);
 }
 
@@ -503,12 +503,12 @@
 .hp-nav__quote {
   font-size: 17px;
   font-weight: 600;
-  color: #c8262e;
+  color: var(--hp-accent);
   transition: color 0.2s ease, transform 0.22s cubic-bezier(0.16,1,0.3,1);
 }
 
 .hp-nav__quote:hover {
-  color: #a81f26;
+  color: var(--hp-accent-hover);
   transform: translateY(-2px);
 }
 
@@ -674,7 +674,7 @@
   padding: 14px 4px;
   font-size: 17px;
   font-weight: 600;
-  color: #c8262e;
+  color: var(--hp-accent);
   transition: color 0.2s ease;
 }
 
@@ -717,7 +717,7 @@
 }
 
 .hp-nav__mobile-cta:hover {
-  color: #a81f26;
+  color: var(--hp-accent-hover);
 }
 
 /* ===================== MOBILE ACCORDION GROUPS ===================== */
@@ -794,7 +794,7 @@
 /* Same active-section styling as the desktop panel's .hp-nav__menu-item —
    see useScrollSpy. */
 .hp-nav__mobile-group-item.is-current {
-  color: #c8262e;
+  color: var(--hp-accent);
   font-weight: 700;
 }
 
@@ -806,11 +806,11 @@
   margin-right: 8px;
   margin-bottom: 1px;
   border-radius: 50%;
-  background: #c8262e;
+  background: var(--hp-accent);
   vertical-align: middle;
 }
 
-.hp-nav__mobile-group-item.is-current:hover { color: #a81f26; }
+.hp-nav__mobile-group-item.is-current:hover { color: var(--hp-accent-hover); }
 
 @media (prefers-reduced-motion: reduce) {
   .hp-nav__mobile-group-chevron,

@@ -264,7 +264,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--hp-red);
+  background: var(--hp-alert);
   flex-shrink: 0;
 }
 
@@ -452,7 +452,7 @@
   display: inline-block;
   padding: 7px 14px;
   border-radius: 999px;
-  background: var(--hp-red);
+  background: var(--hp-accent);
   color: var(--hp-cream);
   font-size: 13px;
   font-weight: 600;
@@ -460,7 +460,7 @@
   transition: background 0.2s ease;
 }
 
-.hp-chat__link:hover { background: var(--hp-red-hover); }
+.hp-chat__link:hover { background: var(--hp-accent-hover); }
 
 /* ---------- suggestion chips ---------- */
 .hp-chat__suggestions {
@@ -538,7 +538,7 @@
 }
 
 .hp-chat__input:focus {
-  border-color: var(--hp-red);
+  border-color: var(--hp-accent);
   background: #fff;
 }
 
@@ -550,7 +550,7 @@
   height: 42px;
   border: none;
   border-radius: 50%;
-  background: var(--hp-red);
+  background: var(--hp-accent);
   color: var(--hp-cream);
   display: flex;
   align-items: center;
@@ -560,7 +560,7 @@
 }
 
 .hp-chat__send svg { transform: translateX(-1px); }
-.hp-chat__send:hover:not(:disabled) { background: var(--hp-red-hover); }
+.hp-chat__send:hover:not(:disabled) { background: var(--hp-accent-hover); }
 .hp-chat__send:active:not(:disabled) { transform: scale(0.94); }
 
 .hp-chat__send:disabled {

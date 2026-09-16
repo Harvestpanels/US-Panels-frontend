@@ -58,7 +58,7 @@
   font-size: 56px;
   line-height: 1;
   font-weight: 800;
-  color: var(--hp-red);
+  color: var(--hp-accent);
   margin-bottom: 4px;
   transition: color 0.3s ease;
 }

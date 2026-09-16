@@ -549,7 +549,7 @@ export default function Nav({
 
   // The fold overlay's slide distance (the -402px in hp-nav-fold-logo,
   // Nav.css) was a hardcoded constant tuned for one specific pill width —
-  // correct at any width where the pill has reached its 920px cap, but
+  // correct at any width where the pill has reached its 1060px cap, but
   // that's an assumption baked into the number rather than something the
   // animation actually adapts to. Computing it instead makes the animation
   // land on the real logo at whatever width the pill actually settles at,

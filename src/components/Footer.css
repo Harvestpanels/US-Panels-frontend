@@ -35,7 +35,7 @@
   transition: color 0.2s ease;
 }
 
-.hp-footer__inner a:hover { color: var(--hp-red); }
+.hp-footer__inner a:hover { color: var(--hp-accent); }
 
 .hp-footer__social {
   display: flex;
@@ -50,7 +50,7 @@
 }
 
 .hp-footer__social a:hover {
-  color: var(--hp-red);
+  color: var(--hp-accent);
   transform: translateY(-2px);
 }
 

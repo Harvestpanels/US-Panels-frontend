@@ -18,9 +18,14 @@
   --hp-cream: #f3f1ec;
   --hp-navy: #14213a;
   --hp-navy-rgb: 20, 30, 50;
-  --hp-red: #c8262e;
-  --hp-red-rgb: 200, 38, 46;
-  --hp-red-hover: #a81f26;
+  --hp-accent: #c8262e;
+  --hp-accent-rgb: 200, 38, 46;
+  --hp-accent-hover: #a81f26;
+  /* Kept as a distinct token from --hp-accent (the brand color) — the chat
+     widget's "new message" alert dot is meant to read as an urgent
+     notification color, not the brand accent, so it stays red regardless
+     of what the primary accent color is. */
+  --hp-alert: #c8262e;
 }
 
 * {
@@ -194,7 +199,7 @@ h3 {
 }
 
 .hp-btn--primary {
-  background: var(--hp-red);
+  background: var(--hp-accent);
   color: var(--hp-cream);
 }
 
@@ -301,7 +306,7 @@ h3 {
   font-size: 12px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--hp-red);
+  color: var(--hp-accent);
   margin: 0 0 14px;
 }
 

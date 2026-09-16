@@ -198,7 +198,7 @@
 
 .hp-products-filter__search input:focus-visible {
   outline: none;
-  border-color: var(--hp-red);
+  border-color: var(--hp-accent);
   background: rgba(var(--hp-navy-rgb), 0.07);
 }
 
@@ -230,8 +230,8 @@
 
 .hp-products-filter__chip.is-active {
   color: var(--hp-cream);
-  background: var(--hp-red);
-  border-color: var(--hp-red);
+  background: var(--hp-accent);
+  border-color: var(--hp-accent);
 }
 
 .hp-products-empty {
@@ -407,7 +407,7 @@
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--hp-red);
+  color: var(--hp-accent);
   margin-bottom: 8px;
 }
 
