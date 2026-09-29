@@ -339,7 +339,7 @@ h3 {
 /* Every home-page section: eyebrow scaled up to read as a huge red
    sub-headline (originally just the panel sections — Building Envelope,
    Roof Panels, Data Center, Cold Storage, Laboratories,
-   Airplane Hangars, Insulated Booths, PEMB, Modular IMP Housing, Doors,
+   Airplane Hangars, PEMB, Modular IMP Housing, Doors,
    Trim & Hardware —
    now applied site-wide to Who We Are/Sustainability/Gallery/Memberships/
    FAQ/Contact too, for one consistent look across the whole page instead
@@ -351,7 +351,6 @@ h3 {
 #laboratories .hp-section__eyebrow,
 #airplane-hangars .hp-section__eyebrow,
 #pemb .hp-section__eyebrow,
-#insulated-booths .hp-section__eyebrow,
 #modular-housing .hp-section__eyebrow,
 #doors .hp-section__eyebrow,
 #trim-hardware .hp-section__eyebrow,
@@ -389,7 +388,6 @@ h3 {
 #laboratories h2,
 #airplane-hangars h2,
 #pemb h2,
-#insulated-booths h2,
 #modular-housing h2,
 #doors h2,
 #trim-hardware h2,

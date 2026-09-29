@@ -9,7 +9,6 @@ import {
   DATA_CENTER_PANELS,
   DOOR_PANELS,
   GALLERY_IMAGES,
-  INSULATED_BOOTHS_PANELS,
   LABORATORIES_PANELS,
   PEMB_PANELS,
   MODULAR_HOUSING_PANELS,
@@ -66,7 +65,6 @@ const OVERVIEW_SECTIONS = [
   { id: "cold-storage", label: "Cold Storage" },
   { id: "laboratories", label: "Laboratories" },
   { id: "airplane-hangars", label: "Airplane Hangars" },
-  { id: "insulated-booths", label: "Insulated Booths" },
   { id: "pemb", label: "Pre-Engineered Metal Buildings" },
   { id: "modular-housing", label: "Modular IMP Housing" },
   { id: "doors", label: "Doors" },
@@ -100,7 +98,6 @@ const HOME_CRITICAL_IMAGES = [
   ...COLD_STORAGE_PANELS.map((p) => p.img),
   ...LABORATORIES_PANELS.map((p) => p.img),
   ...AIRPLANE_HANGARS_PANELS.map((p) => p.img),
-  ...INSULATED_BOOTHS_PANELS.map((p) => p.img),
   ...PEMB_PANELS.map((p) => p.img),
   ...MODULAR_HOUSING_PANELS.map((p) => p.img),
   ...DOOR_PANELS.map((p) => p.img),
@@ -241,14 +238,6 @@ function HomePage() {
         heading="Insulated panels for airplane hangar facilities"
         description="Long-span insulated panel systems built for the scale of aviation hangars, covering wide clear spans while holding a consistent, weather-tight interior envelope."
         panels={AIRPLANE_HANGARS_PANELS}
-        registerReveal={registerReveal}
-      />
-      <PanelSection
-        id="insulated-booths"
-        eyebrow="Insulated booths"
-        heading="Insulated panels for booths, huts, and shacks"
-        description="Compact insulated panel structures built for hunting huts, guard shacks, and lawn sheds, keeping small standalone spaces sealed and temperature-stable."
-        panels={INSULATED_BOOTHS_PANELS}
         registerReveal={registerReveal}
       />
       <PanelSection

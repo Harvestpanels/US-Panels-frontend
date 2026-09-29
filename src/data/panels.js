@@ -19,9 +19,6 @@ import airplaneHangarsBenefitsImg from "../assets/images/Sections/Airplane Hanga
 import pembFrameStructureImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Frame & Structure.webp";
 import pembWallRoofImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Wall & Roof Panels.webp";
 import pembCustomOptionsImg from "../assets/images/Sections/Pre-Engineered Metal Buildings/Pre-engineered metal buildings - Custom Options.webp";
-import insulatedBoothsHuntingImg from "../assets/images/Sections/Insulated Booths/Insulated Booths - Hunting Huts.webp";
-import insulatedBoothsGuardImg from "../assets/images/Sections/Insulated Booths/Insulated Booths - Guard Shacks.webp";
-import insulatedBoothsShedsImg from "../assets/images/Sections/Insulated Booths/Insulated Booths - Lawn Sheds.webp";
 import modularDisasterReliefImg from "../assets/images/Sections/Modular IMP Housing/Modular IMP Housing - Disaster Relief.webp";
 import modularAffordableHousingImg from "../assets/images/Sections/Modular IMP Housing/Modular IMP Housing - Affordable Housing.webp";
 import modularWeatherproofHousingImg from "../assets/images/Sections/Modular IMP Housing/Modular IMP Housing - Weatherproof Housing.webp";
@@ -325,27 +322,6 @@ export const PEMB_PANELS = [
     category: "Metal Building",
     desc: "Custom sizes, designs, and color options let every pre-engineered building match the look and footprint your project needs.",
     img: pembCustomOptionsImg,
-  },
-];
-
-export const INSULATED_BOOTHS_PANELS = [
-  {
-    name: "Hunting Huts",
-    category: "Insulated Booths",
-    desc: "Compact, fully insulated hunting huts built to hold a stable interior temperature through cold-weather sits, with a weather-tight panel envelope that resists condensation.",
-    img: insulatedBoothsHuntingImg,
-  },
-  {
-    name: "Guard Shacks",
-    category: "Insulated Booths",
-    desc: "Prefabricated guard shacks and security booths with insulated walls and roof for year-round comfort at gatehouses, checkpoints, and jobsite entrances.",
-    img: insulatedBoothsGuardImg,
-  },
-  {
-    name: "Lawn Sheds",
-    category: "Insulated Booths",
-    desc: "Insulated lawn and equipment sheds that keep stored tools and equipment protected from temperature swings and moisture, available in custom sizes.",
-    img: insulatedBoothsShedsImg,
   },
 ];
 
