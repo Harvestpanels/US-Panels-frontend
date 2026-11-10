@@ -4,128 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>US Panels | Insulated Metal Panels &amp; Doors (design concept)</title>
+<link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
-<style>
-:root{--ink:#0f1317;--ink2:#2b333b;--mute:#5d6872;--steel:#eef0f2;--steel2:#e1e5e9;--line:#d6dbe0;--white:#fff;--red:#c8202f;--red2:#a51a27;--navy:#0e2a4f;--r:18px}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
-body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased;line-height:1.5}
-img{display:block;max-width:100%}a{color:inherit;text-decoration:none}
-.wrap{width:min(1240px,100% - 40px);margin:0 auto}
-.mono{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
-.disp{font-family:"Big Shoulders Display",Impact,sans-serif;text-transform:uppercase;line-height:.92;letter-spacing:.005em;font-weight:800}
-.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 24px;border-radius:999px;font-weight:600;font-size:15px;border:1.5px solid transparent;cursor:pointer;transition:transform .2s,background .2s,border-color .2s}
-.btn:hover{transform:translateY(-2px)}
-.btn.red{background:var(--red);color:#fff}.btn.red:hover{background:var(--red2)}
-.btn.ghost{border-color:rgba(255,255,255,.55);color:#fff}.btn.ghost:hover{background:rgba(255,255,255,.12)}
-.btn.dark{background:var(--ink);color:#fff}.btn.line{border-color:var(--ink);color:var(--ink)}
-/* nav: the glass lives on a pseudo-element so the bar never becomes the box a fixed menu is measured against */
-.nav{position:fixed;top:14px;left:0;right:0;height:62px;z-index:50;color:var(--ink)}
-.nav .wrap{background:#fff;border-radius:999px;padding:0 10px 0 22px;box-shadow:0 10px 34px rgba(8,12,16,.22);transition:box-shadow .3s}
-.nav.solid .wrap{box-shadow:0 10px 34px rgba(8,12,16,.28)}
-.nav .wrap{height:100%;display:flex;align-items:center;gap:28px;width:min(1240px,100% - 28px)}
-.brand img{height:36px;width:auto}
-.menu{display:flex;gap:26px;margin-left:auto;font-size:15px;font-weight:500}.menu a{opacity:.9}.menu a:hover{opacity:1}
-.tel{font-size:14px;font-weight:600;opacity:.95}
-.nav .btn{padding:10px 18px;font-size:14px}
-.burger{display:none;margin-left:auto;width:44px;height:44px;border:0;background:none;color:var(--ink);cursor:pointer}
-.burger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px auto;transition:.3s}
-.drawer{display:none}
-@media(max-width:900px){.menu,.tel,.nav .btn.hide-m{display:none}.burger{display:block}
- .drawer{display:block;position:fixed;inset:0;z-index:49;background:var(--ink);color:#fff;padding:96px 24px 32px;overflow:auto;overscroll-behavior:contain;transform:translateY(-8px);opacity:0;visibility:hidden;transition:.25s}
- .drawer.open{opacity:1;visibility:visible;transform:none}
- .drawer a{display:block;padding:18px 0;font-family:"Big Shoulders Display",sans-serif;text-transform:uppercase;font-weight:800;font-size:30px;border-bottom:1px solid rgba(255,255,255,.12)}
- .drawer .btn{margin-top:24px;width:100%;justify-content:center;font-family:Inter;font-size:16px;text-transform:none;border:0;padding:16px}
- body.lock{overflow:hidden}.nav.open .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}.nav.open .burger span:nth-child(2){opacity:0}.nav.open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}}
-/* hero */
-.hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;color:#fff;background:#10161c}
-.hero img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,14,18,.86) 0%,rgba(10,14,18,.55) 48%,rgba(10,14,18,.08) 100%),linear-gradient(0deg,rgba(10,14,18,.7) 0%,transparent 38%)}
-.hero .wrap{position:relative;z-index:2;padding:140px 0 64px}
-.hero h1{font-size:clamp(64px,11vw,168px);margin:18px 0 22px;max-width:9em}
-.hero h1 em{font-style:normal;color:#ff4a58}
-.hero p.lead{font-size:clamp(17px,1.6vw,21px);max-width:34em;opacity:.92;margin:0 0 30px}
-.hero .cta{display:flex;flex-wrap:wrap;gap:12px}
-.facts{position:relative;z-index:2;background:var(--ink);color:#fff;border-top:4px solid var(--red)}
-.facts .wrap{padding:0;display:grid;grid-template-columns:repeat(4,1fr)}
-.fact{padding:26px 28px;border-left:1px solid rgba(255,255,255,.16);display:flex;flex-direction:column;gap:6px}.fact:first-child{border-left:0;padding-left:0}
-.fact b{display:block;font-family:"Big Shoulders Display";font-size:40px;text-transform:uppercase;font-weight:800;line-height:1;color:#fff;letter-spacing:.01em}
-.fact span{font-size:14px;color:#c9d1d9;font-weight:500}
-.hero-wrap{position:relative;display:flex;flex-direction:column}
-.hero-wrap .hero{flex:1}
-@media(max-width:900px){.facts .wrap{grid-template-columns:1fr 1fr}.fact{padding:18px;border-top:1px solid rgba(255,255,255,.14)}.fact:nth-child(odd){border-left:0;padding-left:0}.fact:nth-child(-n+2){border-top:0}.fact b{font-size:32px}}
-@media(max-width:760px){.facts .wrap{grid-template-columns:1fr 1fr}.fact{padding:18px 18px;border-top:1px solid rgba(255,255,255,.14)}.fact:nth-child(odd){border-left:0;padding-left:0}.fact:nth-child(-n+2){border-top:0}.fact b{font-size:30px}.fact span{font-size:13px}.hero::after{background:linear-gradient(0deg,rgba(10,14,18,.92) 0%,rgba(10,14,18,.55) 55%,rgba(10,14,18,.25) 100%)}.hero .wrap{padding:120px 0 40px}}
-/* sections */
-section.s{padding:clamp(64px,9vw,128px) 0}
-.eyebrow{color:var(--red);margin:0 0 14px}
-h2.disp{font-size:clamp(44px,6.4vw,92px);margin:0 0 18px}
-.sub{font-size:clamp(17px,1.5vw,20px);color:var(--mute);max-width:40em;margin:0}
-.head{margin-bottom:44px;display:flex;justify-content:space-between;gap:30px;align-items:flex-end;flex-wrap:wrap}
-/* project cards */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.card{position:relative;border-radius:var(--r);overflow:hidden;background:var(--ink);color:#fff;aspect-ratio:4/5;display:flex;align-items:flex-end;isolation:isolate}
-.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1);z-index:-2}
-.card::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,12,16,.88) 0%,rgba(8,12,16,.2) 55%,transparent 100%);z-index:-1}
-.card:hover img{transform:scale(1.06)}
-.card .t{padding:24px}.card h3{margin:0 0 6px;font-family:"Big Shoulders Display";text-transform:uppercase;font-size:36px;line-height:1;font-weight:800}
-.card p{margin:0;font-size:14px;opacity:.85}.card .go{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:18px;backdrop-filter:blur(6px)}
-@media(max-width:900px){.grid{grid-template-columns:1fr 1fr}.card{aspect-ratio:1/1.1}.card h3{font-size:28px}.card .t{padding:18px}}
-@media(max-width:520px){.grid{grid-template-columns:1fr}.card{aspect-ratio:16/11}}
-/* builder */
-.steel{background:var(--steel)}
-.builder{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.bcard{background:#fff;border-radius:var(--r);padding:22px;border:1px solid var(--line);display:flex;flex-direction:column;gap:18px}
-.bcard .view{aspect-ratio:4/3;border-radius:12px;background:var(--steel2);overflow:hidden}
-.bcard .view img{width:100%;height:100%;object-fit:cover;transition:opacity .25s}
-.bcard h3{margin:0;font-family:"Big Shoulders Display";text-transform:uppercase;font-size:34px;font-weight:800;line-height:1}
-.bcard .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font:600 14px Inter;cursor:pointer;transition:.2s}
-.chip.on{background:var(--ink);border-color:var(--ink);color:#fff}.chip:hover{border-color:var(--ink)}
-.sw{display:flex;flex-wrap:wrap;gap:10px}.sw button{width:38px;height:38px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--line);cursor:pointer;transition:.2s}
-.sw button.on{box-shadow:0 0 0 2.5px var(--red)}.sw button:hover{transform:scale(1.1)}
-.note{font-size:13px;color:var(--mute);margin:0}
-@media(max-width:900px){.builder{grid-template-columns:1fr}}
-/* families */
-.fam{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
-.fam a{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:14px;transition:.25s;display:flex;flex-direction:column;gap:12px}
-.fam a:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(15,19,23,.12);border-color:var(--ink)}
-.fam .im{aspect-ratio:1;border-radius:10px;background:var(--steel);overflow:hidden}.fam img{width:100%;height:100%;object-fit:cover}
-.fam b{font-family:"Big Shoulders Display";text-transform:uppercase;font-size:24px;font-weight:800;line-height:1}.fam span{font-size:13px;color:var(--mute)}
-@media(max-width:1000px){.fam{grid-template-columns:repeat(3,1fr)}}@media(max-width:560px){.fam{grid-template-columns:1fr 1fr}}
-/* why */
-.why{display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:center}
-.layers{display:grid;gap:10px;margin-top:26px}.layers div{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:12px;background:var(--steel);font-weight:600}
-.layers div i{font-style:normal;color:var(--red);font-family:"JetBrains Mono";font-size:13px}
-.layers div.one{background:var(--ink);color:#fff;font-family:"Big Shoulders Display";text-transform:uppercase;font-size:28px;font-weight:800}
-.why .pic{border-radius:var(--r);overflow:hidden;aspect-ratio:4/5}.why .pic img{width:100%;height:100%;object-fit:cover}
-@media(max-width:900px){.why{grid-template-columns:1fr;gap:30px}.why .pic{aspect-ratio:16/10}}
-/* quote band + footer */
-.band{background:var(--navy);color:#fff;position:relative;overflow:hidden}
-.band::before{content:"";position:absolute;inset:auto -10% -60% 40%;height:120%;background:radial-gradient(closest-side,rgba(200,32,47,.55),transparent);}
-.band .wrap{position:relative;display:flex;justify-content:space-between;gap:40px;align-items:center;flex-wrap:wrap}
-.band h2{margin:0;font-size:clamp(48px,7vw,104px)}
-.band .acts{display:flex;flex-direction:column;gap:12px;min-width:260px}
-footer{background:var(--ink);color:#c5ccd3;padding:56px 0 34px;font-size:14px}
-footer .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px}footer h4{color:#fff;margin:0 0 12px;font:600 12px "JetBrains Mono";letter-spacing:.14em;text-transform:uppercase}
-footer a{display:block;padding:4px 0}footer a:hover{color:#fff}footer img{height:40px;margin-bottom:14px}
-footer .legal{margin-top:36px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px}
-@media(max-width:800px){footer .cols{grid-template-columns:1fr 1fr}}
-.rv{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}.rv.in{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
-</style>
+<link rel="stylesheet" href="site.css">
+
 </head>
 <body>
 <header class="nav" id="nav">
   <div class="wrap">
     <a class="brand" href="#top"><img src="img/logo.webp" alt="US Panels"></a>
-    <nav class="menu" aria-label="Main"><a href="#projects">Projects</a><a href="#panels">Panels</a><a href="#products">Products</a><a href="#why">Why US Panels</a><a href="#">Specs</a><a href="#">Blog</a></nav>
+    <nav class="menu" aria-label="Main"><a href="#projects">Projects</a><a href="#panels">Panels</a><a href="#products">Products</a><a href="architectural.html">Architectural</a><a href="#why">Why US Panels</a><a href="#">Specs</a></nav>
     <a class="tel" href="tel:4057782808">(405) 778-2808</a>
     <a class="btn red hide-m" href="#quote">Get a quote</a>
     <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
   </div>
 </header>
 <div class="drawer" id="drawer">
-  <a href="#projects">Projects</a><a href="#panels">Panels</a><a href="#products">Products</a><a href="#why">Why US Panels</a><a href="#">Specs</a><a href="#">Blog</a>
+  <a href="#projects">Projects</a><a href="#panels">Panels</a><a href="#products">Products</a><a href="architectural.html">Architectural</a><a href="#why">Why US Panels</a><a href="#">Specs</a><a href="#">Blog</a>
   <a href="tel:4057782808">(405) 778-2808</a>
   <a class="btn red" href="#quote">Get a quote</a>
 </div>
@@ -141,7 +37,7 @@ footer .legal{margin-top:36px;padding-top:20px;border-top:1px solid rgba(255,255
     </div>
   </section>
   <div class="facts"><div class="wrap">
-    <div class="fact"><b>48 hours</b><span>Delivered anywhere in the U.S.</span></div>
+    <div class="fact"><b>48 hours</b><span>Anywhere in the U.S., from departure</span></div>
     <div class="fact"><b>Immediate</b><span>Availability, shipped from Oklahoma</span></div>
     <div class="fact"><b>UL listed</b><span>Panels and door assemblies</span></div>
     <div class="fact"><b>ISO 9001</b><span>Quality management</span></div>
@@ -200,7 +96,7 @@ footer .legal{margin-top:36px;padding-top:20px;border-top:1px solid rgba(255,255
 <footer><div class="wrap">
   <div class="cols"><div><img src="img/logo.webp" alt="US Panels"><p style="max-width:26em">Exterior insulated metal panels and doors, delivered across the U.S. from Oklahoma stock.</p></div>
     <div><h4>Projects</h4><a href="#">Data centers</a><a href="#">Cold storage</a><a href="#">Laboratories</a><a href="#">Hangars</a></div>
-    <div><h4>Products</h4><a href="#">Wall &amp; roof panels</a><a href="#">Fire-rated panels</a><a href="#">Doors</a><a href="#">Trim &amp; hardware</a></div>
+    <div><h4>Products</h4><a href="#">Wall &amp; roof panels</a><a href="#">Fire-rated panels</a><a href="#">Doors</a><a href="#">Trim &amp; hardware</a><a href="architectural.html">Architectural</a></div>
     <div><h4>Company</h4><a href="#">Specs</a><a href="#">Blog</a><a href="tel:4057782808">(405) 778-2808</a><a href="mailto:Sales@uspanels.com">Sales@uspanels.com</a></div></div>
   <div class="legal"><span>&copy; 2026 US Panels. All rights reserved.</span><span>Design concept, not live</span></div>
 </div></footer>

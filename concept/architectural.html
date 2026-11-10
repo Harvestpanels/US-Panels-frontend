@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Architectural Panels | US Panels (design concept)</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+.hero.short{min-height:76svh}
+.hero.short h1{font-size:clamp(56px,9.4vw,150px);max-width:9em}
+.hero.short .wrap{padding:150px 0 70px}
+.hero.short::after{background:linear-gradient(90deg,rgba(10,14,18,.82) 0%,rgba(10,14,18,.45) 55%,rgba(10,14,18,.05) 100%),linear-gradient(0deg,rgba(10,14,18,.6) 0%,transparent 40%)}
+@media(max-width:760px){.hero.short::after{background:linear-gradient(0deg,rgba(10,14,18,.92) 0%,rgba(10,14,18,.5) 60%,rgba(10,14,18,.3) 100%)}.hero.short .wrap{padding:120px 0 44px}}
+
+/* configurator: pick on the left, your look on the right */
+.cfg{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(300px,1fr);gap:24px;align-items:start}
+.pick{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
+.step-h{display:flex;align-items:baseline;gap:14px;margin:0 0 16px}
+.step-h i{font:normal 500 13px "JetBrains Mono";color:var(--red);letter-spacing:.1em}
+.step-h b{font:800 34px/1 "Big Shoulders Display";text-transform:uppercase}
+.step-h span{margin-left:auto;color:var(--mute);font-size:14px;font-weight:600;text-align:right}
+
+.profs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pc{position:relative;text-align:left;background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:12px;cursor:pointer;font:inherit;color:inherit;transition:border-color .2s,box-shadow .2s,transform .2s}
+.pc:hover{border-color:var(--ink);transform:translateY(-2px)}
+.pc .im{aspect-ratio:16/9;background:#fff;border-radius:10px;overflow:hidden}
+.pc .im img{width:100%;height:100%;object-fit:contain}
+.pc b{display:block;font:800 28px/1 "Big Shoulders Display";text-transform:uppercase;margin:2px 0 6px}
+.pc .tx>span{display:block;font-size:13.5px;line-height:1.45;color:var(--mute)}
+.pc[aria-pressed=true]{border-color:var(--red);box-shadow:0 0 0 4px rgba(200,32,47,.12)}
+.pc[aria-pressed=true]::after,.ct[aria-pressed=true]::after{content:"\2713";position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;font:700 14px/26px Inter;text-align:center}
+
+.cols{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.ct{position:relative;text-align:left;background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:7px;cursor:pointer;font:inherit;color:inherit;transition:border-color .2s,box-shadow .2s,transform .2s}
+.ct:hover{border-color:var(--ink);transform:translateY(-2px)}
+.ct .im{aspect-ratio:4/3;border-radius:8px;overflow:hidden;background:var(--steel)}
+.ct .im img{width:100%;height:100%;object-fit:cover}
+.ct b{font-size:13px;font-weight:600;line-height:1.2;padding:0 2px}
+.ct em{font:normal 500 10px "JetBrains Mono";letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding:0 2px 2px}
+.ct.stock em{color:#1b6b3a}
+.ct[aria-pressed=true]{border-color:var(--red);box-shadow:0 0 0 4px rgba(200,32,47,.12)}
+.ct[aria-pressed=true]::after{top:14px;right:14px;width:22px;height:22px;font-size:12px;line-height:22px}
+.pc:focus-visible,.ct:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+
+/* your look */
+.sum{position:sticky;top:96px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:22px;display:grid;gap:18px}
+.sum h3{margin:0;font:800 32px/1 "Big Shoulders Display";text-transform:uppercase}
+.insets{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.inset{position:relative;border-radius:12px;overflow:hidden;background:var(--steel)}
+.inset img{width:100%;aspect-ratio:1/1;object-fit:cover}
+.inset.pf img{object-fit:contain;background:#fff}
+.inset span{position:absolute;left:8px;bottom:8px;background:rgba(15,19,23,.85);color:#fff;padding:4px 10px;border-radius:99px;font:500 10px "JetBrains Mono";letter-spacing:.1em;text-transform:uppercase}
+.spec{margin:0;padding:0;list-style:none}
+.spec li{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
+.spec li:last-child{border-bottom:0}.spec b{font-weight:600}.spec span{color:var(--mute);text-align:right}
+.btns2{display:grid;gap:10px}.btns2 .btn{justify-content:center}
+.fine{font-size:12.5px;color:var(--mute);margin:0;line-height:1.5}
+
+/* phone: the look stays pinned under the menu while you scroll through the choices */
+.sumbar{display:none}
+@media(max-width:980px){
+  .cfg{grid-template-columns:minmax(0,1fr);gap:18px}
+  .sum{display:none}
+  .sumbar{display:flex;align-items:center;gap:10px;position:sticky;top:88px;z-index:20;background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px 8px 8px 8px;box-shadow:0 12px 30px rgba(8,12,16,.16)}
+  .sumbar img{width:56px;height:42px;border-radius:8px;object-fit:cover;background:var(--steel);flex:none}
+  .sumbar img.pf{object-fit:contain;background:#fff;border:1px solid var(--line)}
+  .sumbar .tx{min-width:0;flex:1;line-height:1.25}
+  .sumbar .tx b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sumbar .tx span{display:block;font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sumbar .btn{padding:11px 16px;font-size:14px;flex:none}
+}
+@media(max-width:640px){.cols{grid-template-columns:1fr 1fr}.step-h b{font-size:30px}}
+@media(max-width:560px){.profs{grid-template-columns:1fr}}
+@media(max-width:420px){.sumbar img.t2{display:none}}
+@media(max-width:380px){.sumbar img{width:46px;height:36px}.sumbar .btn{padding:11px 14px}}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.step{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:30px 28px}
+.step i{font:normal 500 13px "JetBrains Mono";color:var(--red);letter-spacing:.1em}
+.step h3{font:800 40px/1 "Big Shoulders Display";text-transform:uppercase;margin:16px 0 12px}
+.step p{margin:0;color:var(--mute)}
+@media(max-width:900px){.steps{grid-template-columns:1fr}}
+
+/* brief form */
+.brief{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.brief::before{content:"";position:absolute;inset:auto -10% -70% 45%;height:120%;background:radial-gradient(closest-side,rgba(200,32,47,.5),transparent)}
+.brief .wrap{position:relative;display:grid;grid-template-columns:1fr 1.15fr;gap:56px;align-items:start}
+.brief h2{margin:0 0 18px;font-size:clamp(46px,6.4vw,96px)}
+.brief .sub{color:#c8d3e0}
+.brief .copylook{margin-top:26px}
+.form{background:#fff;color:var(--ink);border-radius:var(--r);padding:26px;display:grid;gap:14px;box-shadow:0 30px 60px rgba(0,0,0,.28)}
+.form .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form label{display:grid;gap:6px;font-size:13px;font-weight:600;color:var(--ink2)}
+.form input,.form select,.form textarea{font:500 15px Inter,sans-serif;padding:13px 14px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);width:100%}
+.form input:focus,.form select:focus,.form textarea:focus{outline:2px solid var(--red);outline-offset:-1px;border-color:transparent}
+.form input[readonly]{background:var(--steel);font-weight:600}
+.form textarea{min-height:96px;resize:vertical}
+.sent{display:none;padding:14px 16px;border-radius:10px;background:#e5f3ea;color:#1b6b3a;font-weight:600;font-size:14px}
+@media(max-width:900px){.brief .wrap{grid-template-columns:1fr;gap:34px}.form .two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="img/logo.webp" alt="US Panels"></a>
+    <nav class="menu" aria-label="Main"><a href="index.html#projects">Projects</a><a href="index.html#panels">Panels</a><a href="index.html#products">Products</a><a href="architectural.html" style="color:var(--red);opacity:1">Architectural</a><a href="index.html#why">Why US Panels</a><a href="#">Specs</a></nav>
+    <a class="tel" href="tel:4057782808">(405) 778-2808</a>
+    <a class="btn red hide-m" href="#brief">Get a quote</a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="index.html#projects">Projects</a><a href="index.html#panels">Panels</a><a href="index.html#products">Products</a><a href="architectural.html">Architectural</a><a href="index.html#why">Why US Panels</a><a href="#">Specs</a><a href="#">Blog</a>
+  <a href="tel:4057782808">(405) 778-2808</a>
+  <a class="btn red" href="#brief">Get a quote</a>
+</div>
+
+<section class="hero short" id="top">
+  <img class="bg" src="img/arch-hero.webp" alt="Clean metal panel cladding on a modern building">
+  <div class="wrap">
+    <div class="mono" style="opacity:.9">Architectural panels</div>
+    <h1 class="disp">Pick the profile.<br>Pick the <em>finish.</em></h1>
+    <p class="lead">Four face profiles and ten colors. Choose your look, then tell us about the project. We work alongside architects, engineers and designers on every job.</p>
+    <div class="cta"><a class="btn red" href="#look">Choose a look</a><a class="btn ghost" href="#brief">Talk to our team</a></div>
+  </div>
+</section>
+
+<section class="s steel" id="look"><div class="wrap">
+  <div class="head rv"><div><p class="mono eyebrow">Choose a look</p><h2 class="disp">Profile. Color.<br>Your look.</h2></div><p class="sub">Pick one of four face profiles and one of ten colors. Your choice is saved in the page link, so you can send it to anyone on your team.</p></div>
+  <div class="cfg">
+    <div class="sumbar" id="sumbar">
+      <img class="pf t1" id="mbP" src="img/prof-trap.webp" alt=""><img class="t2" id="mbC" src="img/col-grey-white.webp" alt="">
+      <div class="tx"><b id="mbT">Trapezoidal</b><span id="mbS">Grey White &middot; In stock</span></div>
+      <a class="btn red" href="#brief">Get pricing</a>
+    </div>
+    <div class="pick">
+      <div class="rv">
+        <div class="step-h"><i>01</i><b>Profile</b></div>
+        <div class="profs" id="profs"></div>
+      </div>
+      <div class="rv">
+        <div class="step-h"><i>02</i><b>Color</b><span id="stepC">Grey White</span></div>
+        <div class="cols" id="cols"></div>
+      </div>
+    </div>
+    <aside class="sum rv">
+      <h3>Your look</h3>
+      <div class="insets"><div class="inset pf"><img id="insP" src="img/prof-trap.webp" alt="Selected panel profile"><span>Profile</span></div><div class="inset"><img id="insC" src="img/col-grey-white.webp" alt="Selected panel finish"><span>Finish</span></div></div>
+      <ul class="spec"><li><b>Profile</b><span id="sP">Trapezoidal</span></li><li><b>Color</b><span id="sC">Grey White</span></li><li><b>Availability</b><span id="sA">In stock</span></li></ul>
+      <div class="btns2"><a class="btn red" href="#brief">Request pricing for this look</a><button class="btn line copylook" type="button">Copy link to this look</button></div>
+      <p class="fine">Final profiles, sizes and colors are confirmed on your quote. Grey White is kept in stock; every other color is made to order, and custom panel colors are available on request.</p>
+    </aside>
+  </div>
+</div></section>
+
+<section class="s" id="how"><div class="wrap">
+  <div class="head rv"><div><p class="mono eyebrow">Working with design teams</p><h2 class="disp">From sketch<br>to delivery.</h2></div><p class="sub">Budgeting, design assistance, continuous communication and quality workmanship on every project.</p></div>
+  <div class="steps">
+    <div class="step rv"><i>01</i><h3>Share the idea</h3><p>Send drawings or just a direction. We give you budgeting help and a no-cost estimate on every project.</p></div>
+    <div class="step rv"><i>02</i><h3>Spec it together</h3><p>Our team works directly with architects, designers and engineers to spec the right panel size, insulation type and finish.</p></div>
+    <div class="step rv"><i>03</i><h3>We deliver</h3><p>Consistent supply of pre-cut panels, with custom orders typically fulfilled within 30 days and delivery anywhere in the U.S.</p></div>
+  </div>
+</div></section>
+
+<section class="s brief" id="brief"><div class="wrap">
+  <div class="rv"><p class="mono" style="opacity:.8;margin:0 0 14px">Architectural panels</p><h2 class="disp">Tell us what<br>you're designing.</h2><p class="sub">Looking for something specific? Describe the project and our team will come back with options and pricing.</p><button class="btn ghost copylook" type="button">Copy link to this look</button></div>
+  <form class="form rv" id="form" novalidate>
+    <label>Your look<input id="look-field" name="look" readonly value="Trapezoidal · Grey White"></label>
+    <div class="two"><label>Name<input name="name" autocomplete="name" placeholder="Your name"></label><label>Email<input name="email" type="email" autocomplete="email" placeholder="you@company.com"></label></div>
+    <div class="two"><label>Phone<input name="phone" type="tel" autocomplete="tel" placeholder="(405) 555-0123"></label><label>City and state<input name="where" placeholder="Where is the project?"></label></div>
+    <div class="two"><label>Project type<select name="type"><option>Commercial</option><option>Industrial</option><option>Residential</option><option>Institutional</option><option>Other</option></select></label><label>Timeline<select name="when"><option>Just exploring</option><option>Within 3 months</option><option>3 to 6 months</option><option>6+ months</option></select></label></div>
+    <label>About the project<textarea name="msg" placeholder="Building type, size, finish you have in mind, drawings you can share..."></textarea></label>
+    <button class="btn red" type="submit" style="justify-content:center">Send to US Panels</button>
+    <div class="sent" id="sent">Design concept only: the live version sends this to our team through the same Pipedrive form the site uses today.</div>
+  </form>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="cols"><div><img src="img/logo.webp" alt="US Panels"><p style="max-width:26em">Exterior insulated metal panels and doors, delivered across the U.S. from Oklahoma stock.</p></div>
+    <div><h4>Projects</h4><a href="#">Data centers</a><a href="#">Cold storage</a><a href="#">Laboratories</a><a href="#">Hangars</a></div>
+    <div><h4>Products</h4><a href="#">Wall &amp; roof panels</a><a href="#">Fire-rated panels</a><a href="#">Doors</a><a href="architectural.html">Architectural</a></div>
+    <div><h4>Company</h4><a href="#">Specs</a><a href="#">Blog</a><a href="tel:4057782808">(405) 778-2808</a><a href="mailto:Sales@uspanels.com">Sales@uspanels.com</a></div></div>
+  <div class="legal"><span>&copy; 2026 US Panels. All rights reserved.</span><span>Design concept, not live</span></div>
+</div></footer>
+
+<script>
+/* ---------- nav (same as the home concept) ---------- */
+const nav=document.getElementById('nav'),drawer=document.getElementById('drawer'),burger=document.getElementById('burger');
+const onScroll=()=>nav.classList.toggle('solid',scrollY>40); addEventListener('scroll',onScroll,{passive:true}); onScroll();
+const setMenu=o=>{ nav.classList.toggle('open',o); drawer.classList.toggle('open',o); document.body.classList.toggle('lock',o); burger.setAttribute('aria-expanded',String(o)); };
+burger.onclick=()=>setMenu(!drawer.classList.contains('open')); drawer.addEventListener('click',e=>{ if(e.target.closest('a')) setMenu(false); });
+addEventListener('keydown',e=>{ if(e.key==='Escape') setMenu(false); }); addEventListener('resize',()=>{ if(innerWidth>900) setMenu(false); });
+const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }),{threshold:.12}); document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+/* ---------- look picker: the real profile and finish photos, nothing drawn ---------- */
+/* Profile wording is the live site's own (Specs page). */
+const PROFILES=[
+  {k:'flat',n:'Flat',d:'A smooth, unribbed face for the most minimal, monolithic appearance.'},
+  {k:'box',n:'Box',d:'Flat pans separated by narrow ribs, the cleanest, most contemporary look.'},
+  {k:'trap',n:'Trapezoidal',d:'Repeating angular ribs for a bold, structured profile with added rigidity, common on exterior wall and roof panels.'},
+  {k:'emb',n:'Embossed',d:'A subtle textured stucco finish that hides minor surface imperfections and reduces the appearance of oil-canning.'}];
+const COLORS=[['Grey White',1],['White'],['White Aluminum'],['Ivory'],['Light Blue'],['Gentian Blue'],['Signal Green'],['Colza Yellow'],['Pure Orange'],['Flame Red']].map(([n,s])=>({n,stock:!!s,slug:n.toLowerCase().replace(/ /g,'-')}));
+const st={p:'trap',c:'grey-white'};
+const $=id=>document.getElementById(id);
+
+const profsBox=$('profs'), colsBox=$('cols');
+PROFILES.forEach(p=>{ const b=document.createElement('button'); b.type='button'; b.className='pc'; b.dataset.k=p.k;
+  b.innerHTML=`<span class="im"><img src="img/prof-${p.k}.webp" alt="" loading="lazy"></span><span class="tx"><b>${p.n}</b><span>${p.d}</span></span>`;
+  b.onclick=()=>{ st.p=p.k; render(true); }; profsBox.appendChild(b); });
+COLORS.forEach(c=>{ const b=document.createElement('button'); b.type='button'; b.className='ct'+(c.stock?' stock':''); b.dataset.k=c.slug; b.setAttribute('aria-label',c.n+(c.stock?', in stock':', made to order'));
+  b.innerHTML=`<span class="im"><img src="img/col-${c.slug}.webp" alt="" loading="lazy"></span><b>${c.n}</b><em>${c.stock?'In stock':'Made to order'}</em>`;
+  b.onclick=()=>{ st.c=c.slug; render(true); }; colsBox.appendChild(b); });
+
+function render(write){
+  const p=PROFILES.find(x=>x.k===st.p), c=COLORS.find(x=>x.slug===st.c), avail=c.stock?'In stock':'Made to order';
+  profsBox.querySelectorAll('.pc').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.k===st.p)));
+  colsBox.querySelectorAll('.ct').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.k===st.c)));
+  const pi=`img/prof-${p.k}.webp`, ci=`img/col-${c.slug}.webp`;
+  $('insP').src=pi; $('insC').src=ci; $('mbP').src=pi; $('mbC').src=ci;
+  $('insP').alt=p.n+' panel profile'; $('insC').alt=c.n+' panel finish';
+  $('sP').textContent=p.n; $('sC').textContent=c.n; $('sA').textContent=avail; $('stepC').textContent=c.n+' · '+avail;
+  $('mbT').textContent=p.n; $('mbS').textContent=c.n+' · '+avail;
+  $('look-field').value=p.n+' · '+c.n;
+  if(write) history.replaceState(null,'','#look/'+new URLSearchParams(st).toString());
+}
+/* shared looks live at #look/p=..&c=.. (plain #p=.. would clash with the page anchors) */
+function fromHash(){ if(!location.hash.startsWith('#look/')) return false; const q=new URLSearchParams(location.hash.slice(6)); let any=false, p=q.get('p'), c=q.get('c');
+  if(PROFILES.some(x=>x.k===p)){ st.p=p; any=true; } if(COLORS.some(x=>x.slug===c)){ st.c=c; any=true; } return any; }
+if(fromHash()){ render(false); requestAnimationFrame(()=>$('look').scrollIntoView()); } else render(false);
+addEventListener('hashchange',()=>{ if(fromHash()){ render(false); $('look').scrollIntoView(); } });
+document.querySelectorAll('.copylook').forEach(b=>b.onclick=function(){ const t=b.textContent, url=location.origin+location.pathname+'#look/'+new URLSearchParams(st).toString();
+  (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>{ b.textContent='Link copied'; },()=>{ b.textContent='Copy it from the address bar'; history.replaceState(null,'','#look/'+new URLSearchParams(st).toString()); }).finally(()=>setTimeout(()=>b.textContent=t,1800)); });
+$('form').addEventListener('submit',e=>{ e.preventDefault(); $('sent').style.display='block'; });
+</script>
+</body>
+</html>
