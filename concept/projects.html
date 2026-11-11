@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Projects | US Panels (design concept)</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+/* jump links under the hero */
+.jump{background:#fff;border-bottom:1px solid var(--line);padding:16px 0}
+.jump .wrap{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px}
+.jump .mono{color:var(--mute);flex:none}
+.jump ul{flex:1 1 300px;min-width:0}
+ul.chips{list-style:none;margin:0;padding:0}
+a.chip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:9px 18px}
+
+/* one project type: photo on one side, the words on the other; .flip puts the photo on the right */
+.proj{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:start}
+.proj .pic{margin:0;position:sticky;top:104px;border-radius:var(--r);overflow:hidden;aspect-ratio:4/3;background:var(--steel2)}
+.proj .pic img{width:100%;height:100%;object-fit:cover}
+.proj.flip .pic{order:2}
+.proj h2.disp{font-size:clamp(42px,5.6vw,80px);margin:0 0 16px;overflow-wrap:anywhere}
+.stand{margin:0 0 10px;font-size:clamp(18px,1.7vw,22px);font-weight:600;line-height:1.35}
+.lab{margin:30px 0 0;color:var(--mute);font-weight:500}
+.supply{list-style:none;margin:12px 0 0;padding:0;border-bottom:1px solid var(--line)}
+.supply li{display:grid;grid-template-columns:150px minmax(0,1fr);gap:4px 18px;padding:14px 0;border-top:1px solid var(--line);font-size:15px}
+.supply b{font-weight:600}
+.supply span{color:var(--mute)}
+.gain{margin:18px 0 0;padding:16px 18px;border-radius:14px;background:var(--steel);font-size:15px;color:var(--ink2)}
+.gain b{display:block;margin-bottom:6px;color:var(--red);font:500 11px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase}
+.steel .gain{background:#fff}
+.plinks{margin-top:12px}
+.proj .btnrow{margin-top:26px}
+
+/* insulated booths: three photo cards */
+.booths{list-style:none;margin:0;padding:0;grid-template-columns:repeat(3,minmax(0,1fr))}
+.booths .card{aspect-ratio:4/5}
+
+@media(max-width:900px){
+  .proj{grid-template-columns:minmax(0,1fr);gap:26px}
+  .proj .pic,.proj.flip .pic{position:static;order:0;aspect-ratio:16/10}
+  .booths{gap:12px}
+}
+@media(max-width:640px){
+  .booths{grid-template-columns:minmax(0,1fr)}
+  .booths .card{aspect-ratio:16/10}
+}
+@media(max-width:560px){
+  .supply li{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+<!--nav-->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="img/logo.webp" alt="US Panels" width="96" height="36"></a>
+    <nav class="menu" aria-label="Main"><a href="products.html">Products</a><a href="doors.html">Doors</a><a href="showroom.html">3D Showroom</a><a href="architectural.html">Architectural</a><a href="projects.html" aria-current="page">Projects</a><a href="specs.html">Specs</a></nav>
+    <a class="tel" href="tel:4057782808">(405) 778-2808</a>
+    <a class="btn red hide-m" href="quote.html">Get a quote</a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="products.html">Products</a><a href="doors.html">Doors</a><a href="trim.html">Trim &amp; Hardware</a><a href="showroom.html">3D Showroom</a><a href="architectural.html">Architectural</a><a href="projects.html" aria-current="page">Projects</a><a href="specs.html">Specs</a>
+  <a href="tel:4057782808">(405) 778-2808</a>
+  <a class="btn red" href="quote.html">Get a quote</a>
+</div>
+<!--/nav-->
+
+<section class="phero"><div class="wrap">
+  <div class="mono">Projects</div>
+  <h1 class="disp">Built for<br>your <em>project.</em></h1>
+  <p class="lead">Insulated Metal Panels for every building type we work on, from data centers to hangars to modular housing, with the panel spec (fire rating, insulation and finish) matched to your project.</p>
+  <div class="cta"><a class="btn red" href="quote.html">Get a quote</a><a class="btn ghost" href="products.html">See the products</a></div>
+</div></section>
+
+<nav class="jump" aria-label="Project types"><div class="wrap">
+  <span class="mono">Jump to</span>
+  <ul class="chips">
+    <li><a class="chip" href="#data-centers">Data centers</a></li>
+    <li><a class="chip" href="#cold-storage">Cold storage</a></li>
+    <li><a class="chip" href="#laboratories">Laboratories</a></li>
+    <li><a class="chip" href="#hangars">Airplane hangars</a></li>
+    <li><a class="chip" href="#metal-buildings">Metal buildings</a></li>
+    <li><a class="chip" href="#modular-housing">Modular housing</a></li>
+    <li><a class="chip" href="#general-construction">General construction</a></li>
+    <li><a class="chip" href="#insulated-booths">Insulated booths</a></li>
+  </ul>
+</div></nav>
+
+<section class="s" id="data-centers"><div class="wrap proj">
+  <figure class="pic rv"><img src="img/ind-data.webp" alt="Aerial view of a white panel-clad data center with rooftop cooling units and a perimeter fence"></figure>
+  <div class="rv">
+    <p class="mono eyebrow">01 &middot; Server halls and critical equipment</p>
+    <h2 class="disp">Data centers</h2>
+    <p class="stand">Panel systems built for data center facilities, inside and out.</p>
+    <p class="sub">Insulated wall and interior panel systems engineered for the tight tolerances and reliability data center environments demand.</p>
+    <h3 class="mono lab">What we supply</h3>
+    <ul class="supply">
+      <li><b>Exterior panels</b><span>Insulated exterior wall systems built to protect critical equipment with a tight, secure, weather-resistant shell.</span></li>
+      <li><b>Interior panels</b><span>Clean, finish-grade interior panels for server halls and controlled-access spaces that need a durable, easy-to-maintain surface.</span></li>
+    </ul>
+    <p class="gain"><b>Benefits</b>Consistent thermal performance, fire-rated core options and fast installation help keep critical environments stable and on schedule.</p>
+    <h3 class="mono lab">Matching products</h3>
+    <ul class="chips plinks">
+      <li><a class="chip" href="products.html#wall-roof">Wall &amp; roof panels <span aria-hidden="true">&rarr;</span></a></li>
+      <li><a class="chip" href="products.html#fire-rated">Fire-rated panels <span aria-hidden="true">&rarr;</span></a></li>
+    </ul>
+    <div class="btnrow"><a class="btn red" href="quote.html">Get a quote</a></div>
+  </div>
+</div></section>
+
+<section class="s steel" id="cold-storage"><div class="wrap proj flip">
+  <figure class="pic rv"><img src="img/ind-cold.webp" alt="Long white panel-clad wall of a cold storage building with loading docks at the far end" loading="lazy"></figure>
+  <div class="rv">
+    <p class="mono eyebrow">02 &middot; Refrigerated and frozen storage</p>
+    <h2 class="disp">Cold storage</h2>
+    <p class="stand">Insulated Metal Panels for cold storage facilities.</p>
+    <p class="sub">Exterior and interior panel systems engineered to hold a consistent thermal shell around refrigerated and frozen storage.</p>
+    <h3 class="mono lab">What we supply</h3>
+    <ul class="supply">
+      <li><b>Exterior panels</b><span>Heavy-duty insulated exterior panels engineered to keep the building shell thermally tight for refrigerated and frozen storage facilities.</span></li>
+      <li><b>Interior panels</b><span>Interior partition panels built for consistent temperature zones, with finishes suited to food-safety and sanitation requirements.</span></li>
+      <li><b>Insulated doors</b><span>Hinged insulated doors for cold storage and cooler entries that seal tight against the panels around them, and heavy-duty insulated sliding doors for consistent temperature control and secure cooler access.</span></li>
+    </ul>
+    <p class="gain"><b>Benefits</b>Superior insulation values, moisture resistance and low-maintenance surfaces keep cold storage facilities efficient year-round.</p>
+    <h3 class="mono lab">Matching products</h3>
+    <ul class="chips plinks">
+      <li><a class="chip" href="products.html#cold-storage">Cold storage panels <span aria-hidden="true">&rarr;</span></a></li>
+      <li><a class="chip" href="doors.html">Doors <span aria-hidden="true">&rarr;</span></a></li>
+    </ul>
+    <div class="btnrow"><a class="btn red" href="quote.html">Get a quote</a></div>
+  </div>
+</div></section>
+
+<section class="s" id="laboratories"><div class="wrap proj">
+  <figure class="pic rv"><img src="img/ind-lab.webp" alt="Technicians in cleanroom suits working at equipment in a white panel-lined cleanroom" loading="lazy"></figure>
+  <div class="rv">
+    <p class="mono eyebrow">03 &middot; Research, testing and cleanrooms</p>
+    <h2 class="disp">Laboratories</h2>
+    <p class="stand">Insulated Metal Panels for laboratory facilities.</p>
+    <p class="sub">Precision-controlled panel systems engineered for research and testing laboratories, holding tight temperature, humidity and contamination tolerances.</p>
+    <h3 class="mono lab">What we supply</h3>
+    <ul class="supply">
+      <li><b>GMP &amp; cleanroom panels</b><span>Seamless, non-shedding panel systems built to ISO 14644 cleanroom classifications and EU GMP Annex 1 grades, with coved wall-to-floor transitions and factory-notched joints that reduce on-site cutting and particulate generation during installation.</span></li>
+      <li><b>USP 797/800 compounding panels</b><span>Panel enclosures suited to both sterile compounding suites (positive-pressure rooms that protect the product from contamination under USP &lt;797&gt;) and hazardous drug compounding rooms (negative-pressure containment under USP &lt;800&gt;), holding the airtight seal each pressure cascade depends on.</span></li>
+      <li><b>Wet lab &amp; containment panels</b><span>Sealed floor, wall and window junctions built for BSL-rated containment labs, supporting the directional (inward) airflow BSL-3 and BSL-4 spaces require, alongside chemical-resistant surface options for general wet lab use.</span></li>
+      <li><b>Vivarium &amp; research panels</b><span>Wipe-clean, sanitary panel surfaces for vivariums and animal research spaces, built to pair with ASHRAE 170-compatible ventilation and hold the species-specific environmental control AAALAC-accredited facilities are evaluated against.</span></li>
+    </ul>
+    <h3 class="mono lab">Matching products</h3>
+    <ul class="chips plinks">
+      <li><a class="chip" href="products.html#cold-storage">Hygienic-finish panels <span aria-hidden="true">&rarr;</span></a></li>
+      <li><a class="chip" href="doors.html">Doors <span aria-hidden="true">&rarr;</span></a></li>
+    </ul>
+    <div class="btnrow"><a class="btn red" href="quote.html">Get a quote</a></div>
+  </div>
+</div></section>
+
+<section class="s steel" id="hangars"><div class="wrap proj flip">
+  <figure class="pic rv"><img src="img/ind-hangar.webp" alt="Dark grey panel-clad aircraft hangar with its door open and a jet inside" loading="lazy"></figure>
+  <div class="rv">
+    <p class="mono eyebrow">04 &middot; Wide clear spans</p>
+    <h2 class="disp">Airplane hangars</h2>
+    <p class="stand">Insulated Metal Panels for airplane hangar facilities.</p>
+    <p class="sub">Long-span insulated panel systems built for the scale of aviation hangars, covering wide clear spans while keeping the interior consistent and weather-tight.</p>
+    <h3 class="mono lab">What we supply</h3>
+    <ul class="supply">
+      <li><b>Exterior wall &amp; roof panels</b><span>Insulated metal wall and roof panels form the hangar's weather-tight shell, standing up to wind, hail and UV exposure across wide clear-span steel frames, while continuous, factory-sealed seams keep the building airtight from ridge to eave.</span></li>
+      <li><b>Interior wall systems</b><span>Impact-resistant interior wall panels stand up to tow tractors, tugs and ground equipment traffic along the hangar floor, while sealed joints keep the shop's conditioned air from leaking out around the bay door.</span></li>
+    </ul>
+    <p class="gain"><b>Benefits</b>A sealed shell and insulated roof liner hold a consistent shop temperature, keeping maintenance crews productive and protecting avionics and composite work from condensation, while a dry ceiling and wipe-clean walls cut the corrosion risk bare metal framing carries.</p>
+    <h3 class="mono lab">Matching products</h3>
+    <ul class="chips plinks">
+      <li><a class="chip" href="products.html#wall-roof">Wall &amp; roof panels <span aria-hidden="true">&rarr;</span></a></li>
+      <li><a class="chip" href="specs.html">Panel specs <span aria-hidden="true">&rarr;</span></a></li>
+    </ul>
+    <div class="btnrow"><a class="btn red" href="quote.html">Get a quote</a></div>
+  </div>
+</div></section>
+
+<section class="s" id="metal-buildings"><div class="wrap proj">
+  <figure class="pic rv"><img src="img/ind-metal.webp" alt="Aerial view of a large white metal building with panel walls and roof and a row of loading docks" loading="lazy"></figure>
+  <div class="rv">
+    <p class="mono eyebrow">05 &middot; Pre-engineered metal buildings</p>
+    <h2 class="disp">Metal buildings</h2>
+    <p class="stand">Complete metal building systems, frame to finish.</p>
+    <p class="sub">Steel frame structures clad with insulated wall and roof panels, available in custom sizes, designs and colors for any project.</p>
+    <h3 class="mono lab">What we supply</h3>
+    <ul class="supply">
+      <li><b>Frame &amp; structure</b><span>Pre-engineered steel frame systems designed for fast erection and a strong, code-compliant structural foundation.</span></li>
+      <li><b>Wall &amp; roof panels</b><span>Insulated wall and roof panel systems that clad the structure for a complete, weather-tight building shell.</span></li>
+      <li><b>Custom options</b><span>Custom sizes, designs and color options let every pre-engineered building match the look and footprint your project needs.</span></li>
+    </ul>
+    <h3 class="mono lab">Matching products</h3>
+    <ul class="chips plinks">
+      <li><a class="chip" href="products.html#wall-roof">Wall &amp; roof panels <span aria-hidden="true">&rarr;</span></a></li>
+      <li><a class="chip" href="trim.html">Trim &amp; hardware <span aria-hidden="true">&rarr;</span></a></li>
+    </ul>
+    <div class="btnrow"><a class="btn red" href="quote.html">Get a quote</a></div>
+  </div>
+</div></section>
+
+<section class="s steel" id="modular-housing"><div class="wrap proj flip">
+  <figure class="pic rv"><img src="img/ind-housing.webp" alt="Single-storey modular home with tan vertical panel walls and a covered entry" loading="lazy"></figure>
+  <div class="rv">
+    <p class="mono eyebrow">06 &middot; Disaster relief, affordable, weatherproof</p>
+    <h2 class="disp">Modular housing</h2>
+    <p class="stand">Modular housing built from Insulated Metal Panels.</p>
+    <p class="sub">Fast-assembling modular units for disaster relief, affordable housing and weatherproof housing, all built from the same insulated panel shell.</p>
+    <h3 class="mono lab">What we supply</h3>
+    <ul class="supply">
+      <li><b>Disaster relief</b><span>Rapidly deployable modular units built from Insulated Metal Panels, shipped ready to assemble for emergency and disaster relief housing.</span></li>
+      <li><b>Affordable housing</b><span>Cost-effective modular housing units that use insulated panel construction to cut build time and materials cost without sacrificing durability.</span></li>
+      <li><b>Weatherproof housing</b><span>Fully sealed insulated panel shells engineered to hold up against wind, rain and extreme temperatures in any climate.</span></li>
+    </ul>
+    <h3 class="mono lab">Matching products</h3>
+    <ul class="chips plinks">
+      <li><a class="chip" href="products.html#wall-roof">Wall &amp; roof panels <span aria-hidden="true">&rarr;</span></a></li>
+      <li><a class="chip" href="showroom.html">3D showroom <span aria-hidden="true">&rarr;</span></a></li>
+    </ul>
+    <div class="btnrow"><a class="btn red" href="quote.html">Get a quote</a></div>
+  </div>
+</div></section>
+
+<section class="s" id="general-construction"><div class="wrap proj">
+  <figure class="pic rv"><img src="img/projects/general-commercial.webp" alt="Corner of a commercial building clad in light grey and charcoal metal panels" loading="lazy"></figure>
+  <div class="rv">
+    <p class="mono eyebrow">07 &middot; Industrial, commercial, residential</p>
+    <h2 class="disp">General construction</h2>
+    <p class="stand">Insulation and facade in one step.</p>
+    <p class="sub">Double-steel-sheet wall and roof panels with a rigid PUR or PIR foam core, our highest-volume product line for industrial, commercial and residential buildings.</p>
+    <h3 class="mono lab">Building types</h3>
+    <ul class="supply">
+      <li><b>Industrial</b><span>From a 2,000 sq ft shop to a 200,000 sq ft factory, Insulated Metal Panels save time and money on every build.</span></li>
+      <li><b>Commercial</b><span>Commercial facilities need to look good and perform well. Insulated Metal Panels deliver both.</span></li>
+      <li><b>Residential</b><span>Single-family, multi-family, stand-alone or connected: a great option for your next residential project.</span></li>
+    </ul>
+    <h3 class="mono lab">Matching products</h3>
+    <ul class="chips plinks">
+      <li><a class="chip" href="products.html#wall-roof">Wall &amp; roof panels <span aria-hidden="true">&rarr;</span></a></li>
+      <li><a class="chip" href="doors.html">Doors <span aria-hidden="true">&rarr;</span></a></li>
+      <li><a class="chip" href="trim.html">Trim &amp; hardware <span aria-hidden="true">&rarr;</span></a></li>
+    </ul>
+    <div class="btnrow"><a class="btn red" href="quote.html">Get a quote</a></div>
+  </div>
+</div></section>
+
+<section class="s steel" id="insulated-booths"><div class="wrap">
+  <div class="head rv"><div><p class="mono eyebrow">08 &middot; Guard shacks, hunting huts, lawn sheds</p><h2 class="disp">Insulated booths</h2></div></div>
+  <ul class="grid booths">
+    <li class="card rv"><img src="img/projects/booth-guard-shack.webp" alt="Light grey panel-built guard shack with windows and a door beside a security gate" loading="lazy"><div class="t"><h3>Guard shacks</h3></div></li>
+    <li class="card rv"><img src="img/projects/booth-hunting-hut.webp" alt="Olive green panel-built hunting hut raised on posts in bare woodland" loading="lazy"><div class="t"><h3>Hunting huts</h3></div></li>
+    <li class="card rv"><img src="img/projects/booth-lawn-shed.webp" alt="Light grey panel-built lawn shed with its double doors open and a ride-on mower inside" loading="lazy"><div class="t"><h3>Lawn sheds</h3></div></li>
+  </ul>
+  <div class="btnrow rv" style="margin-top:26px"><a class="btn red" href="quote.html">Get a quote</a></div>
+</div></section>
+
+<section class="s band" id="quote"><div class="wrap">
+  <div class="rv"><p class="mono" style="opacity:.8;margin:0 0 14px">Panels, doors and buildings from one source</p><h2 class="disp">Tell us the build.<br>We'll price it.</h2></div>
+  <div class="acts rv"><a class="btn red" href="quote.html">Get a quote</a><a class="btn ghost" href="tel:4057782808">Call (405) 778-2808</a><span style="font-size:13px;opacity:.75">7751 N County Line Rd., Piedmont, OK 73078</span></div>
+</div></section>
+
+<!--footer-->
+<footer><div class="wrap">
+  <div class="cols"><div><img src="img/logo.webp" alt="US Panels" width="107" height="40"><p style="max-width:26em">Exterior insulated metal panels and doors, delivered across the U.S. from Oklahoma stock.</p></div>
+    <div><h4>Products</h4><a href="products.html#wall-roof">Wall &amp; roof panels</a><a href="products.html#fire-rated">Fire-rated panels</a><a href="products.html#cold-storage">Cold storage panels</a><a href="doors.html">Doors</a><a href="trim.html">Trim &amp; hardware</a><a href="architectural.html">Architectural</a></div>
+    <div><h4>Explore</h4><a href="showroom.html">3D Showroom</a><a href="projects.html">Projects</a><a href="specs.html">Specs</a><a href="quote.html">Get a quote</a></div>
+    <div><h4>Contact</h4><a href="tel:4057782808">(405) 778-2808</a><a href="mailto:Sales@uspanels.com">Sales@uspanels.com</a><span>7751 N County Line Rd.<br>Piedmont, OK 73078</span></div></div>
+  <div class="legal"><span>&copy; <span data-year style="display:inline;padding:0">2026</span> US Panels. All rights reserved.</span><span>Design concept, not live</span></div>
+</div></footer>
+<!--/footer-->
+<script src="site.js"></script>
+</body>
+</html>
