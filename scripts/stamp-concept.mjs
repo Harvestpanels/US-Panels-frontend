@@ -20,7 +20,10 @@ const LINKS = [
 const DRAWER_LINKS = [LINKS[0], LINKS[1], ['trim.html', 'Trim &amp; Hardware'], ...LINKS.slice(2)];
 const TEL = '<a href="tel:4057782808">(405) 778-2808</a>';
 
-const links = (list, file) => list.map(([h, t]) => `<a href="${h}"${h === file ? ' aria-current="page"' : ''}>${t}</a>`).join('');
+// pages that live under a menu item (the menu item is marked while you are on them)
+const PARENT = { 'data-centers.html': 'projects.html' };
+
+const links = (list, file) => list.map(([h, t]) => `<a href="${h}"${h === (PARENT[file] || file) ? ' aria-current="page"' : ''}>${t}</a>`).join('');
 
 const nav = file => `<!--nav-->
 <header class="nav" id="nav">
