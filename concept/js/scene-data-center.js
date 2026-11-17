@@ -9,11 +9,11 @@
   U.scenes['data-center']={
     modes:{
       out:{label:'Outside',title:'The outside',lead:'The roof, the walls, the entrance door and the corner trim. Tap a number on the picture, or pick a part here.'},
-      in:{label:'Inside',title:'The inside',lead:'The ceiling, the interior wall, seams, hangers and doors. Tap a number on the picture, or pick a part here.'}
+      in:{label:'Inside',title:'The inside',lead:'The ceiling, the interior wall, seam trim, a door and a corner. Tap a number on the picture, or pick a part here.'}
     },
     images:{
       out:{src:'img/dc-outside.jpg',w:2200,h:1244,alt:'Illustration of a data center from outside: a white insulated metal panel building with a smooth front wall, a side wall with visible fasteners, a ribbed roof, an entrance door and aluminum corner trim.'},
-      in:{src:'img/dc-inside.jpg',w:2200,h:1244,alt:'Illustration of the inside of a data center hall: server racks, a perforated white ceiling and wall, strut channel and rods holding cable trays, and a grey metal door.'}
+      in:{src:'img/dc-inside.jpg',w:2200,h:1244,alt:'Illustration of the inside of a data center hall: server racks, a perforated white ceiling and wall, and a grey metal door.'}
     },
     parts:[
       {key:'roof',pid:'roof-fireguard',mode:'out',n:1,label:'Roof',x:58.3,y:21.6,look:'The long ribs running down the roof.'},
@@ -21,12 +21,11 @@
       {key:'wall-side',pid:'wall-exposed',mode:'out',n:3,label:'Side wall',x:71.8,y:48.1,look:'The round fastener heads in rows across each panel.'},
       {key:'door-out',pid:'metal-doors',mode:'out',n:4,label:'Entrance door',x:31.7,y:73.8,look:'The grey door in its aluminum frame.'},
       {key:'corner-out',pid:'corner-angles',mode:'out',n:5,label:'Corner trim',x:61.7,y:58.4,look:'The slim aluminum angle where the two walls meet.'},
-      {key:'ceiling',pid:'roof-acoustic',mode:'in',n:1,label:'Ceiling',x:58.3,y:13.7,look:'The fine perforations across the white ceiling.'},
-      {key:'partition',pid:'interior-acoustic',mode:'in',n:2,label:'Interior wall',x:57.5,y:60.4,look:'The perforated white wall behind the racks.'},
-      {key:'tbar',pid:'t-bar',mode:'in',n:3,label:'Seam trim',x:66,y:19.6,look:'The slim aluminum lines where ceiling panels meet.'},
-      {key:'hangers',pid:'hardware',mode:'in',n:4,label:'Hangers',x:42.1,y:39.1,look:'The threaded rods and slotted strut channel that hold the cable tray.'},
-      {key:'door-in',pid:'metal-doors',mode:'in',n:5,label:'Interior door',x:69.5,y:68.7,look:'The grey door set in the perforated wall.'},
-      {key:'corner-in',pid:'corner-angles',mode:'in',n:6,label:'Corner trim',x:48.3,y:65.2,look:'The aluminum angle in the inside corner.'}
+      {key:'ceiling',pid:'roof-acoustic',mode:'in',n:1,label:'Ceiling',x:38.8,y:20.6,look:'The fine perforations across the white ceiling.'},
+      {key:'partition',pid:'interior-acoustic',mode:'in',n:2,label:'Interior wall',x:45.4,y:58.4,look:'The perforated white wall at the end of the aisle.'},
+      {key:'tbar',pid:'t-bar',mode:'in',n:3,label:'Seam trim',x:50.4,y:22.7,look:'The slim aluminum lines where ceiling panels meet.'},
+      {key:'door-in',pid:'metal-doors',mode:'in',n:4,label:'Interior door',x:59.6,y:60.4,look:'The grey door set in the perforated wall.'},
+      {key:'corner-in',pid:'corner-angles',mode:'in',n:5,label:'Corner trim',x:68.9,y:58.4,look:'The aluminum angle in the inside corner.'}
     ],
     info:{
       'roof-fireguard':{showroom:'showroom.html#fireguard/roof-fireguard',note:CALL,
@@ -44,9 +43,7 @@
       'corner-angles':{showroom:'showroom.html#trim/al-outside-corner',note:'Sizes are nominal. Custom sizes and colors are available.',
         specs:[['Material','Aluminum'],['Thickness','1.5 mm (0.059″)'],['Fits','4″ (100 mm) panel'],['Length','6 m (19.7 ft)']]},
       't-bar':{showroom:'showroom.html#trim/al-t',note:'Sizes are nominal. Custom sizes and colors are available.',
-        specs:[['Material','Aluminum'],['Thickness','3.0 mm (0.118″)'],['Width × height','120 × 150 mm (4.72 × 5.91″)'],['Length','6 m (19.7 ft)']]},
-      'hardware':{showroom:'showroom.html#trim/strut-channel',note:'Sizes are nominal. Custom sizes and colors are available.',
-        specs:[['Strut channel','Pre-galvanized, Z275'],['Section','41 × 41 mm (1.61 × 1.61″)'],['Thickness','2.5 mm (0.098″)'],['Length','6,096 mm (20 ft)']]}
+        specs:[['Material','Aluminum'],['Thickness','3.0 mm (0.118″)'],['Width × height','120 × 150 mm (4.72 × 5.91″)'],['Length','6 m (19.7 ft)']]}
     }
   };
 })();
