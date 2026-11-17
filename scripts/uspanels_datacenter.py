@@ -30,7 +30,7 @@ HX, HY, HH = 30.0, 18.0, 8.0       # half width (x), half depth (y), wall height
 WT = 0.10                          # wall panel thickness
 RT = 0.16                          # roof slab
 PITCH = 1.0                        # panel cover width
-GAP = 0.004
+GAP = 0.010
 PART_Y = 12.0                     # interior partition wall (back of the racks)
 AX, AD, AH = 5.5, 6.0, 4.6        # entrance building: half width, depth, height
 
@@ -254,12 +254,33 @@ M["wall"].name = "Wall_steel"
 for _n in M["wall"].node_tree.nodes:                  # a touch greyer than the studio colour so sunlit and shaded walls read apart
     if _n.type == "BSDF_PRINCIPLED":
         _n.inputs["Base Color"].default_value = (.60, .61, .60, 1)
+def add_grime(m, base):
+    """Weathering on the outer walls: darker near the ground and faint vertical run-off streaks."""
+    nt = m.node_tree
+    b = [n for n in nt.nodes if n.type == "BSDF_PRINCIPLED"][0]
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    mp = nt.nodes.new("ShaderNodeMapping"); mp.inputs["Scale"].default_value = (16, 16, .5)
+    nz = nt.nodes.new("ShaderNodeTexNoise"); nz.inputs["Scale"].default_value = 1.0; nz.inputs["Detail"].default_value = 6
+    nt.links.new(tc.outputs["Object"], mp.inputs["Vector"]); nt.links.new(mp.outputs["Vector"], nz.inputs["Vector"])
+    sp = nt.nodes.new("ShaderNodeSeparateXYZ"); nt.links.new(tc.outputs["Object"], sp.inputs["Vector"])
+    low = math_node(nt, "SUBTRACT", 1.0, math_node(nt, "DIVIDE", sp.outputs["Z"], 3.2), clamp=True)          # 1 at the ground, 0 at 3 m
+    streak = math_node(nt, "MULTIPLY", math_node(nt, "SUBTRACT", nz.outputs["Fac"], .47), .55, clamp=True)
+    grime = math_node(nt, "ADD", math_node(nt, "MULTIPLY", low, .32), streak, clamp=True)
+    _, c = mix_rgba(nt, grime, (*base, 1), (.17, .165, .15, 1))
+    nt.links.new(c, b.inputs["Base Color"])
+
+
+add_grime(M["wall"], (.52, .52, .50))
+for _n in M["wall"].node_tree.nodes:                  # coated steel: a little more sheen so the sun runs along the panels
+    if _n.type == "BSDF_PRINCIPLED":
+        _n.inputs["Roughness"].default_value = .30
+        _n.inputs["Coat Weight"].default_value = .22
 M["wall_in"] = mat("Wall_inner", (.70, .71, .70), .55, 0, coat=0.05)
 M["roof"] = mat("Roof_steel", (.42, .45, .48), .32, .8, coat=.2, bump=(1500, .05))
 M["alu"] = mat("Aluminum", (.74, .76, .78), .28, 1.0, bump=(2000, .04))
 M["dark"] = mat("Dark", (.03, .032, .035), .5, .3)
 M["fence"] = mat("Fence", (.015, .016, .018), .45, .6)
-M["washer"] = mat("Washer", (.52, .54, .57), .3, 1.0)
+M["washer"] = mat("Washer", (.16, .17, .19), .28, 1.0)
 M["head"] = mat("ScrewHead", (.22, .23, .25), .35, 1.0)
 M["gen"] = mat("Generator", (.80, .76, .62), .5, .1, bump=(900, .06))
 M["unit"] = mat("Chiller", (.58, .60, .62), .55, .5, bump=(500, .2))
@@ -304,7 +325,15 @@ def strips(name, axis, fixed, thick, a0, a1, z0, z1, mat_out, mat_in, outward, s
             box_bm(bm, s0, s1, fixed - thick / 2, fixed + thick / 2, header, z1)
         else:
             box_bm(bm, fixed - thick / 2, fixed + thick / 2, s0, s1, header, z1)
-    me_ob = bm_obj(name, bm, None, smooth=False, bevel=0.0025)
+    # a dark backing sheet behind the panels, so every joint reads as a dark line (and the door opening stays open)
+    cuts = [(a0, a1)] if not skip else [(a0, skip[0]), (skip[1], a1)]
+    for i_, (c0, c1) in enumerate(cuts):
+        if c1 - c0 > .01:
+            if axis == "x":
+                box(name + "_back%d" % i_, c0, c1, fixed - thick * .3, fixed + thick * .3, z0, z1, M["dark"])
+            else:
+                box(name + "_back%d" % i_, fixed - thick * .3, fixed + thick * .3, c0, c1, z0, z1, M["dark"])
+    me_ob = bm_obj(name, bm, None, smooth=False, bevel=0.004)
     me_ob.data.materials.append(mat_out)
     me_ob.data.materials.append(mat_in)
     # outer faces -> slot 0, inner faces -> slot 1, edges stay on slot 0
@@ -324,8 +353,8 @@ def saddle_washers(name, x, y0, y1, z_rows, outward=1):
         yc = y0 + (i + .5) * pw
         for dy in (-.3, 0.0, .3):
             for z in z_rows:
-                r1 = bmesh.ops.create_cone(bm, cap_ends=True, segments=14, radius1=.03, radius2=.03, depth=.005)
-                r2 = bmesh.ops.create_cone(bm, cap_ends=True, segments=6, radius1=.011, radius2=.011, depth=.009)
+                r1 = bmesh.ops.create_cone(bm, cap_ends=True, segments=14, radius1=.042, radius2=.042, depth=.006)
+                r2 = bmesh.ops.create_cone(bm, cap_ends=True, segments=6, radius1=.015, radius2=.015, depth=.011)
                 for verts, off in ((r1["verts"], .002), (r2["verts"], .0075)):
                     for v in verts:
                         c = v.co
@@ -341,7 +370,7 @@ def build_building():
     strips("Wall_back", "x", HY + WT / 2, WT, -HX, HX, 0, HH, W, M["wall_in"], +1)
     strips("Wall_west", "y", -HX - WT / 2, WT, -HY - WT, HY + WT, 0, HH, W, M["wall_in"], -1)
     east = strips("Wall_east", "y", HX + WT / 2, WT, -HY - WT, HY + WT, 0, HH, W, M["wall_in"], +1)
-    saddle_washers("Saddle_washers", HX + WT, -HY - WT, HY + WT, [.45, 1.95, 3.45, 4.95, 6.0])
+    saddle_washers("Saddle_washers", HX + WT, -HY - WT, HY + WT, [.45, 1.2, 1.95, 2.7, 3.45, 4.2, 4.95, 5.7, 6.45, 7.2, 7.7])
     # roof: ribbed sheet on a slab
     box("Roof_slab", -HX - WT, HX + WT, -HY - WT, HY + WT, HH, HH + RT * .8, M["wall_in"], smooth=False)
     bm = bmesh.new()
@@ -362,6 +391,7 @@ def build_building():
     for (xa, xb, ya, yb) in [(-HX - WT - .02, HX + WT + .02, -HY - WT - .02, -HY - WT + .02), (-HX - WT - .02, HX + WT + .02, HY + WT - .02, HY + WT + .02),
                               (-HX - WT - .02, -HX - WT + .02, -HY - WT, HY + WT), (HX + WT - .02, HX + WT + .02, -HY - WT, HY + WT)]:
         box("Roof_edge", xa, xb, ya, yb, HH - .02, HH + .30, M["alu"], bevel=.004)
+        box("Roof_coping", xa - .06 if xb - xa < 1 else xa - .02, xb + .06 if xb - xa < 1 else xb + .02, ya - .06 if yb - ya < 1 else ya - .02, yb + .06 if yb - ya < 1 else yb + .02, HH + .30, HH + .35, M["alu"], bevel=.006)   # coping with a small overhang
     corner_angle(HX + WT, -HY - WT, 1, -1, HH + RT * .8)
     corner_angle(-HX - WT, -HY - WT, -1, -1, HH + RT * .8)
     corner_angle(HX + WT, HY + WT, 1, 1, HH + RT * .8)
@@ -393,7 +423,7 @@ def build_building():
 
 def corner_angle(cx, cy, sx, sy, h):
     """Aluminum outside-corner angle, 50 x 50 mm legs, standing on the two wall faces at the corner."""
-    t, L = .003, .05
+    t, L = .004, .11                 # formed flashing: 110 mm legs
     bm = bmesh.new()
     # leg across x (lies on the face at y = cy)
     x0, x1 = (cx - L, cx + t) if sx > 0 else (cx - t, cx + L)
@@ -439,7 +469,7 @@ def door(x, y, z, flip=False, parent_y_face=-1):
                     nt = m.node_tree
                     for n in nt.nodes:
                         if n.type == "BSDF_PRINCIPLED":
-                            n.inputs["Base Color"].default_value = (.46, .48, .50, 1)
+                            n.inputs["Base Color"].default_value = (.20, .22, .24, 1)
                             n.inputs["Roughness"].default_value = .42
                     slot.material = m
     return root
@@ -464,11 +494,18 @@ def build_site():
     bm_obj("ParkingLines", bl_, M["paint"], smooth=False)
     # shrubs along the front of the building and the entrance walk
     bsh = bmesh.new()
-    for sx_ in list(range(-28, -7, 5)) + list(range(9, 28, 5)):
-        r = bmesh.ops.create_icosphere(bsh, subdivisions=2, radius=.75)
-        for v in r["verts"]:
-            v.co = Vector((sx_ + v.co.x * 1.1, -HY - WT - 1.2 + v.co.y, .55 + v.co.z * .8))
+    for cx0 in (-29, -22, -15, 10, 17, 24):                      # clusters of shrubs of different sizes, sunk a little into the bed
+        for k in range(rnd.randint(3, 5)):
+            s = rnd.uniform(.45, 1.1)
+            ox, oy = cx0 + rnd.uniform(-1.9, 1.9), -HY - WT - rnd.uniform(.8, 1.9)
+            r = bmesh.ops.create_icosphere(bsh, subdivisions=2, radius=s)
+            for v in r["verts"]:
+                j = rnd.uniform(.9, 1.1)
+                v.co = Vector((ox + v.co.x * 1.25 * j, oy + v.co.y * j, .3 * s + v.co.z * .8 * j))
     bm_obj("Shrubs", bsh, M["shrub"])
+    mulch = bmesh.new()
+    box_bm(mulch, -31, -6, -HY - WT - 2.2, -HY - WT, 0, .04); box_bm(mulch, 8, 31, -HY - WT - 2.2, -HY - WT, 0, .04)
+    bm_obj("Mulch", mulch, noisy("Mulch", (.11, .075, .05), 120, .5, .95, 1.0), smooth=False)
     # fence: posts and rails
     bm = bmesh.new()
     X0, X1, Y0, Y1 = -84, 84, -54, 48
@@ -515,6 +552,7 @@ def build_site():
         box("Bollard", bx - .1, bx + .1, -HY - WT - AD - 2.5 - .1, -HY - WT - AD - 2.5 + .1, 0, 1.05, mat("Bollard", (.9, .75, .05), .5), bevel=.02)
     # tree line
     bt = bmesh.new()
+    bt2 = bmesh.new()
     btr = bmesh.new()
     for i in range(110):                                        # trees: a few overlapping crowns on a trunk, set well back from the fence
         a = rnd.uniform(0, math.tau)
@@ -524,16 +562,98 @@ def build_site():
             continue                                            # keep the drive clear
         hgt = rnd.uniform(9, 15)
         box_bm(btr, cx - .35, cx + .35, cy - .35, cy + .35, 0, hgt * .5)
+        tgt = bt if rnd.random() < .55 else bt2                 # two shades of green
         for k in range(4):
-            r = bmesh.ops.create_icosphere(bt, subdivisions=2, radius=rnd.uniform(3.8, 6.2))
+            r = bmesh.ops.create_icosphere(tgt, subdivisions=2, radius=rnd.uniform(3.8, 6.2))
             ox, oy, oz = rnd.uniform(-3, 3), rnd.uniform(-3, 3), hgt * .55 + rnd.uniform(0, hgt * .45)
             for v in r["verts"]:
-                v.co = Vector((cx + ox + v.co.x, cy + oy + v.co.y, oz + v.co.z * 1.15))
+                j = rnd.uniform(.84, 1.16)                       # ragged crowns
+                v.co = Vector((cx + ox + v.co.x * j, cy + oy + v.co.y * j, oz + v.co.z * 1.15 * j))
     bm_obj("Trees", bt, noisy("Foliage", (.045, .095, .03), 6, .55, .9, 2.0))
+    bm_obj("Trees2", bt2, noisy("Foliage2", (.085, .13, .04), 7, .5, .9, 2.0))
+    bh_ = bmesh.new()                                            # low hills on the horizon
+    for i in range(14):
+        a = i / 14 * math.tau + rnd.uniform(-.1, .1)
+        r = bmesh.ops.create_icosphere(bh_, subdivisions=3, radius=rnd.uniform(160, 260))
+        hx, hy = math.cos(a) * rnd.uniform(520, 640), math.sin(a) * rnd.uniform(520, 640)
+        for v in r["verts"]:
+            v.co = Vector((hx + v.co.x, hy + v.co.y, v.co.z * .16 - 6))
+    bm_obj("Hills", bh_, noisy("HillGrass", (.13, .2, .1), 3, .35, .95, .6))
+    build_extras()
     bm_obj("Trunks", btr, mat("Bark", (.07, .05, .035), .9), smooth=False)
 
 
 # ---- inside -----------------------------------------------------------------------------------
+def build_extras():
+    """The things that make a site look lived in: light poles, curbs, wall louvres, fuel tanks, a transformer yard, wall lights."""
+    bp, bh, bc = bmesh.new(), bmesh.new(), bmesh.new()
+    for px, py in [(-44, -46), (-12, -46), (20, -46), (50, -30), (-60, -8), (-60, 26), (66, 36)]:        # light poles over the parking and the yard
+        r = bmesh.ops.create_cone(bp, cap_ends=True, segments=10, radius1=.18, radius2=.11, depth=10.0)
+        for v in r["verts"]:
+            v.co = Vector((px + v.co.x, py + v.co.y, 5 + v.co.z))
+        box_bm(bp, px - .06, px + 1.9, py - .05, py + .05, 9.6, 9.72)
+        box_bm(bh, px + 1.2, px + 2.4, py - .22, py + .22, 9.52, 9.64)
+        box_bm(bc, px - .35, px + .35, py - .35, py + .35, 0, .5)            # concrete base
+    bm_obj("LightPoles", bp, M["fence"], smooth=False, bevel=.005)
+    bm_obj("LightHeads", bh, M["alu"], smooth=False, bevel=.01)
+    bm_obj("PoleBases", bc, M["stoop"], smooth=False, bevel=.02)
+    # curbs round the parking lot and the drive
+    bk = bmesh.new()
+    for (x0, x1, y0, y1) in [(-42, 34, -50.1, -49.9), (-42, 34, -30.1, -29.9), (-42.1, -41.9, -50, -30), (33.9, 34.1, -50, -30)]:
+        box_bm(bk, x0, x1, y0 - .1, y1 + .1, 0, .16)
+    bm_obj("Curbs", bk, M["stoop"], smooth=False, bevel=.012)
+    # louvre grilles high on the front wall
+    bl, bs = bmesh.new(), bmesh.new()
+    yf = -HY - WT
+    for gx in (-22.0, -11.0, 17.0):
+        box_bm(bl, gx - 1.7, gx + 1.7, yf - .08, yf, 5.3, 6.6)                                          # frame
+        for k in range(10):
+            box_bm(bs, gx - 1.55, gx + 1.55, yf - .1, yf - .02, 5.42 + k * .115, 5.42 + k * .115 + .06)
+    bm_obj("LouvreFrames", bl, M["alu"], smooth=False, bevel=.006)
+    bm_obj("LouvreSlats", bs, M["dark"], smooth=False)
+    # fuel tanks, two big horizontal cylinders on saddles
+    bt_ = bmesh.new(); bsd = bmesh.new()
+    for ty in (-46.0, -36.0):
+        r = bmesh.ops.create_cone(bt_, cap_ends=True, segments=36, radius1=1.5, radius2=1.5, depth=9.0)
+        for v in r["verts"]:
+            v.co = Vector((HX + 22 + v.co.z, ty + v.co.x, 1.75 + v.co.y))
+        for sx_ in (-3, 3):
+            box_bm(bsd, HX + 22 + sx_ - .3, HX + 22 + sx_ + .3, ty - 1.2, ty + 1.2, 0, .6)
+    bm_obj("FuelTanks", bt_, mat("Tank", (.78, .8, .8), .35, .6, bump=(800, .03)), smooth=True)
+    bm_obj("TankSaddles", bsd, M["stoop"], smooth=False)
+    # transformer yard
+    btf = bmesh.new(); bfn = bmesh.new()
+    for tx_, ty_ in [(HX + 24, 30), (HX + 24, 40), (HX + 32, 35)]:
+        box_bm(btf, tx_ - 1.6, tx_ + 1.6, ty_ - 1.3, ty_ + 1.3, .3, 2.8)
+        for k in range(8):
+            box_bm(bfn, tx_ - 1.75, tx_ - 1.6, ty_ - 1.1 + k * .3, ty_ - 1.0 + k * .3, .6, 2.5)
+        box_bm(btf, tx_ - 1.7, tx_ + 1.7, ty_ - 1.4, ty_ + 1.4, 0, .3)
+    bm_obj("Transformers", btf, mat("Transformer", (.30, .36, .33), .45, .5, bump=(700, .05)), smooth=False, bevel=.02)
+    bm_obj("TransformerFins", bfn, M["dark"], smooth=False)
+    # a few parked cars (simple shapes, glossy paint) as a sense of scale
+    pal = {"white": (.82, .82, .80), "silver": (.55, .57, .6), "black": (.03, .03, .035), "red": (.45, .05, .05), "blue": (.05, .12, .3), "grey": (.25, .26, .28)}
+    cb = {k: bmesh.new() for k in pal}; glass, wheels = bmesh.new(), bmesh.new()
+    for cx_, cy_, kind in [(-34, -46.4, "white"), (-26, -46.4, "blue"), (-22, -46.4, "silver"), (-10, -46.4, "black"), (-2, -46.4, "grey"), (6, -46.4, "red"), (18, -46.4, "white"), (-30, -33.5, "silver"), (22, -33.5, "black")]:
+        yaw = rnd.uniform(-.03, .03); L, Wd = 4.5, 1.85
+        box_bm(cb[kind], cx_ - Wd / 2, cx_ + Wd / 2, cy_ - L / 2, cy_ + L / 2, .32, .95)
+        box_bm(cb[kind], cx_ - Wd / 2 + .08, cx_ + Wd / 2 - .08, cy_ - L / 2 + 1.1, cy_ + L / 2 - .9, .95, 1.44)
+        box_bm(glass, cx_ - Wd / 2 + .1, cx_ + Wd / 2 - .1, cy_ - L / 2 + 1.25, cy_ + L / 2 - 1.05, .98, 1.38)
+        for wy in (-1.4, 1.4):
+            for wx in (-Wd / 2 + .1, Wd / 2 - .1):
+                r = bmesh.ops.create_cone(wheels, cap_ends=True, segments=16, radius1=.32, radius2=.32, depth=.22)
+                for v in r["verts"]:
+                    v.co = Vector((cx_ + wx + v.co.z, cy_ + wy + v.co.x, .32 + v.co.y))
+    for k, bmk in cb.items():
+        bm_obj("Car_" + k, bmk, mat("CarPaint_" + k, pal[k], .22, .4, coat=.9), smooth=False, bevel=.05)
+    bm_obj("CarGlass", glass, mat("CarGlass", (.02, .03, .035), .05, .3), smooth=False, bevel=.02)
+    bm_obj("CarWheels", wheels, M["dark"], smooth=False)
+    # wall lights beside the entrance and at the corners
+    bw = bmesh.new()
+    for lx, ly in [(-2.4, -HY - WT - AD - WT), (2.4, -HY - WT - AD - WT)]:
+        box_bm(bw, lx - .15, lx + .15, ly - .16, ly, 3.2, 3.5)
+    bm_obj("WallLights", bw, M["alu"], smooth=False, bevel=.01)
+
+
 def build_inside():
     plane_bm = bmesh.new()
     box_bm(plane_bm, -HX, HX, -HY, HY, -.04, .0)
@@ -637,12 +757,42 @@ def world_outdoor():
     sky.sun_elevation = math.radians(float(arg("--sunel", "17")))
     sky.sun_rotation = math.radians(SKY_ROT)
     sky.air_density = 1.0
+    if hasattr(sky, "sun_intensity"):
+        sky.sun_intensity = float(arg("--sunpow", "1.6"))      # a stronger sun against the sky, so shadows and joints read
     for attr, val in (("aerosol_density", 1.2), ("dust_density", 1.2)):
         if hasattr(sky, attr):
             setattr(sky, attr, val)
     bg.inputs["Strength"].default_value = 1.0
-    nt.links.new(sky.outputs["Color"], bg.inputs["Color"])
+    # a layer of soft clouds, stretched along the horizon, fading out toward the horizon and the zenith
+    tc = nt.nodes.new("ShaderNodeTexCoord")
+    mp = nt.nodes.new("ShaderNodeMapping")
+    mp.inputs["Scale"].default_value = (1.5, 1.5, 4.5)
+    nz = nt.nodes.new("ShaderNodeTexNoise")
+    nz.inputs["Scale"].default_value = 2.2
+    nz.inputs["Detail"].default_value = 7
+    nz.inputs["Roughness"].default_value = .62
+    nt.links.new(tc.outputs["Generated"], mp.inputs["Vector"])
+    nt.links.new(mp.outputs["Vector"], nz.inputs["Vector"])
+    ramp = nt.nodes.new("ShaderNodeValToRGB")
+    ramp.color_ramp.elements[0].position = .47
+    ramp.color_ramp.elements[1].position = .66
+    nt.links.new(nz.outputs["Fac"], ramp.inputs["Fac"])
+    sp = nt.nodes.new("ShaderNodeSeparateXYZ")
+    nt.links.new(tc.outputs["Generated"], sp.inputs["Vector"])
+    # the world's Generated vector is the view direction (z = 0 at the horizon): clouds fade in a little above it
+    fade = math_node(nt, "MULTIPLY", math_node(nt, "SUBTRACT", sp.outputs["Z"], .04), 5.0, clamp=True)
+    cloud = math_node(nt, "MULTIPLY", math_node(nt, "MULTIPLY", ramp.outputs["Color"], fade), .92)
+    _, skycol = mix_rgba(nt, cloud, sky.outputs["Color"], (9.0, 8.8, 8.5, 1))      # the sky is HDR, so clouds are far brighter than 1.0
+    nt.links.new(skycol, bg.inputs["Color"])
     nt.links.new(bg.outputs["Background"], out.inputs["Surface"])
+    # a little haze so distant things (trees, hills) fade into the air
+    haze = float(arg("--haze", "0"))          # a world volume turned the whole picture black in Blender 5.2, so it is off unless asked for
+    if haze > 0:
+        vol = nt.nodes.new("ShaderNodeVolumeScatter")
+        vol.inputs["Density"].default_value = haze
+        vol.inputs["Color"].default_value = (.86, .92, 1.0, 1)
+        vol.inputs["Anisotropy"].default_value = .35
+        nt.links.new(vol.outputs["Volume"], out.inputs["Volume"])
 
 
 def world_interior():
@@ -703,7 +853,17 @@ def main():
         sc.view_settings.view_transform = arg("--vt", "AgX")
     except TypeError:
         pass
+    for lk in ("AgX - Medium High Contrast", "Medium High Contrast"):      # a touch more punch
+        try:
+            sc.view_settings.look = lk
+            break
+        except TypeError:
+            continue
     sc.view_settings.exposure = float(arg("--exposure", "-3.8" if VIEW == "ext" else "1.0"))
+    if VIEW == "ext" and "--pano" not in argv:                              # a very little depth of field, focus on the aim point
+        cam.data.dof.use_dof = True
+        cam.data.dof.focus_distance = (Vector(look) - Vector(loc)).length
+        cam.data.dof.aperture_fstop = float(arg("--fstop", "10"))
     sc.render.image_settings.file_format = "JPEG"
     sc.render.image_settings.quality = 90
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
