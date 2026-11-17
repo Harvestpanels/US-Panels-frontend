@@ -267,12 +267,89 @@
       note:()=>'Shown at a short display length. Custom sizes and colors are available.' };
   }
 
+  // ================================================================= PRODUCT: Fireguard mineral wool panels (illustrative models)
+  // Names, cores, joints, fastening and liners are the live product copy. The thickness, rib shape and perforation size are illustrative:
+  // the perforation is drawn far larger than real so it can be seen. Replace with models from photos and data sheets when they arrive.
+  const FG=[
+    {id:'wall-exposed',label:'Wall: Exposed Fastening',kind:'wall',fast:true,joint:true,liner:false,
+     blurb:'A self-supporting wall panel with a tongue-and-groove joint, insulated with mineral rockwool and secured with a visible through-fastened, saddle-washer system.',
+     rows:[['Core','Mineral rockwool'],['Joint','Tongue-and-groove'],['Fastening','Visible, through-fastened with saddle washers']]},
+    {id:'wall-hidden',label:'Wall: Hidden Fastening',kind:'wall',fast:false,joint:true,liner:false,
+     blurb:'The same self-supporting mineral wool wall panel with a concealed fastening system on each side for a smooth, uninterrupted finish.',
+     rows:[['Core','Mineral rockwool'],['Joint','Tongue-and-groove'],['Fastening','Concealed on each side']]},
+    {id:'interior-acoustic',label:'Wall: Acoustic',kind:'wall',fast:true,joint:false,liner:true,
+     blurb:'A mineral wool wall panel with a micro-perforated internal steel liner and visible fastening, tuned for sound absorption alongside fire resistance.',
+     rows:[['Core','Mineral rockwool'],['Inside liner','Micro-perforated steel'],['Fastening','Visible']]},
+    {id:'roof-fireguard',label:'Roof',kind:'roof',fast:false,joint:false,liner:false,
+     blurb:'A self-supporting mineral wool roof panel rated for low-slope roofing, with an external ribbed steel sheet for added static and dynamic strength.',
+     rows:[['Core','Mineral rockwool'],['Roof type','Self-supporting, rated for low slope'],['Outer face','External ribbed steel sheet']]},
+    {id:'roof-acoustic',label:'Roof: Acoustic',kind:'roof',fast:false,joint:true,liner:true,
+     blurb:'A self-supporting mineral wool roof panel with a micro-perforated interior liner and tongue-and-groove joint for added sound-dampening performance.',
+     rows:[['Core','Mineral rockwool'],['Joint','Tongue-and-groove'],['Inside liner','Micro-perforated steel']]}];
+  let woolTx=null, perfTx=null;
+  function woolTexture(){ if(woolTx) return woolTx; const c=document.createElement('canvas'); c.width=c.height=512; const g=c.getContext('2d'); g.fillStyle='#b9ae7e'; g.fillRect(0,0,512,512);
+    for(let i=0;i<2600;i++){ const x=Math.random()*512,y=Math.random()*512,l=10+Math.random()*34,a=(Math.random()-.5)*.7; g.strokeStyle=Math.random()<.5?'rgba(238,228,172,.3)':'rgba(92,80,48,.28)'; g.lineWidth=.6+Math.random()*1.2; g.beginPath(); g.moveTo(x,y); g.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l); g.stroke(); }
+    woolTx=new THREE.CanvasTexture(c); woolTx.wrapS=woolTx.wrapT=THREE.RepeatWrapping; woolTx.encoding=THREE.sRGBEncoding; woolTx.anisotropy=8; woolTx.repeat.set(1/110,1/110); return woolTx; }
+  function perfTexture(){ if(perfTx) return perfTx; const c=document.createElement('canvas'); c.width=c.height=256; const g=c.getContext('2d'); g.fillStyle='#eef0ee'; g.fillRect(0,0,256,256);
+    for(let y=16;y<256;y+=32) for(let x=16;x<256;x+=32){ g.fillStyle='#5d656c'; g.beginPath(); g.arc(x,y,7,0,7); g.fill(); g.fillStyle='rgba(255,255,255,.55)'; g.beginPath(); g.arc(x-1.5,y-2,2,0,7); g.fill(); }
+    perfTx=new THREE.CanvasTexture(c); perfTx.wrapS=perfTx.wrapT=THREE.RepeatWrapping; perfTx.encoding=THREE.sRGBEncoding; perfTx.anisotropy=8; return perfTx; }
+  function buildFireguard(ctx){
+    const THK=100, SK=1.5, S={id:'wall-exposed',color:'#E7EBDA',layers:0,join:0}; const rootG=new THREE.Group(); let inner=null;
+    const item=()=>FG.find(f=>f.id===S.id);
+    function makePanel(P,LEN){
+      const g=new THREE.Group(), y0=THK/2, yb=-y0+SK, skin=steelMat(S.color);
+      const prof=P.kind==='roof'?(()=>{ const p=[[-500,0]]; [-375,-125,125,375].forEach(c=>p.push([c-45,0],[c-22,34],[c+22,34],[c+45,0])); p.push([500,0]); return p; })():[[-500,0],[500,0]];
+      const outer=prof.map(([x,o])=>[x,y0+o]), inn=outer.map(([x,y])=>[x,y-SK]);
+      const top=new THREE.Group(), mid=new THREE.Group(), low=new THREE.Group();
+      top.add(sh(new THREE.Mesh(extrude(outer.concat(inn.slice().reverse()),LEN),skin)));
+      if(P.fast){ const wm=new THREE.MeshStandardMaterial({color:0x9aa1a8,roughness:.35,metalness:.7}), hm=new THREE.MeshStandardMaterial({color:0x5b6269,roughness:.4,metalness:.6});
+        for(let z=-LEN/2+250;z<LEN/2;z+=450) [-300,0,300].forEach(x=>{ const w=sh(new THREE.Mesh(new THREE.CylinderGeometry(15,15,3,20),wm)), h=sh(new THREE.Mesh(new THREE.CylinderGeometry(7,7,5,6),hm)); w.position.set(x,y0+1.5,z); h.position.set(x,y0+5,z); top.add(w,h); }); }
+      // core: the tongue sticks out of the right edge and the groove cuts into the left edge (only on the panels whose copy names a joint)
+      const tops=inn.map(p=>p.slice()), pts=[[-500,yb],[500,yb]];
+      if(P.joint) pts.push([500,-15],[525,-15],[525,15],[500,15]);
+      for(let i=tops.length-1;i>=0;i--) pts.push(tops[i]);
+      if(P.joint) pts.push([-500,15],[-475,15],[-475,-15],[-500,-15]);
+      const wool=new THREE.MeshStandardMaterial({map:woolTexture(),roughness:.95});
+      mid.add(sh(new THREE.Mesh(extrude(pts,LEN),wool)));
+      const side=steelMat(0xf2f3f0), face=P.liner?new THREE.MeshStandardMaterial({map:perfTexture(),roughness:.55,metalness:.25}):side;
+      if(P.liner){ face.map=perfTexture().clone(); face.map.repeat.set(1000/96,LEN/96); face.map.needsUpdate=true; }
+      low.add(sh(new THREE.Mesh(new THREE.BoxGeometry(1000,SK,LEN),[side,side,side,face,side,side])));
+      low.children[0].position.y=-y0+SK/2;
+      top.position.y=S.layers*120; low.position.y=-S.layers*120;
+      g.add(top,mid,low); return g;
+    }
+    function make(){
+      if(inner){ rootG.remove(inner); inner.traverse(o=>{ if(o.geometry) o.geometry.dispose(); }); }
+      const P=item(), LEN=P.kind==='roof'?2000:1800; inner=new THREE.Group();
+      const pair=new THREE.Group(), A=makePanel(P,LEN); pair.add(A);
+      if(P.joint){ const B=makePanel(P,LEN); B.position.x=1000+S.join*300; pair.add(B); pair.position.x=-500; }
+      if(P.kind==='wall'){ pair.rotation.x=Math.PI/2; pair.position.y=LEN/2; inner.add(pair); }
+      else { const holder=new THREE.Group(), pm=new THREE.MeshStandardMaterial({color:0x4b5058,roughness:.6,metalness:.4});
+        holder.add(pair); [-LEN*.3,LEN*.3].forEach(zz=>holder.add(box(P.joint?2500:1300,60,110,pm,0,-THK/2-30,zz)));
+        holder.rotation.x=-.2618; inner.add(holder); const bb=new THREE.Box3().setFromObject(holder); holder.position.y=-bb.min.y+60; }
+      rootG.add(inner); ctx.update(); wake();
+    }
+    const ctl={
+      panel:{type:'chips',label:'Panel',value:S.id,options:FG.map(f=>({v:f.id,label:f.label})),onChange:v=>setPanel(v)},
+      color:{type:'swatches',label:'Color',value:S.color,options:COLORS.map(c=>({v:c[1],label:c[0]})),onChange:v=>{ S.color=v; make(); }},
+      layers:{type:'slider',label:'Pull the layers apart',min:0,max:100,value:0,fmt:v=>v+'%',onChange:v=>{ S.layers=v/100; make(); }},
+      join:{type:'slider',label:'Join the panels',min:0,max:100,value:0,fmt:v=>(100-v)+'%',onChange:v=>{ S.join=v/100; make(); }}};
+    const ctlList=[ctl.panel,ctl.color,ctl.layers,ctl.join];
+    function setPanel(v){ if(!FG.some(f=>f.id===v)) return; S.id=v; S.layers=0; S.join=0; ctl.panel.value=v; ctl.layers.value=0; ctl.join.value=0;
+      ctlList.length=0; ctlList.push(ctl.panel,ctl.color,ctl.layers); if(item().joint) ctlList.push(ctl.join); renderControls(ctlList); make(); ctx.update(); ctx.view('34'); }
+    return { root:rootG, build:make, controls:ctlList, setPanel,
+      title:()=>item().label, blurb:()=>item().blurb,
+      stats:()=>[['Panel',item().label]].concat(item().rows,[['Color',(COLORS.find(c=>c[1]===S.color)||['',''])[0]]]),
+      note:()=>item().blurb+' Shown at an illustrative thickness and profile, and the perforation is drawn far larger than real so you can see it. Thickness, weight and test data: call (405) 778-2808.' };
+  }
+
   // ---------------- registry + switching ----------------
-  const reg={doors:buildDoors,trim:buildTrim,designer:buildDesigner};
+  const reg={doors:buildDoors,trim:buildTrim,designer:buildDesigner,fireguard:buildFireguard};
   const meta={
     doors:{t:'Doors',b:'Pick a door and a size, swing it open, and look at the hardware up close.'},
     trim:{t:'Trim & Hardware',b:'Pick an item and turn it around to see the profile up close.'},
-    designer:{t:'Wall & Roof Panels',b:'Pick a profile, a thickness and a color. The insulation value and weight update with your choice.'}
+    designer:{t:'Wall & Roof Panels',b:'Pick a profile, a thickness and a color. The insulation value and weight update with your choice.'},
+    fireguard:{t:'Fire-Rated Panels',b:'Mineral wool panels for walls and roofs. Pick one, pull the layers apart, and join two panels edge to edge.'}
   };
   const offered=(host.dataset.products||'doors,trim,designer').split(',').map(s=>s.trim()).filter(k=>reg[k]);
   const multi=offered.length>1;
@@ -296,13 +373,17 @@
   function resize(){ if(!host.clientWidth||!host.clientHeight) return; wake(1200); renderer.setSize(host.clientWidth,host.clientHeight,false); camera.aspect=host.clientWidth/host.clientHeight; camera.updateProjectionMatrix(); }
   if('ResizeObserver' in window) new ResizeObserver(()=>{ resize(); }).observe(host); else addEventListener('resize',resize);
   resize();
-  const start=(location.hash||'').slice(1).split('/')[0]; show(offered.indexOf(start)>=0?start:(offered.indexOf(host.dataset.start)>=0?host.dataset.start:offered[0]));
-  addEventListener('hashchange',()=>{ const h=(location.hash||'').slice(1); if(multi&&offered.indexOf(h)>=0&&h!==currentId) show(h); });
+  // links can name a product and one item in it: showroom.html#doors/office, #trim/al-t, #fireguard/roof-acoustic
+  const hashParts=()=>(location.hash||'').slice(1).split('/');
+  function applySub(id,sub){ if(!sub||!current) return; if(id==='doors'&&current.setType) current.setType(sub,0); else if(id==='trim'&&current.setItem) current.setItem(sub); else if(id==='fireguard'&&current.setPanel) current.setPanel(sub); }
+  const [start,startSub]=hashParts(); show(offered.indexOf(start)>=0?start:(offered.indexOf(host.dataset.start)>=0?host.dataset.start:offered[0])); if(offered.indexOf(start)>=0) applySub(currentId,startSub);
+  addEventListener('hashchange',()=>{ const [h,sub]=hashParts(); if(multi&&offered.indexOf(h)>=0){ if(h!==currentId) show(h); applySub(h,sub); } });
 
   // what the pages can call: USP3D.door('sliding'), USP3D.trim('al-t'), USP3D.show('doors')
   window.USP3D={ show, types:DOOR_TYPES, trimItems:TRIM,
     door:(type,size)=>{ if(currentId!=='doors') show('doors'); current.setType&&current.setType(type,size||0); },
-    trim:id=>{ if(currentId!=='trim') show('trim'); current.setItem&&current.setItem(id); } };
+    trim:id=>{ if(currentId!=='trim') show('trim'); current.setItem&&current.setItem(id); },
+    fireguard:id=>{ if(currentId!=='fireguard') show('fireguard'); current.setPanel&&current.setPanel(id); } };
   document.dispatchEvent(new Event('usp3d-ready'));
 
   (function loop(now){ requestAnimationFrame(loop); if(document.hidden) return; if(controls.update()) wake(300,true); if(now>wakeUntil && now-lastBeat<600) return; lastBeat=now; setRes(now-lastMove<220?moveRatio:baseRatio); renderer.render(scene,camera); })();

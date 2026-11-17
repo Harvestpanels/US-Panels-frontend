@@ -36,10 +36,12 @@
     empty.hidden=ids.length>0; fw.hidden=ids.length===0;
     cnt.textContent=ids.length; bar.hidden=ids.length===0;
     if(write){ try{ history.replaceState(null,'',ids.length?'#list='+ids.join(','):location.pathname+location.search); }catch(e){} }
+    document.dispatchEvent(new Event('usplist'));   // other widgets on the page (the building viewer's sheet) keep their buttons in step
   }
   function toggle(id){ if(sel.has(id)) sel.delete(id); else sel.add(id); render(true); }
 
   opts.forEach(o=>o.querySelector('.add').addEventListener('click',()=>toggle(o.dataset.id)));
+  window.USPList={ has:id=>sel.has(id), toggle:id=>{ if(by[id]) toggle(id); } };
 
   const m=/^#list=([\w,-]+)$/.exec(location.hash);
   if(m) m[1].split(',').forEach(id=>{ if(by[id]) sel.add(id); });

@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="industry.css">
+<link rel="stylesheet" href="building.css">
 </head>
 <body data-lead="Data center project. Products I'm interested in:">
 <!--nav-->
@@ -34,9 +35,28 @@
     <div class="mono">Projects &middot; Data centers</div>
     <h1 class="disp">Data <em>centers.</em></h1>
     <p class="lead">Panel systems built for data center facilities, inside and out. Pick the roof, wall and interior panels you need, and send us the list.</p>
-    <div class="cta"><a class="btn red" href="#roof">See the panels</a><a class="btn ghost" href="#list">Request pricing</a></div>
+    <div class="cta"><a class="btn red" href="#building">Walk through it</a><a class="btn ghost" href="#roof">All the panels</a><a class="btn ghost" href="#list">Request pricing</a></div>
   </div>
   <figure><img src="img/ind-data.webp" alt="Aerial view of a white panel-clad data center with rooftop cooling units and a perimeter fence" width="1100" height="619"></figure>
+</div></section>
+
+<!-- WALK THROUGH THE BUILDING: 3D, outside and inside, a pin on every part -->
+<section class="s bld" id="building"><div class="wrap">
+  <div class="bhead">
+    <p class="mono eyebrow">Walk through it</p>
+    <h2 class="disp">Outside <em>and in.</em></h2>
+    <p class="sub">A typical data center with every panel and trim piece where it goes. Switch between outside and inside, tap a number to see the part and its specs, and open it in the 3D showroom for a closer look.</p>
+  </div>
+  <div class="bgrid">
+    <div class="bstage">
+      <div id="bview" data-scene="data-center" role="img" aria-label="Interactive 3D model of a data center. The list beside it has every part."></div>
+      <div class="bmode" role="group" aria-label="View"><button type="button" class="on" data-mode="out" aria-pressed="true">Outside</button><button type="button" data-mode="in" aria-pressed="false">Inside</button></div>
+      <p class="bhint">Drag to turn &middot; tap a number</p>
+      <p class="bcap">A typical layout, not a drawing of your building</p>
+      <div class="bpins" id="bpins"></div>
+    </div>
+    <aside class="bsheet" id="bsheet" aria-live="polite"></aside>
+  </div>
 </div></section>
 
 <nav class="znav" aria-label="Parts of the building"><ul>
@@ -214,5 +234,6 @@
 <!--/footer-->
 <script src="site.js"></script>
 <script src="js/industry.js"></script>
+<script src="js/building.js" defer></script>
 </body>
 </html>
