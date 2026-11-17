@@ -1,9 +1,10 @@
-/* US Panels walk-through (photo version).
-   One page = one building shown as two pictures (Outside, Inside) with numbered pins on every part. Tapping a pin zooms the picture to that
-   part and the side sheet shows the product's photo, words and specs, "Add to my list" and a link to the 3D showroom.
-   A scene file (js/scene-<name>.js) registers USPB.scenes[name] = { modes, images, parts, info }.
+/* US Panels walk-through.
+   One page = one building shown as a 360-degree tour (js/tour.js: drag to look around, step between spots) in two groups of spots, Outside and Inside,
+   with numbered pins on the parts that are in view. Tapping a pin fades in a close-up render of that part and the side sheet shows the product's photo,
+   words and specs, "Add to my list" and a link to the 3D showroom. Without WebGL it falls back to two still pictures with the same pins.
+   A scene file (js/scene-<name>.js) registers USPB.scenes[name] = { modes, tour:{stations}, images, parts, info }.
    Page provides: #bview[data-scene] inside .bstage, .bmode [data-mode] buttons, #bsheet, and the product cards (.opt[data-id][data-name] with .im img, .k, h3, p)
-   that supply each product's title, picture and words. No WebGL needed. */
+   that supply each product's title, picture and words. */
 (function(){
   const host=document.getElementById('bview'); if(!host) return;
   const stage=host.closest('.bstage'), sheet=document.getElementById('bsheet');
@@ -12,12 +13,14 @@
   const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
   const NAME=host.dataset.scene||'data-center';
   const U=window.USPB=window.USPB||{scenes:{}};
-  let S=null, mode='out', sel=null, pan=null, imgEl=null, pinsEl=null;
+  let S=null, mode='out', sel=null, tour=null, station=null;
+  let pan=null, imgEl=null, pinsEl=null, detEl=null, detLab=null, hotsEl=null, stnEl=null;
   const el=(tag,cls,txt)=>{ const e=document.createElement(tag); if(cls) e.className=cls; if(txt!=null) e.textContent=txt; return e; };
   const loadJS=src=>new Promise((ok,no)=>{ const s=document.createElement('script'); s.src=src; s.onload=ok; s.onerror=()=>no(new Error(src)); document.head.appendChild(s); });
   const card=pid=>document.querySelector('.opt[data-id="'+pid+'"]');
   const nameOf=pid=>{ const c=card(pid); return c?c.dataset.name:pid; };
   const partOf=key=>S.parts.find(p=>p.key===key);
+  const stationsOf=m=>Object.keys(S.tour.stations).filter(k=>S.tour.stations[k].mode===m);
 
   /* ---------------- the sheet ---------------- */
   function renderList(){
@@ -50,12 +53,12 @@
   function syncAdd(){ const b=$('.add[data-pid]',sheet); if(!b||!window.USPList) return; const on=USPList.has(b.dataset.pid); b.setAttribute('aria-pressed',String(on)); $('.lbl',b).textContent=on?'In my list':'Add to my list'; }
   document.addEventListener('usplist',syncAdd);
 
-  /* ---------------- the picture: zoom to a part ---------------- */
-  function zoomTo(p){
-    const cw=stage.clientWidth, ch=stage.clientHeight; if(!cw||!ch) return;
+  /* ---------------- selecting a part ---------------- */
+  function zoomTo(p){   // still-picture fallback: zoom the overview to the pin
+    const cw=stage.clientWidth, ch=stage.clientHeight; if(!cw||!ch||!pan) return;
     if(!p){ pan.style.setProperty('--inv',1); pan.style.transform='translate(0px,0px) scale(1)'; return; }
-    const ih=ch, iw=Math.max(cw,ch*S.images[mode].w/S.images[mode].h), ix=(cw-iw)/2, s=cw<600?2.7:2.3;
-    let tx=cw/2-s*(ix+p.x/100*iw), ty=ch/2-s*(p.y/100*ih);
+    const im=S.images[mode], iw=Math.max(cw,ch*im.w/im.h), ix=(cw-iw)/2, s=cw<600?2.7:2.3;
+    let tx=cw/2-s*(ix+p.x/100*iw), ty=ch/2-s*(p.y/100*ch);
     tx=clamp(tx,cw-s*(ix+iw),-s*ix); ty=clamp(ty,ch-s*ch,0);
     pan.style.setProperty('--inv',(1/s).toFixed(4)); pan.style.transform='translate('+tx.toFixed(1)+'px,'+ty.toFixed(1)+'px) scale('+s+')';
   }
@@ -63,32 +66,80 @@
     const p=key?partOf(key):null; if(p&&p.mode!==mode) setMode(p.mode,true);
     sel=key; if(p) renderDetail(p); else renderList();
     $$('.pin',pinsEl).forEach(b=>{ const on=b.dataset.key===key; b.classList.toggle('sel',on); b.setAttribute('aria-pressed',String(on)); });
-    stage.classList.toggle('zoomed',!!p); zoomTo(p);
+    const det=p&&p.detail;
+    if(det){ detEl.src=det; detEl.alt=p.look||p.label; detLab.textContent=p.n+' · '+p.label; }
+    stage.classList.toggle('detail',!!det);
+    if(!tour){ stage.classList.toggle('zoomed',!!p&&!det); zoomTo(p&&!det?p:null); }
+    else if(p&&!det&&tour) tour.lookAt(p.at);
   }
-  function setMode(m,instant){
-    if(m===mode&&!instant&&imgEl.getAttribute('src')===S.images[m].src) return;
-    const apply=()=>{
-      mode=m; sel=null; const im=S.images[m];
-      imgEl.src=im.src; imgEl.alt=im.alt; imgEl.width=im.w; imgEl.height=im.h;
-      $$('.bmode [data-mode]').forEach(b=>{ const on=b.dataset.mode===m; b.classList.toggle('on',on); b.setAttribute('aria-pressed',String(on)); });
-      $$('.pin',pinsEl).forEach(b=>{ b.hidden=partOf(b.dataset.key).mode!==m; b.classList.remove('sel'); });
-      stage.classList.remove('zoomed'); zoomTo(null); renderList();
-      const shown=()=>stage.classList.remove('swap'); (imgEl.decode?imgEl.decode():Promise.resolve()).then(shown,shown);   // fade back in once the new picture is ready
-    };
-    if(!reduce&&!instant){ stage.classList.add('swap'); setTimeout(apply,200); } else apply();
+
+  /* ---------------- moving: stations, hotspots, pins ---------------- */
+  function goStation(id,o){
+    const st=S.tour.stations[id]; if(!st) return;
+    if(sel) select(null);
+    if(st.mode!==mode) setMode(st.mode,true,true);
+    station=id; tour.goTo(id,o||{keepLook:true}).then(()=>refresh());
+    refresh();
   }
+  function refresh(){
+    const sid=tour&&tour.station||station; if(!sid) return;
+    stnEl.textContent=S.tour.stations[sid].label;
+    const links=S.tour.stations[sid].links||[];
+    hotsEl.replaceChildren();
+    links.forEach(l=>{ const b=el('button','hot'); b.type='button'; b.dataset.to=l.to; b.setAttribute('aria-label',l.label);
+      b.append(el('span','ico'),el('span','lbl',l.label)); b.onclick=()=>goStation(l.to,l.look?{yaw:l.look[0],pitch:l.look[1]}:{keepLook:true}); b._at=l.at||floorOf(l.to); hotsEl.append(b); });
+    tour.preload(links.map(l=>l.to));
+    overlay();
+  }
+  const floorOf=id=>{ const p=S.tour.stations[id].pos; return [p[0],p[1],.15]; };
+  function overlay(){
+    const sid=tour.station||station; if(!sid) return;
+    $$('.pin',pinsEl).forEach(b=>{ const p=partOf(b.dataset.key);
+      const show=p.mode===mode&&p.st&&p.st.indexOf(sid)>=0; if(!show){ b.hidden=true; return; }
+      const q=tour.project(p.at); b.hidden=!q.visible; if(q.visible){ b.style.left=q.x.toFixed(1)+'px'; b.style.top=q.y.toFixed(1)+'px'; } });
+    $$('.hot',hotsEl).forEach(b=>{ const q=tour.project(b._at); b.hidden=!q.visible; if(q.visible){ b.style.left=q.x.toFixed(1)+'px'; b.style.top=q.y.toFixed(1)+'px'; b.style.setProperty('--s',clamp(3.2/Math.max(.5,q.depth/10),.7,1.15).toFixed(2)); } });
+  }
+  function setMode(m,instant,fromStation){
+    if(m===mode&&!instant) return;
+    mode=m; sel=null;
+    $$('.bmode [data-mode]').forEach(b=>{ const on=b.dataset.mode===m; b.classList.toggle('on',on); b.setAttribute('aria-pressed',String(on)); });
+    $$('.pin',pinsEl).forEach(b=>{ b.classList.remove('sel'); if(!tour) b.hidden=partOf(b.dataset.key).mode!==m; });
+    stage.classList.remove('zoomed','detail'); renderList();
+    if(tour){ if(!fromStation) goStation(stationsOf(m)[0],{instant:false,yaw:undefined,keepLook:false}); }
+    else { const im=S.images[m]; imgEl.src=im.src; imgEl.alt=im.alt; imgEl.width=im.w; imgEl.height=im.h; zoomTo(null); }
+  }
+
+  /* ---------------- build ---------------- */
   function build(){
-    host.replaceChildren(); pan=el('div','bpan'); const inner=el('div','bimg'); imgEl=new Image(); imgEl.decoding='async'; imgEl.draggable=false;
-    pinsEl=el('div','bpins'); inner.append(imgEl,pinsEl); pan.append(inner); host.append(pan);
+    host.replaceChildren();
+    detEl=new Image(); detEl.className='bdetail'; detEl.decoding='async'; detEl.draggable=false; detLab=el('div','bdlabel');
+    pinsEl=el('div','bpins'); hotsEl=el('div','bhots'); stnEl=el('div','bstn');
+    tour=(window.USPTour&&S.tour)?USPTour.mount(host,{stations:S.tour.stations,onError:()=>{ /* keep going with what loaded */ }}):null;
+    if(!tour){   // still pictures: the overview with zoom-to-pin
+      pan=el('div','bpan'); const inner=el('div','bimg'); imgEl=new Image(); imgEl.decoding='async'; imgEl.draggable=false; inner.append(imgEl,pinsEl); pan.append(inner); host.append(pan);
+      stage.classList.add('still');
+    } else { host.append(pinsEl,hotsEl); stage.classList.add('touring'); }
+    host.append(detEl,detLab); if(tour) stage.append(stnEl);
     S.parts.forEach(p=>{
-      const b=el('button','pin'); b.type='button'; b.dataset.key=p.key; b.dataset.label=p.label; b.hidden=true; b.style.left=p.x+'%'; b.style.top=p.y+'%';
+      const b=el('button','pin'); b.type='button'; b.dataset.key=p.key; b.dataset.label=p.label; b.hidden=true;
+      if(!tour){ b.style.left=p.x+'%'; b.style.top=p.y+'%'; }
       b.setAttribute('aria-label',p.label+': '+nameOf(p.pid)); b.setAttribute('aria-pressed','false'); b.append(el('span',null,String(p.n)));
       b.onclick=()=>select(sel===p.key?null:p.key); pinsEl.append(b);
+      if(p.detail){ const i=new Image(); i.src=p.detail; }          // warm the close-ups
     });
     $$('.bmode [data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
-    if('ResizeObserver' in window) new ResizeObserver(()=>{ if(sel) zoomTo(partOf(sel)); }).observe(stage);
-    setMode(mode,true);
+    if(tour){
+      tour.onFrame(overlay);
+      stage.querySelector('.bhint').textContent='Drag to look around · tap an arrow to move';
+      mode=$('.bmode .on')?$('.bmode .on').dataset.mode:'out';
+      renderList(); goStation(stationsOf(mode)[0],{instant:true});
+    } else {
+      if('ResizeObserver' in window) new ResizeObserver(()=>{ if(sel) zoomTo(partOf(sel)); }).observe(stage);
+      mode=$('.bmode .on')?$('.bmode .on').dataset.mode:'out'; setMode(mode,true);
+      $$('.pin',pinsEl).forEach(b=>{ b.hidden=partOf(b.dataset.key).mode!==mode; });
+    }
+    window.USPB.view={ select:k=>select(k), mode:m=>setMode(m,true), go:id=>goStation(id,{instant:true}), tour, ready:true };
   }
-  loadJS('js/scene-'+NAME+'.js').then(()=>{ S=U.scenes[NAME]; if(!S) throw new Error('scene'); build(); window.USPB.view={ select:k=>select(k), mode:m=>setMode(m,true), ready:true }; })
+  loadJS('js/scene-'+NAME+'.js').then(()=>{ S=U.scenes[NAME]; if(!S) throw new Error('scene'); build(); })
     .catch(()=>{ host.textContent='The pictures could not load.'; });
 })();
