@@ -41,6 +41,11 @@
 .bdlabel{position:absolute;left:14px;bottom:12px;z-index:2;padding:7px 14px;border-radius:99px;background:var(--red);color:#fff;font:600 13px Inter,sans-serif;opacity:0;transition:opacity .4s;pointer-events:none}
 .bstage.detail .bdlabel{opacity:1}
 .bstage.detail .bcap{opacity:0}
+.bdback{position:absolute;right:14px;top:14px;z-index:5;display:none;min-height:44px;padding:10px 18px;border:0;border-radius:99px;background:#fff;color:var(--ink);font:600 14px Inter,sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(8,12,16,.3)}
+.bdback:hover{background:var(--ink);color:#fff}
+.bdback:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.bstage.detail .bdback{display:block}
+@media(max-width:560px){.bdback{right:10px;top:10px;padding:9px 14px;font-size:13px}}
 @media(prefers-reduced-motion:reduce){.bpan{transition:none}}
 
 .bmode{position:absolute;left:14px;top:14px;z-index:3;display:flex;gap:2px;padding:4px;border-radius:999px;background:#fff;box-shadow:0 8px 24px rgba(8,12,16,.28)}
@@ -53,16 +58,16 @@
 .bcap{position:absolute;left:14px;bottom:12px;z-index:2;margin:0;font-size:12px;color:var(--ink2);background:rgba(255,255,255,.92);padding:6px 12px;border-radius:99px;pointer-events:none}
 
 /* pins: numbered buttons on the picture; they keep their size while the picture zooms */
-.pin{position:absolute;width:44px;height:44px;margin:0;padding:0;border:0;background:none;cursor:pointer;transform:translate(-50%,-50%) scale(var(--inv,1))}
-.pin span{position:absolute;inset:6px;display:grid;place-items:center;border-radius:50%;border:2px solid #fff;background:var(--ink);color:#fff;font:700 14px/1 Inter,sans-serif;box-shadow:0 4px 14px rgba(8,12,16,.45);transition:background .2s,box-shadow .2s}
+/* a pin is a pill with the product's name */
+.pin{position:absolute;margin:0;padding:0;border:0;background:none;cursor:pointer;transform:translate(-50%,-50%) scale(var(--inv,1))}
+.pin span{position:relative;display:block;max-width:176px;min-height:34px;padding:8px 13px 8px 28px;border-radius:18px;border:2px solid #fff;background:rgba(15,19,23,.92);color:#fff;font:600 12.5px/1.2 Inter,sans-serif;text-align:left;box-shadow:0 4px 14px rgba(8,12,16,.45);transition:background .2s,box-shadow .2s}
+.pin span::before{content:"";position:absolute;left:10px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;background:#fff;animation:pinring 2.6s ease-out infinite}
+@keyframes pinring{0%{box-shadow:0 0 0 0 rgba(255,255,255,.7)}70%,100%{box-shadow:0 0 0 9px rgba(255,255,255,0)}}
 .pin:hover span{box-shadow:0 0 0 4px rgba(255,255,255,.45),0 4px 14px rgba(8,12,16,.45)}
 .pin.sel span{background:var(--red);box-shadow:0 0 0 5px rgba(200,32,47,.45),0 4px 14px rgba(8,12,16,.45)}
-.pin::before{content:"";position:absolute;inset:6px;border-radius:50%;border:2px solid #fff;opacity:0;animation:pinring 2.6s ease-out infinite}
-.pin.sel::before{display:none}
-@keyframes pinring{0%{transform:scale(1);opacity:.7}70%,100%{transform:scale(1.9);opacity:0}}
-.pin::after{content:attr(data-label);position:absolute;left:50%;bottom:calc(100% - 2px);transform:translate(-50%,4px);white-space:nowrap;padding:6px 11px;border-radius:99px;background:var(--ink);color:#fff;font:600 12.5px Inter,sans-serif;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s}
-.pin:hover::after,.pin:focus-visible::after,.pin.sel::after{opacity:1;transform:translate(-50%,0)}
-@media(prefers-reduced-motion:reduce){.pin::before{animation:none}}
+.pin.sel span::before{animation:none}
+@media(prefers-reduced-motion:reduce){.pin span::before{animation:none}}
+@media(max-width:560px){.pin span{max-width:128px;min-height:32px;padding:6px 10px 6px 24px;font-size:11.5px}.pin span::before{left:9px}}
 
 /* the sheet */
 .bsheet{background:var(--ink);color:#fff;border-radius:var(--r);padding:26px;min-width:0}

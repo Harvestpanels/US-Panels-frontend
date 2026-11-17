@@ -29,8 +29,8 @@
     const ol=el('ol','bs-parts');
     S.parts.filter(p=>p.mode===mode).forEach(p=>{
       const li=el('li'), b=el('button','bs-part'), t=el('span','t');
-      b.type='button'; b.dataset.key=p.key; t.append(el('b',null,p.label),el('small',null,nameOf(p.pid)));
-      b.append(el('i',null,String(p.n)),t); b.onclick=()=>select(p.key); li.append(b); ol.append(li);
+      b.type='button'; b.dataset.key=p.key; t.append(el('b',null,nameOf(p.pid)),el('small',null,p.label));
+      b.append(t); b.onclick=()=>select(p.key); li.append(b); ol.append(li);
     });
     w.append(ol); sheet.replaceChildren(w);
   }
@@ -39,7 +39,7 @@
     const back=el('button','bs-back','← All parts in this view'); back.type='button'; back.onclick=()=>select(null); w.append(back);
     const src=c&&$('.im img',c);
     if(src){ const cl=$('.im',c).className, im=el('div','bs-img'+(/\bdoor\b/.test(cl)?' door':'')+(/\btrim\b/.test(cl)?' trim':'')), i=new Image(); i.src=src.getAttribute('src'); i.alt=src.alt||''; im.append(i); w.append(im); }
-    w.append(el('p','bs-k',p.n+' · '+p.label));
+    w.append(el('p','bs-k',p.label));
     w.append(el('h3',null,c?$('h3',c).textContent:p.pid));
     if(c&&$('p',c)) w.append(el('p','bs-desc',$('p',c).textContent));
     if(p.look) w.append(el('p','bs-look','What to look for: '+p.look));
@@ -67,7 +67,7 @@
     sel=key; if(p) renderDetail(p); else renderList();
     $$('.pin',pinsEl).forEach(b=>{ const on=b.dataset.key===key; b.classList.toggle('sel',on); b.setAttribute('aria-pressed',String(on)); });
     const det=p&&p.detail;
-    if(det){ detEl.src=det; detEl.alt=p.look||p.label; detLab.textContent=p.n+' · '+p.label; }
+    if(det){ detEl.src=det; detEl.alt=p.look||p.label; detLab.textContent=nameOf(p.pid); }
     stage.classList.toggle('detail',!!det);
     if(!tour){ stage.classList.toggle('zoomed',!!p&&!det); zoomTo(p&&!det?p:null); }
     else if(p&&!det&&tour) tour.lookAt(p.at);
@@ -94,10 +94,17 @@
   const floorOf=id=>{ const p=S.tour.stations[id].pos; return [p[0],p[1],.15]; };
   function overlay(){
     const sid=tour.station||station; if(!sid) return;
+    const placed=[], W=host.clientWidth, H=host.clientHeight;
+    const hit=(a,b)=>Math.abs(a.x-b.x)<(a.w+b.w)/2+4&&Math.abs(a.y-b.y)<(a.h+b.h)/2+4;
+    $$('.hot',hotsEl).forEach(b=>{ const q=tour.project(b._at); b.hidden=!q.visible;
+      if(q.visible){ b.style.left=q.x.toFixed(1)+'px'; b.style.top=q.y.toFixed(1)+'px'; b.style.setProperty('--s',clamp(3.2/Math.max(.5,q.depth/10),.7,1.15).toFixed(2)); placed.push({x:q.x,y:q.y,w:54,h:54}); } });
     $$('.pin',pinsEl).forEach(b=>{ const p=partOf(b.dataset.key);
       const show=p.mode===mode&&p.st&&p.st.indexOf(sid)>=0; if(!show){ b.hidden=true; return; }
-      const q=tour.project(p.at); b.hidden=!q.visible; if(q.visible){ b.style.left=q.x.toFixed(1)+'px'; b.style.top=q.y.toFixed(1)+'px'; } });
-    $$('.hot',hotsEl).forEach(b=>{ const q=tour.project(b._at); b.hidden=!q.visible; if(q.visible){ b.style.left=q.x.toFixed(1)+'px'; b.style.top=q.y.toFixed(1)+'px'; b.style.setProperty('--s',clamp(3.2/Math.max(.5,q.depth/10),.7,1.15).toFixed(2)); } });
+      const q=tour.project(p.at); b.hidden=!q.visible; if(!q.visible) return;
+      const r={x:q.x,y:q.y,w:b.offsetWidth||130,h:b.offsetHeight||36};
+      for(let i=0;i<8&&placed.some(o=>hit(r,o));i++) r.y=q.y+(i%2?-1:1)*(Math.floor(i/2)+1)*(r.h+5);   // names that would sit on top of each other step apart
+      r.x=clamp(r.x,r.w/2+4,W-r.w/2-4); r.y=clamp(r.y,r.h/2+4,H-r.h/2-4);
+      placed.push(r); b.style.left=r.x.toFixed(1)+'px'; b.style.top=r.y.toFixed(1)+'px'; });
   }
   function setMode(m,instant,fromStation){
     if(m===mode&&!instant) return;
@@ -123,11 +130,14 @@
     S.parts.forEach(p=>{
       const b=el('button','pin'); b.type='button'; b.dataset.key=p.key; b.dataset.label=p.label; b.hidden=true;
       if(!tour){ b.style.left=p.x+'%'; b.style.top=p.y+'%'; }
-      b.setAttribute('aria-label',p.label+': '+nameOf(p.pid)); b.setAttribute('aria-pressed','false'); b.append(el('span',null,String(p.n)));
+      b.setAttribute('aria-label',nameOf(p.pid)+' ('+p.label+')'); b.setAttribute('aria-pressed','false'); b.append(el('span',null,nameOf(p.pid)));
       b.onclick=()=>select(sel===p.key?null:p.key); pinsEl.append(b);
       if(p.detail){ const i=new Image(); i.src=p.detail; }          // warm the close-ups
     });
-    $$('.bmode [data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+    $$('.bmode [data-mode]').forEach(b=>b.addEventListener('click',()=>{ if(sel) select(null); setMode(b.dataset.mode); }));
+    // the close-up is only a peek: a button, a drag on the picture, or either mode button brings the tour back
+    const back=el('button','bdback','← Back to the tour'); back.type='button'; back.onclick=()=>select(null); stage.append(back);
+    host.addEventListener('pointerdown',e=>{ if(stage.classList.contains('detail')&&!e.target.closest('button')) select(null); },true);
     if(tour){
       tour.onFrame(overlay);
       stage.querySelector('.bhint').textContent='Drag to look around · tap an arrow to move';

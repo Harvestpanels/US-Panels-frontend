@@ -11,8 +11,8 @@
   const fl=(x,y)=>[x,y,.15];
   U.scenes['data-center']={
     modes:{
-      out:{label:'Outside',title:'The outside',lead:'Drag to look around, tap an arrow to walk to the next spot, and tap a number to see a part up close. Or pick a part here.'},
-      in:{label:'Inside',title:'The inside',lead:'Drag to look around, tap an arrow to walk down the aisle, and tap a number to see a part up close. Or pick a part here.'}
+      out:{label:'Outside',title:'The outside',lead:'Drag to look around and tap an arrow to walk to the next spot. Tap a product name on the picture, or pick one here, to see it up close.'},
+      in:{label:'Inside',title:'The inside',lead:'Drag to look around and tap an arrow to walk down the aisle. Tap a product name on the picture, or pick one here, to see it up close.'}
     },
     tour:{ stations:{
       o1:{mode:'out',label:'Front entrance',src:D+'pano_o1.jpg',pos:[3,-38,1.7],yaw:0,pitch:3,links:[
