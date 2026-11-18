@@ -102,7 +102,7 @@ h2.disp{font-size:clamp(44px,6.4vw,92px);margin:0 0 18px}
 .band .acts{display:flex;flex-direction:column;gap:12px;min-width:260px}
 footer{background:var(--ink);color:#c5ccd3;padding:56px 0 34px;font-size:14px}
 footer .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:30px}footer h4{color:#fff;margin:0 0 12px;font:600 12px "JetBrains Mono";letter-spacing:.14em;text-transform:uppercase}
-footer a{display:block;padding:4px 0}footer a:hover{color:#fff}footer img{height:40px;margin-bottom:14px}
+footer a{display:block;padding:4px 0}footer a:hover{color:#fff}footer img{height:40px;width:auto;margin-bottom:14px;background:#fff;padding:6px 10px;border-radius:8px;box-sizing:content-box}footer .social{display:flex;gap:18px;padding:0}footer .social a{padding:0}
 footer .legal{margin-top:36px;padding-top:20px;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-size:13px}
 @media(max-width:800px){footer .cols{grid-template-columns:1fr 1fr}}
 footer span{display:block;padding:4px 0}

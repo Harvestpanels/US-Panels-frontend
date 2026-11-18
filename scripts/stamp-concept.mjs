@@ -48,7 +48,7 @@ const footer = () => `<!--footer-->
     <div><h4>Products</h4><a href="products.html#wall-roof">Wall &amp; roof panels</a><a href="products.html#fire-rated">Fire-rated panels</a><a href="products.html#cold-storage">Cold storage panels</a><a href="doors.html">Doors</a><a href="trim.html">Trim &amp; hardware</a><a href="architectural.html">Architectural</a></div>
     <div><h4>Explore</h4><a href="showroom.html">3D Showroom</a><a href="projects.html">Projects</a><a href="specs.html">Specs</a><a href="quote.html">Get a quote</a></div>
     <div><h4>Contact</h4><a href="tel:4057782808">(405) 778-2808</a><a href="mailto:Sales@uspanels.com">Sales@uspanels.com</a><span>7751 N County Line Rd.<br>Piedmont, OK 73078</span></div></div>
-  <div class="legal"><span>&copy; <span data-year style="display:inline;padding:0">2026</span> US Panels. All rights reserved.</span><span>Design concept, not live</span></div>
+  <div class="legal"><span>&copy; <span data-year style="display:inline;padding:0">2026</span> US Panels. All rights reserved.</span><span class="social"><a href="https://www.facebook.com/people/US-Panels/61555678774736/" target="_blank" rel="noopener">Facebook</a><a href="https://www.instagram.com/uspanels/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@uspanels" target="_blank" rel="noopener">TikTok</a><a href="https://x.com/uspanels" target="_blank" rel="noopener">X</a></span></div>
 </div></footer>
 <!--/footer-->`;
 
