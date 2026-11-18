@@ -150,6 +150,13 @@
     }
     window.USPB.view={ select:k=>select(k), mode:m=>setMode(m,true), go:id=>goStation(id,{instant:true}), tour, ready:true };
   }
-  loadJS('js/scene-'+NAME+'.js').then(()=>{ S=U.scenes[NAME]; if(!S) throw new Error('scene'); build(); })
-    .catch(()=>{ host.textContent='The pictures could not load.'; });
+  function start(){
+    loadJS('js/scene-'+NAME+'.js').then(()=>{ S=U.scenes[NAME]; if(!S) throw new Error('scene'); build(); })
+      .catch(()=>{ host.textContent='The pictures could not load.'; });
+  }
+  // the pictures (about 4 MB) only start loading when the visitor scrolls near the tour
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ io.disconnect(); start(); } },{rootMargin:'700px 0px'});
+    io.observe(stage);
+  } else start();
 })();
