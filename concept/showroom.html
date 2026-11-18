@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3D Showroom: Panels, Doors and Trim | US Panels</title>
+<meta name="description" content="Explore US Panels insulated metal panels, doors and trim in 3D. Turn them around, open the doors, change profiles, thickness and color.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b1d1f">
+<link rel="canonical" href="https://uspanels.com/showroom">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="US Panels">
+<meta property="og:title" content="3D Showroom: Panels, Doors and Trim | US Panels">
+<meta property="og:description" content="Explore US Panels insulated metal panels, doors and trim in 3D. Turn them around, open the doors, change profiles, thickness and color.">
+<meta property="og:url" content="https://uspanels.com/showroom">
+<meta property="og:image" content="https://uspanels.com/og-logo.png">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="showroom.css">
+<style>
+.phero.tight{padding-bottom:56px}
+.phero.tight h1{font-size:clamp(48px,7.4vw,112px)}
+#room{padding-top:clamp(36px,5vw,64px)}
+</style>
+</head>
+<body>
+<!--nav-->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="img/logo.webp" alt="US Panels" width="96" height="36"></a>
+    <nav class="menu" aria-label="Main"><a href="products.html">Products</a><a href="projects.html">Industries</a><a href="showroom.html" aria-current="page">3D Showroom</a><a href="specs.html">Specs</a><a href="quote.html">Contact</a></nav>
+    <a class="tel" href="tel:4057782808">(405) 778-2808</a>
+    <a class="btn red hide-m" href="quote.html">Get a quote</a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="products.html">Products</a><a href="projects.html">Industries</a><a href="showroom.html" aria-current="page">3D Showroom</a><a href="specs.html">Specs</a><a href="quote.html">Contact</a>
+  <a href="tel:4057782808">(405) 778-2808</a>
+  <a class="btn red" href="quote.html">Get a quote</a>
+</div>
+<!--/nav-->
+
+<section class="phero tight"><div class="wrap">
+  <div class="mono">3D showroom</div>
+  <h1 class="disp">Pick a product.<br><em>Turn it around.</em></h1>
+  <p class="lead" style="margin-bottom:0">Spin it, open it and change it. Choose what you want to see.</p>
+</div></section>
+
+<section class="s steel" id="room"><div class="wrap">
+  <div class="pick" role="group" aria-label="Choose a product">
+    <button class="pk" type="button" data-id="walls"><span class="ph" style="background-image:url('img/products/usp-mw-wall.jpg');background-color:#fff;background-size:cover"></span><span><b>Walls</b><span>Mineral wool and PIR wall panels</span></span></button>
+    <button class="pk" type="button" data-id="ceiling"><span class="ph" style="background-image:url('img/products/usp-mw-interior.jpg');background-color:#fff;background-size:cover"></span><span><b>Ceiling</b><span>Perforated and solid ceiling panels</span></span></button>
+    <button class="pk" type="button" data-id="roof"><span class="ph" style="background-image:url('img/products/usp-fireguard-roof-panel.webp');background-color:#fff;background-size:contain;background-repeat:no-repeat"></span><span><b>Roof</b><span>Roof panels</span></span></button>
+    <button class="pk" type="button" data-id="designer"><span class="ph" style="background-image:url('img/prof-trap.webp');background-color:#fff"></span><span><b>Wall &amp; Roof Panels</b><span>Profile, thickness, color</span></span></button>
+    <button class="pk" type="button" data-id="fireguard"><span class="ph" style="background-image:url('img/products/usp-fireguard-wall-panel-exposed-fastening.webp');background-color:#fff;background-size:contain"></span><span><b>Fire-Rated Panels</b><span>Mineral wool, walls and roofs</span></span></button>
+    <button class="pk" type="button" data-id="doors"><span class="ph" style="background-image:url('img/doors/hinged-4x7_open.jpg')"></span><span><b>Doors</b><span>Hinge, sliding, metal</span></span></button>
+    <button class="pk" type="button" data-id="trim"><span class="ph" style="background-image:url('img/trim/al-inside-curved.jpg')"></span><span><b>Trim &amp; Hardware</b><span>Corner angles, T-bar, strut</span></span></button>
+  </div>
+  <div class="show">
+    <div class="stage3d">
+      <div id="sv" data-products="walls,ceiling,roof,designer,fireguard,doors,trim" role="img" aria-label="Interactive 3D product viewer"></div>
+      <div class="vbar"><button class="vb" type="button" id="rotb">Turn it</button><button class="vb" type="button" data-view="34">3/4</button><button class="vb" type="button" data-view="front">Front</button><button class="vb" type="button" data-view="side">Side</button><button class="vb" type="button" data-view="top">Top</button><button class="vb" type="button" data-view="under" hidden>Below</button></div>
+      <div class="hint">Drag to turn &middot; click, then scroll to zoom</div>
+    </div>
+    <aside class="side">
+      <p class="mono">Now viewing</p><h2 id="ptitle">Wall &amp; Roof Panels</h2><p class="bl" id="pblurb"></p>
+      <div id="ctl"></div>
+      <div class="stats3" id="stats"></div>
+      <p id="pnote"></p>
+      <div class="btnrow"><a class="btn red" href="quote.html">Get a quote</a><a class="btn ghost" href="products.html">All products</a></div>
+    </aside>
+  </div>
+</div></section>
+
+<section class="s"><div class="wrap">
+  <div class="head rv"><div><p class="mono eyebrow">Go deeper</p><h2 class="disp">The full story<br>on each one.</h2></div></div>
+  <div class="pgrid">
+    <a class="pcard rv" href="products.html#wall-roof"><div class="im fit"><img src="img/products/usp-fortis-wall-panel.webp" alt="" loading="lazy"></div><div class="tx"><span class="k">Panels</span><h3>Wall &amp; roof panels</h3><p>Fortis, Box, Cop and Grecata, plus fire-rated and cold storage lines.</p><span class="more">See the panels &rarr;</span></div></a>
+    <a class="pcard rv" href="doors.html"><div class="im"><img src="img/doors/sliding-6x7_open.jpg" alt="" loading="lazy"></div><div class="tx"><span class="k">Doors</span><h3>Insulated doors</h3><p>Hinge cooler, sliding cooler and metal doors, with every size.</p><span class="more">See the doors &rarr;</span></div></a>
+    <a class="pcard rv" href="trim.html"><div class="im"><img src="img/trim/al-outside-corner.jpg" alt="" loading="lazy"></div><div class="tx"><span class="k">Trim</span><h3>Trim &amp; hardware</h3><p>Corner angles, T-bar, flashing and strut channel.</p><span class="more">See the trim &rarr;</span></div></a>
+  </div>
+</div></section>
+
+<section class="s band"><div class="wrap">
+  <div class="rv"><p class="mono" style="opacity:.8;margin:0 0 14px">Ready when you are</p><h2 class="disp">Tell us the job.<br>We'll price it.</h2></div>
+  <div class="acts rv"><a class="btn red" href="quote.html">Get a quote</a><a class="btn ghost" href="tel:4057782808">Call (405) 778-2808</a></div>
+</div></section>
+
+<!--footer-->
+<footer><div class="wrap">
+  <div class="cols"><div><img src="img/logo.webp" alt="US Panels" width="107" height="40"><p style="max-width:26em">Insulated metal panels, doors and trim, delivered across the U.S.</p></div>
+    <div><h4>Products</h4><a href="products.html#wall-roof">Wall &amp; roof panels</a><a href="products.html#fire-rated">Fire-rated panels</a><a href="products.html#cold-storage">Cold storage panels</a><a href="doors.html">Doors</a><a href="trim.html">Trim &amp; hardware</a><a href="architectural.html">Architectural</a></div>
+    <div><h4>Explore</h4><a href="showroom.html">3D Showroom</a><a href="projects.html">Projects</a><a href="specs.html">Specs</a><a href="quote.html">Get a quote</a></div>
+    <div><h4>Contact</h4><a href="tel:4057782808">(405) 778-2808</a><a href="mailto:Sales@uspanels.com">Sales@uspanels.com</a><span>7751 N County Line Rd.<br>Piedmont, OK 73078</span></div></div>
+  <div class="legal"><span>&copy; <span data-year style="display:inline;padding:0">2026</span> US Panels. All rights reserved.</span><span class="social"><a href="https://www.facebook.com/people/US-Panels/61555678774736/" target="_blank" rel="noopener">Facebook</a><a href="https://www.instagram.com/uspanels/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@uspanels" target="_blank" rel="noopener">TikTok</a><a href="https://x.com/uspanels" target="_blank" rel="noopener">X</a></span></div>
+</div></footer>
+<link rel="stylesheet" href="panelo.css">
+<script defer src="js/panelo.js"></script>
+<!--/footer-->
+<script src="site.js"></script>
+<script src="vendor/three/three.min.js"></script>
+<script src="vendor/three/OrbitControls.js"></script>
+<script src="vendor/three/GLTFLoader.js"></script>
+<script src="js/panelmat.js"></script>
+<script src="js/acc_assets.js"></script>
+<script src="js/panels-data.js"></script>
+<script src="js/showroom.js"></script>
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)}</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

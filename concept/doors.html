@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Insulated Doors: Hinge, Sliding and Metal | US Panels</title>
+<meta name="description" content="Insulated hinge cooler doors, sliding cooler doors and metal doors from US Panels. Open every door in 3D, compare sizes and request pricing.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b1d1f">
+<link rel="canonical" href="https://uspanels.com/doors">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="US Panels">
+<meta property="og:title" content="Insulated Doors: Hinge, Sliding and Metal | US Panels">
+<meta property="og:description" content="Insulated hinge cooler doors, sliding cooler doors and metal doors from US Panels. Open every door in 3D, compare sizes and request pricing.">
+<meta property="og:url" content="https://uspanels.com/doors">
+<meta property="og:image" content="https://uspanels.com/og-logo.png">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="showroom.css">
+<style>
+/* door family cards: photo, what it is, and every size as a button that opens it in 3D */
+.fams{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.famc{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.famc .im{aspect-ratio:7/5;background:#8b9096;overflow:hidden}
+.famc .im img{width:100%;height:100%;object-fit:cover}
+.famc .tx{padding:22px;display:flex;flex-direction:column;gap:10px;flex:1}
+.famc .k{font:500 11px "JetBrains Mono";letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
+.famc h3{margin:0;font:800 34px/1 "Big Shoulders Display";text-transform:uppercase}
+.famc p{margin:0;color:var(--mute);font-size:15px}
+.sizes{display:grid;gap:10px;margin-top:6px;padding-top:14px;border-top:1px solid var(--line)}
+.sizes div{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.sizes i{font:normal 500 11px "JetBrains Mono";letter-spacing:.08em;text-transform:uppercase;color:var(--mute);min-width:74px}
+.sz{padding:8px 13px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font:600 13px Inter;cursor:pointer;color:var(--ink);transition:.2s}
+.sz:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.famc .btn{margin-top:auto;justify-content:center}
+@media(max-width:1000px){.fams{grid-template-columns:minmax(0,1fr)}.famc{flex-direction:row}.famc .im{width:42%;aspect-ratio:auto;flex:none}}
+@media(max-width:640px){.famc{flex-direction:column}.famc .im{width:auto;aspect-ratio:7/5}}
+/* order steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:22px}
+.step{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:26px}
+.step i{font:normal 500 13px "JetBrains Mono";color:var(--red);letter-spacing:.1em}
+.step h3{font:800 32px/1 "Big Shoulders Display";text-transform:uppercase;margin:14px 0 10px}
+.step p{margin:0;color:var(--mute);font-size:15px}
+@media(max-width:900px){.steps{grid-template-columns:minmax(0,1fr)}}
+.tbl.doors{min-width:860px}
+.tbl.doors td{vertical-align:top}
+</style>
+</head>
+<body>
+<!--nav-->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="index.html"><img src="img/logo.webp" alt="US Panels" width="96" height="36"></a>
+    <nav class="menu" aria-label="Main"><a href="products.html" aria-current="page">Products</a><a href="projects.html">Industries</a><a href="showroom.html">3D Showroom</a><a href="specs.html">Specs</a><a href="quote.html">Contact</a></nav>
+    <a class="tel" href="tel:4057782808">(405) 778-2808</a>
+    <a class="btn red hide-m" href="quote.html">Get a quote</a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
+  </div>
+</header>
+<div class="drawer" id="drawer">
+  <a href="products.html" aria-current="page">Products</a><a href="projects.html">Industries</a><a href="showroom.html">3D Showroom</a><a href="specs.html">Specs</a><a href="quote.html">Contact</a>
+  <a href="tel:4057782808">(405) 778-2808</a>
+  <a class="btn red" href="quote.html">Get a quote</a>
+</div>
+<!--/nav-->
+
+<section class="phero"><div class="wrap">
+  <div class="mono">Insulated doors</div>
+  <h1 class="disp">Doors that match<br>the <em>panels.</em></h1>
+  <p class="lead">Insulated doors built to match the thermal performance of the panels around them, for fast, secure and efficient access. Open every one of them in 3D.</p>
+  <div class="cta"><a class="btn red" href="#viewer">Open the 3D viewer</a><a class="btn ghost" href="quote.html">Get a quote</a></div>
+</div></section>
+
+<section class="s" id="types"><div class="wrap">
+  <div class="head rv"><div><p class="mono eyebrow">Door types</p><h2 class="disp">Three families.<br>Pick a size.</h2></div><p class="sub">Tap any size to open that exact door in the 3D viewer below.</p></div>
+  <div class="fams">
+    <article class="famc rv">
+      <div class="im"><img src="img/doors/hinged-4x7_open.jpg" alt="Hinged insulated cooler door, open, set in an insulated panel wall" width="1100" height="785"></div>
+      <div class="tx"><span class="k">Insulated &middot; hinged, cold storage</span><h3>Hinge Cooler Doors</h3>
+        <p>Hinged insulated doors built for cold storage and cooler entries, sealing tight against the panels around them.</p>
+        <div class="sizes">
+          <div><i>Single</i><button class="sz" type="button" data-door="hinged" data-size="0">3&times;7</button><button class="sz" type="button" data-door="hinged" data-size="1">4&times;7</button><button class="sz" type="button" data-door="hinged" data-size="2">5&times;7</button></div>
+          <div><i>Double</i><button class="sz" type="button" data-door="double" data-size="0">6&times;7</button><button class="sz" type="button" data-door="double" data-size="1">8&times;7</button><button class="sz" type="button" data-door="double" data-size="2">6&times;7 unequal</button></div>
+        </div>
+        <button class="btn dark" type="button" data-door="hinged" data-size="1">See it in 3D</button></div>
+    </article>
+    <article class="famc rv">
+      <div class="im"><img src="img/doors/sliding-6x7_open.jpg" alt="Insulated sliding cooler door on a top rail, slid open" width="1100" height="785" loading="lazy"></div>
+      <div class="tx"><span class="k">Insulated &middot; heavy-duty track</span><h3>Sliding Cooler Doors</h3>
+        <p>Heavy-duty insulated sliding doors built for consistent temperature control and secure cooler access.</p>
+        <div class="sizes">
+          <div><i>Single</i><button class="sz" type="button" data-door="sliding" data-size="0">5&times;7</button><button class="sz" type="button" data-door="sliding" data-size="1">6&times;7</button></div>
+        </div>
+        <button class="btn dark" type="button" data-door="sliding" data-size="1">See it in 3D</button></div>
+    </article>
+    <article class="famc rv">
+      <div class="im"><img src="img/doors/office-3x7_front.jpg" alt="Flush insulated metal door in an aluminum frame" width="1100" height="785" loading="lazy"></div>
+      <div class="tx"><span class="k">Insulated &middot; metal construction</span><h3>Metal Doors</h3>
+        <p>Durable insulated metal doors matched to the thermal performance of the panels around them.</p>
+        <div class="sizes">
+          <div><i>Single</i><button class="sz" type="button" data-door="office" data-size="0">2.5&times;7</button><button class="sz" type="button" data-door="office" data-size="1">3&times;7</button><button class="sz" type="button" data-door="office" data-size="2">4&times;7</button></div>
+          <div><i>Double</i><button class="sz" type="button" data-door="officed" data-size="0">6&times;7</button></div>
+          <div><i>Window</i><button class="sz" type="button" data-door="clean" data-size="0">3&times;7</button><button class="sz" type="button" data-door="cleand" data-size="0">6&times;7 double</button></div>
+        </div>
+        <button class="btn dark" type="button" data-door="office" data-size="1">See it in 3D</button></div>
+    </article>
+  </div>
+</div></section>
+
+<section class="s steel" id="viewer"><div class="wrap">
+  <div class="head rv"><div><p class="mono eyebrow">3D viewer</p><h2 class="disp">Open one up.</h2></div><p class="sub">Pick a door and a size, swing it open, flip the hinge side, and look at the hardware up close.</p></div>
+  <div class="show">
+    <div class="stage3d">
+      <div id="sv" data-products="doors" role="img" aria-label="Interactive 3D door viewer"></div>
+      <div class="vbar"><button class="vb" type="button" id="rotb">Turn it</button><button class="vb" type="button" data-view="34">3/4</button><button class="vb" type="button" data-view="front">Front</button><button class="vb" type="button" data-view="side">Side</button><button class="vb" type="button" data-view="top">Top</button></div>
+      <div class="hint">Drag to turn &middot; click, then scroll to zoom</div>
+    </div>
+    <aside class="side">
+      <p class="mono">Now viewing</p><h2 id="ptitle">Doors</h2><p class="bl" id="pblurb"></p>
+      <div id="ctl"></div>
+      <div class="stats3" id="stats"></div>
+      <p id="pnote"></p>
+      <div class="btnrow"><a class="btn red" href="quote.html">Get a quote</a><a class="btn ghost" href="showroom.html">Full 3D showroom</a></div>
+    </aside>
+  </div>
+</div></section>
+
+<section class="s" id="details"><div class="wrap">
+  <div class="head rv"><div><p class="mono eyebrow">Door details</p><h2 class="disp">What each<br>door is made of.</h2></div><p class="sub">Sizes are nominal clear openings, width &times; height in feet. Full specifications are provided with every quote.</p></div>
+  <div class="tblwrap rv"><table class="tbl doors">
+    <thead><tr><th scope="col">Door</th><th scope="col">Sizes (ft)</th><th scope="col">Leaf</th><th scope="col">Frame</th><th scope="col">Hardware</th></tr></thead>
+    <tbody>
+      <tr><td>Hinge Cooler</td><td>3&times;7, 4&times;7, 5&times;7</td><td>100 mm (3.94&Prime;) insulated, 0.5 mm steel faces</td><td>Aluminum edge frame, white door frame</td><td>Hinges and a key latch</td></tr>
+      <tr><td>Double Hinge Cooler</td><td>6&times;7, 8&times;7, 6&times;7 unequal</td><td>100 mm (3.94&Prime;) insulated, 0.5 mm steel faces</td><td>Aluminum edge frame, white door frame</td><td>Hinges, key latch on the active leaf</td></tr>
+      <tr><td>Sliding Cooler</td><td>5&times;7, 6&times;7</td><td>100 mm (3.94&Prime;) insulated, 0.5 mm steel faces</td><td>U-shape frame with gasket</td><td>Top rail with roller hangers, floor guide, stainless pull handle and lock</td></tr>
+      <tr><td>Metal</td><td>2.5&times;7, 3&times;7, 4&times;7</td><td>0.5 mm steel faces</td><td>Aluminum</td><td>Lever handle and key cylinder, hinged, door closer</td></tr>
+      <tr><td>Double Metal</td><td>6&times;7</td><td>0.5 mm steel faces</td><td>Aluminum</td><td>Lever handles, hinged, door closers</td></tr>
+      <tr><td>Vision Window</td><td>3&times;7</td><td>50 mm (1.97&Prime;) polyurethane foam, 0.5 mm steel faces</td><td>Aluminum</td><td>Lever handle, vision window, door closer</td></tr>
+      <tr><td>Double Vision Window</td><td>6&times;7</td><td>50 mm (1.97&Prime;) polyurethane foam, 0.5 mm steel faces</td><td>Aluminum</td><td>Lever handles, vision windows, door closers</td></tr>
+    </tbody></table></div>
+  <div class="steps">
+    <div class="step rv"><i>01</i><h3>The opening</h3><p>Tell us the clear opening you need, width by height. Not sure? Send the drawing and we will size it.</p></div>
+    <div class="step rv"><i>02</i><h3>The swing</h3><p>Hinge on the left or the right, or which way a sliding door should travel. Try both in the viewer above.</p></div>
+    <div class="step rv"><i>03</i><h3>The wall</h3><p>Tell us which panel and thickness the door sits in, so the frame matches the wall.</p></div>
+  </div>
+</div></section>
+
+<section class="s band"><div class="wrap">
+  <div class="rv"><p class="mono" style="opacity:.8;margin:0 0 14px">Ready when you are</p><h2 class="disp">Need doors<br>with the panels?</h2></div>
+  <div class="acts rv"><a class="btn red" href="quote.html">Get a quote</a><a class="btn ghost" href="tel:4057782808">Call (405) 778-2808</a><a class="btn ghost" href="products.html">All products</a></div>
+</div></section>
+
+<!--footer-->
+<footer><div class="wrap">
+  <div class="cols"><div><img src="img/logo.webp" alt="US Panels" width="107" height="40"><p style="max-width:26em">Insulated metal panels, doors and trim, delivered across the U.S.</p></div>
+    <div><h4>Products</h4><a href="products.html#wall-roof">Wall &amp; roof panels</a><a href="products.html#fire-rated">Fire-rated panels</a><a href="products.html#cold-storage">Cold storage panels</a><a href="doors.html">Doors</a><a href="trim.html">Trim &amp; hardware</a><a href="architectural.html">Architectural</a></div>
+    <div><h4>Explore</h4><a href="showroom.html">3D Showroom</a><a href="projects.html">Projects</a><a href="specs.html">Specs</a><a href="quote.html">Get a quote</a></div>
+    <div><h4>Contact</h4><a href="tel:4057782808">(405) 778-2808</a><a href="mailto:Sales@uspanels.com">Sales@uspanels.com</a><span>7751 N County Line Rd.<br>Piedmont, OK 73078</span></div></div>
+  <div class="legal"><span>&copy; <span data-year style="display:inline;padding:0">2026</span> US Panels. All rights reserved.</span><span class="social"><a href="https://www.facebook.com/people/US-Panels/61555678774736/" target="_blank" rel="noopener">Facebook</a><a href="https://www.instagram.com/uspanels/" target="_blank" rel="noopener">Instagram</a><a href="https://www.tiktok.com/@uspanels" target="_blank" rel="noopener">TikTok</a><a href="https://x.com/uspanels" target="_blank" rel="noopener">X</a></span></div>
+</div></footer>
+<link rel="stylesheet" href="panelo.css">
+<script defer src="js/panelo.js"></script>
+<!--/footer-->
+<script src="site.js"></script>
+<script src="vendor/three/three.min.js"></script>
+<script src="vendor/three/OrbitControls.js"></script>
+<script src="vendor/three/GLTFLoader.js"></script>
+<script src="js/panelmat.js"></script>
+<script src="js/showroom.js"></script>
+<script>
+/* size buttons and "See it in 3D": open that door in the viewer and bring the viewer into view */
+document.querySelectorAll('[data-door]').forEach(b=>b.addEventListener('click',()=>{
+  if(window.USP3D) USP3D.door(b.dataset.door, +b.dataset.size||0);
+  document.getElementById('viewer').scrollIntoView();
+}));
+</script>
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)}</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
