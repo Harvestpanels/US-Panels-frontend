@@ -12,23 +12,28 @@ button.btn{background:none;font-family:inherit}
 .btn.ghost{border-color:rgba(255,255,255,.55);color:#fff}.btn.ghost:hover{background:rgba(255,255,255,.12)}
 .btn.dark{background:var(--ink);color:#fff}.btn.line{border-color:var(--ink);color:var(--ink)}
 /* nav: the glass lives on a pseudo-element so the bar never becomes the box a fixed menu is measured against */
-/* nav: a full-width dark bar like harvestpanels.com: logo, links next to it, phone and the quote button on the right */
-.nav{position:fixed;top:0;left:0;right:0;height:60px;z-index:50;background:var(--navy);color:#fff;border-bottom:1px solid rgba(255,255,255,.08)}
-.nav .wrap{height:100%;display:flex;align-items:center;gap:30px;width:min(1280px,100% - 40px);padding:0}
-.brand{display:flex;align-items:center;flex:none}
-.brand img{height:30px;width:auto;background:#fff;border-radius:8px;padding:4px 9px;box-sizing:content-box}
-.menu{display:flex;gap:clamp(16px,2vw,30px);margin-right:auto;font-size:14px;font-weight:500}
-.menu a{color:rgba(255,255,255,.78);padding:6px 0;transition:color .2s}.menu a:hover{color:#fff}
-.menu a[aria-current]{color:#fff;box-shadow:inset 0 -2px 0 var(--red)}
-.menu a:focus-visible{outline:2px solid #fff;outline-offset:3px}
-.tel{font-size:14px;font-weight:600;color:#fff}
-.nav .btn{padding:9px 18px;font-size:14px}
-.burger{display:none;margin-left:auto;width:44px;height:44px;border:0;background:none;color:#fff;cursor:pointer}
-.burger span{display:block;width:22px;height:2px;background:#fff;margin:5px auto;transition:.3s}
+/* nav: a clean full-width bar, logo left, links next to it, phone and the quote button on the right (same layout as harvestpanels.com, in the US Panels colors) */
+.nav{position:fixed;top:0;left:0;right:0;height:68px;z-index:50;background:rgba(255,255,255,.96);-webkit-backdrop-filter:saturate(160%) blur(14px);backdrop-filter:saturate(160%) blur(14px);color:var(--ink);border-bottom:1px solid var(--line);transition:box-shadow .3s}
+.nav.solid{box-shadow:0 10px 30px rgba(8,12,16,.10)}
+.nav.open{background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}   /* a blur on .nav would make it the box the fixed drawer is measured against */
+.nav .wrap{height:100%;display:flex;align-items:center;gap:40px;width:min(1280px,100% - 48px);padding:0}
+.brand{display:block;flex:none;position:relative;width:128px;height:42px;overflow:hidden}
+.brand img{position:absolute;left:-5px;top:-22px;width:140px;height:auto;max-width:none}   /* the logo file has wide empty margins: crop to the artwork */
+.menu{display:flex;gap:clamp(20px,2.6vw,38px);margin-right:auto;font-size:15px;font-weight:500;letter-spacing:-.005em}
+.menu a{position:relative;color:var(--ink2);padding:8px 0;transition:color .2s}
+.menu a:hover{color:var(--red)}
+.menu a[aria-current]{color:var(--ink);font-weight:600}
+.menu a[aria-current]::after{content:"";position:absolute;left:0;right:0;bottom:-16px;height:3px;background:var(--red);border-radius:3px 3px 0 0}
+.menu a:focus-visible,.brand:focus-visible{outline:2px solid var(--red);outline-offset:4px;border-radius:6px}
+.tel{font-size:15px;font-weight:700;color:var(--ink);letter-spacing:-.005em;white-space:nowrap}
+.tel:hover{color:var(--red)}
+.nav .btn{padding:11px 22px;font-size:14.5px;font-weight:700;box-shadow:0 6px 16px rgba(200,32,47,.28)}
+.burger{display:none;margin-left:auto;width:44px;height:44px;border:0;background:none;color:var(--ink);cursor:pointer}
+.burger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px auto;transition:.3s}
 .drawer{display:none}
-@media(max-width:1180px){.tel{display:none}.menu{gap:20px}.nav .wrap{gap:20px}}
+@media(max-width:1180px){.tel{display:none}.menu{gap:24px}.nav .wrap{gap:28px}}
 @media(max-width:980px){.menu,.tel,.nav .btn.hide-m{display:none}.burger{display:block}
- .drawer{display:block;position:fixed;inset:0;z-index:49;background:var(--navy);color:#fff;padding:84px 24px 32px;overflow:auto;overscroll-behavior:contain;transform:translateY(-8px);opacity:0;visibility:hidden;transition:.25s}
+ .drawer{display:block;position:fixed;inset:0;z-index:49;background:var(--ink);color:#fff;padding:92px 24px 32px;overflow:auto;overscroll-behavior:contain;transform:translateY(-8px);opacity:0;visibility:hidden;transition:.25s}
  .drawer.open{opacity:1;visibility:visible;transform:none}
  .drawer a{display:block;padding:18px 0;font-family:"Big Shoulders Display",sans-serif;text-transform:uppercase;font-weight:800;font-size:30px;border-bottom:1px solid rgba(255,255,255,.12)}
  .drawer .btn{margin-top:24px;width:100%;justify-content:center;font-family:Inter;font-size:16px;text-transform:none;border:0;padding:16px}

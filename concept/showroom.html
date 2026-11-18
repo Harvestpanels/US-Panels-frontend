@@ -55,12 +55,13 @@
   <div class="pick" role="group" aria-label="Choose a product">
     <button class="pk" type="button" data-id="designer"><span class="ph" style="background-image:url('img/prof-trap.webp');background-color:#fff"></span><span><b>Wall &amp; Roof Panels</b><span>Profile, thickness, color</span></span></button>
     <button class="pk" type="button" data-id="fireguard"><span class="ph" style="background-image:url('img/products/usp-fireguard-wall-panel-exposed-fastening.webp');background-color:#fff;background-size:contain"></span><span><b>Fire-Rated Panels</b><span>Mineral wool, walls and roofs</span></span></button>
+    <button class="pk" type="button" data-id="panels"><span class="ph" style="background-image:url('img/products/usp-pir-imp.jpg');background-color:#fff;background-size:cover"></span><span><b>Mineral Wool &amp; PIR Panels</b><span>Wall, interior, PIR IMP</span></span></button>
     <button class="pk" type="button" data-id="doors"><span class="ph" style="background-image:url('img/doors/hinged-4x7_open.jpg')"></span><span><b>Doors</b><span>Hinge, sliding, metal</span></span></button>
     <button class="pk" type="button" data-id="trim"><span class="ph" style="background-image:url('img/trim/al-inside-curved.jpg')"></span><span><b>Trim &amp; Hardware</b><span>Corner angles, T-bar, strut</span></span></button>
   </div>
   <div class="show">
     <div class="stage3d">
-      <div id="sv" data-products="designer,fireguard,doors,trim" role="img" aria-label="Interactive 3D product viewer"></div>
+      <div id="sv" data-products="designer,fireguard,panels,doors,trim" role="img" aria-label="Interactive 3D product viewer"></div>
       <div class="vbar"><button class="vb" type="button" id="rotb">Turn it</button><button class="vb" type="button" data-view="34">3/4</button><button class="vb" type="button" data-view="front">Front</button><button class="vb" type="button" data-view="side">Side</button><button class="vb" type="button" data-view="top">Top</button></div>
       <div class="hint">Drag to turn &middot; click, then scroll to zoom</div>
     </div>
@@ -103,6 +104,7 @@
 <script src="vendor/three/GLTFLoader.js"></script>
 <script src="js/panelmat.js"></script>
 <script src="js/acc_assets.js"></script>
+<script src="js/panels-data.js"></script>
 <script src="js/showroom.js"></script>
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)}</script>
 <script defer src="/_vercel/insights/script.js"></script>

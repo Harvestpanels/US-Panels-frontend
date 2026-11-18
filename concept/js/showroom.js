@@ -343,13 +343,74 @@
       note:()=>item().blurb+' Shown at an illustrative thickness and profile, and the perforation is drawn far larger than real so you can see it. Thickness, weight and test data: call (405) 778-2808.' };
   }
 
+  // ================================================================= PRODUCT: mineral wool and PIR panels (built in Blender from the sample photos)
+  // Cross sections come from js/panels-data.js, dumped from the same Blender models, drawn at true thickness (2 in mineral wool; PIR 2, 4, 6 or 8 in).
+  // The rib size on the wall panel is read from a sample photo, and the hole size on the interior panel is illustrative.
+  let holeTx=null;
+  function holeTexture(){ if(holeTx) return holeTx; const W=256,H=222,c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,W,H); g.fillStyle='#3a4046';
+    [[0,0],[128,0],[256,0],[64,111],[192,111],[0,222],[128,222],[256,222]].forEach(([x,y])=>{ g.beginPath(); g.arc(x,y,36,0,7); g.fill(); });
+    holeTx=new THREE.CanvasTexture(c); holeTx.encoding=THREE.sRGBEncoding; holeTx.wrapS=holeTx.wrapT=THREE.RepeatWrapping; holeTx.repeat.set(1/12,1/10.392); holeTx.anisotropy=4; return holeTx; }   // one tile = 12 x 10.4 mm: holes 6 mm apart, drawn about twice the real size so they can be seen
+  const perfSteel=hex=>{ const m=steelMat(hex); m.map=holeTexture(); m.alphaMap=holeTexture(); m.alphaTest=.5; m.side=THREE.DoubleSide; return m; };
+  const NP=[
+    {id:'mw-wall',label:'Exterior wall',t:'Exterior Wall Panel, Mineral Wool',color:'#6FA3D6',
+     blurb:'An exterior wall panel with a mineral wool core, a painted steel outer face with two stepped ribs, a steel liner and a lapped joint.',
+     rows:()=>[['Core','Mineral wool'],['Thickness','2 in (50.8 mm)'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm steel'],['Outer face','Two stepped ribs'],['Joint','Lapped']]},
+    {id:'mw-interior',label:'Interior wall and ceiling',t:'Interior Wall and Ceiling Panel, Mineral Wool',color:'#E7EBDA',
+     blurb:'An interior wall and ceiling panel with a mineral wool core, perforated on one face, on both faces, or on neither.',
+     rows:S=>[['Core','Mineral wool'],['Thickness','2 in (50.8 mm)'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm steel'],['Perforation',{none:'None',one:'One face',both:'Both faces'}[S.perf]],['Joint','Tongue-and-groove with gasket']]},
+    {id:'pir-imp',label:'PIR Insulated Metal Panel (IMP)',t:'PIR Insulated Metal Panel (IMP)',color:'#E7EBDA',
+     blurb:'A rigid PIR foam core between 0.5 mm satin steel faces, with a locking tongue-and-groove joint, in ten colors and four thicknesses.',
+     rows:S=>[['Core','PIR foam'],['Thickness',({'50.8':'2 in (50.8 mm)','101.6':'4 in (100 mm)','152.4':'6 in (150 mm)','203.2':'8 in (200 mm)'})[S.thick]],['Insulation value',S.thick==='101.6'?'R-30 (RSI 5.3)':'Call for this thickness'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm satin steel'],['Joint','Locking tongue-and-groove with gasket']]}];
+  function buildPanels(ctx){
+    const D=window.USPanelsData, S={id:'mw-wall',color:NP[0].color,perf:'none',thick:'101.6',layers:0,join:0}, rootG=new THREE.Group(); let inner=null;
+    if(!D){ return {root:rootG,controls:[],stats:()=>[],title:()=>'',blurb:()=>'',note:()=>'The panel data did not load.'}; }
+    const item=()=>NP.find(p=>p.id===S.id), mesh=(pts,LEN,mat)=>sh(new THREE.Mesh(extrude(pts,LEN),mat));
+    function makePanel(LEN){
+      const g=new THREE.Group(), top=new THREE.Group(), mid=new THREE.Group(), low=new THREE.Group(), wool=new THREE.MeshStandardMaterial({map:woolTexture(),roughness:.95});
+      if(S.id==='mw-wall'){ const W=D.wall;
+        top.add(mesh(W.skin,LEN,steelMat(S.color)));
+        mid.add(mesh(W.wool,LEN,wool)); W.foam.forEach(f=>mid.add(mesh(f,LEN,foamMat())));
+        low.add(mesh(W.liner,LEN,steelMat('#C9CFD2')));
+      } else { const H=D.hs[S.id==='pir-imp'?S.thick:'50.8'], interior=S.id==='mw-interior';
+        const skinTop=interior&&S.perf!=='none'?perfSteel(S.color):steelMat(S.color), skinBot=interior&&S.perf==='both'?perfSteel(S.color):steelMat(S.color);
+        top.add(mesh(H.top,LEN,skinTop)); low.add(mesh(H.bot,LEN,skinBot));
+        mid.add(mesh(H.core,LEN,interior?wool:foamMat())); mid.add(mesh(H.gasket,LEN,new THREE.MeshStandardMaterial({color:0x1b1b1e,roughness:.95})));
+      }
+      top.position.y=S.layers*120; low.position.y=-S.layers*120; g.add(top,mid,low); return g;
+    }
+    function make(){
+      if(inner){ rootG.remove(inner); inner.traverse(o=>{ if(o.geometry) o.geometry.dispose(); }); }
+      const LEN=1800; inner=new THREE.Group(); const pair=new THREE.Group(); pair.add(makePanel(LEN));
+      const B=makePanel(LEN); B.position.x=1000+S.join*300; pair.add(B); pair.position.x=-500;
+      pair.rotation.x=Math.PI/2; pair.position.y=LEN/2; inner.add(pair); rootG.add(inner); ctx.update(); wake();
+    }
+    const swatches=COLORS.map(c=>({v:c[1],label:c[0]})); if(!swatches.some(s=>s.v===NP[0].color)) swatches.push({v:NP[0].color,label:'Blue'});
+    const ctl={
+      item:{type:'chips',label:'Panel',value:S.id,options:NP.map(p=>({v:p.id,label:p.label})),onChange:v=>setItem(v)},
+      color:{type:'swatches',label:'Color',value:S.color,options:swatches,onChange:v=>{ S.color=v; make(); }},
+      perf:{type:'chips',label:'Perforation',value:S.perf,options:[{v:'none',label:'None'},{v:'one',label:'One face'},{v:'both',label:'Both faces'}],onChange:v=>{ S.perf=v; make(); }},
+      thick:{type:'chips',label:'Thickness',value:S.thick,options:[{v:'50.8',label:'2″'},{v:'101.6',label:'4″'},{v:'152.4',label:'6″'},{v:'203.2',label:'8″'}],onChange:v=>{ S.thick=v; make(); }},
+      layers:{type:'slider',label:'Pull the layers apart',min:0,max:100,value:0,fmt:v=>v+'%',onChange:v=>{ S.layers=v/100; make(); }},
+      join:{type:'slider',label:'Join the panels',min:0,max:100,value:0,fmt:v=>(100-v)+'%',onChange:v=>{ S.join=v/100; make(); }}};
+    const ctlList=[];
+    function setItem(v){ if(!NP.some(p=>p.id===v)) return; S.id=v; S.color=item().color; S.layers=0; S.join=0; ctl.item.value=v; ctl.color.value=S.color; ctl.layers.value=0; ctl.join.value=0;
+      ctlList.length=0; ctlList.push(ctl.item,ctl.color); if(v==='mw-interior') ctlList.push(ctl.perf); if(v==='pir-imp') ctlList.push(ctl.thick); ctlList.push(ctl.layers,ctl.join);
+      renderControls(ctlList); make(); ctx.update(); ctx.view('34'); }
+    ctlList.push(ctl.item,ctl.color,ctl.layers,ctl.join);
+    return { root:rootG, build:make, controls:ctlList, setItem,
+      title:()=>item().t, blurb:()=>item().blurb,
+      stats:()=>[['Panel',item().t]].concat(item().rows(S),[['Color',(swatches.find(c=>c.v===S.color)||{label:''}).label]]),
+      note:()=>item().blurb+' Drawn to scale from the Blender models'+(S.id==='mw-interior'&&S.perf!=='none'?', with the holes drawn about twice their real size so you can see them':'')+'. Thickness, weight and test data: call (405) 778-2808.' };
+  }
+
   // ---------------- registry + switching ----------------
-  const reg={doors:buildDoors,trim:buildTrim,designer:buildDesigner,fireguard:buildFireguard};
+  const reg={doors:buildDoors,trim:buildTrim,designer:buildDesigner,fireguard:buildFireguard,panels:buildPanels};
   const meta={
     doors:{t:'Doors',b:'Pick a door and a size, swing it open, and look at the hardware up close.'},
     trim:{t:'Trim & Hardware',b:'Pick an item and turn it around to see the profile up close.'},
     designer:{t:'Wall & Roof Panels',b:'Pick a profile, a thickness and a color. The insulation value and weight update with your choice.'},
-    fireguard:{t:'Fire-Rated Panels',b:'Mineral wool panels for walls and roofs. Pick one, pull the layers apart, and join two panels edge to edge.'}
+    fireguard:{t:'Fire-Rated Panels',b:'Mineral wool panels for walls and roofs. Pick one, pull the layers apart, and join two panels edge to edge.'},
+    panels:{t:'Mineral Wool & PIR Panels',b:'Pick a panel, a color and a perforation or thickness, pull the layers apart, and join two panels edge to edge.'}
   };
   const offered=(host.dataset.products||'doors,trim,designer').split(',').map(s=>s.trim()).filter(k=>reg[k]);
   const multi=offered.length>1;
@@ -375,7 +436,7 @@
   resize();
   // links can name a product and one item in it: showroom.html#doors/office, #trim/al-t, #fireguard/roof-acoustic
   const hashParts=()=>(location.hash||'').slice(1).split('/');
-  function applySub(id,sub){ if(!sub||!current) return; if(id==='doors'&&current.setType) current.setType(sub,0); else if(id==='trim'&&current.setItem) current.setItem(sub); else if(id==='fireguard'&&current.setPanel) current.setPanel(sub); }
+  function applySub(id,sub){ if(!sub||!current) return; if(id==='doors'&&current.setType) current.setType(sub,0); else if(id==='trim'&&current.setItem) current.setItem(sub); else if(id==='fireguard'&&current.setPanel) current.setPanel(sub); else if(id==='panels'&&current.setItem) current.setItem(sub); }
   const [start,startSub]=hashParts(); show(offered.indexOf(start)>=0?start:(offered.indexOf(host.dataset.start)>=0?host.dataset.start:offered[0])); if(offered.indexOf(start)>=0) applySub(currentId,startSub);
   addEventListener('hashchange',()=>{ const [h,sub]=hashParts(); if(multi&&offered.indexOf(h)>=0){ if(h!==currentId) show(h); applySub(h,sub); } });
 
@@ -383,7 +444,8 @@
   window.USP3D={ show, types:DOOR_TYPES, trimItems:TRIM,
     door:(type,size)=>{ if(currentId!=='doors') show('doors'); current.setType&&current.setType(type,size||0); },
     trim:id=>{ if(currentId!=='trim') show('trim'); current.setItem&&current.setItem(id); },
-    fireguard:id=>{ if(currentId!=='fireguard') show('fireguard'); current.setPanel&&current.setPanel(id); } };
+    fireguard:id=>{ if(currentId!=='fireguard') show('fireguard'); current.setPanel&&current.setPanel(id); },
+    panels:id=>{ if(currentId!=='panels') show('panels'); current.setItem&&current.setItem(id); } };
   document.dispatchEvent(new Event('usp3d-ready'));
 
   (function loop(now){ requestAnimationFrame(loop); if(document.hidden) return; if(controls.update()) wake(300,true); if(now>wakeUntil && now-lastBeat<600) return; lastBeat=now; setRes(now-lastMove<220?moveRatio:baseRatio); renderer.render(scene,camera); })();
