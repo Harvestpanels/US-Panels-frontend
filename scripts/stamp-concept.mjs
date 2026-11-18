@@ -9,21 +9,13 @@ import { fileURLToPath } from 'node:url';
 const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'concept');
 
 // Same menu structure as harvestpanels.com: Products, Industries, 3D Showroom, Specs, Contact.
-// Doors, Trim & Hardware and Architectural live under Products (dropdown on desktop, list on the phone).
+// Doors, Trim & Hardware and Architectural are reached from the Products page (jump chips) and the footer.
 const LINKS = [
   ['products.html', 'Products'],
   ['projects.html', 'Industries'],
   ['showroom.html', '3D Showroom'],
   ['specs.html', 'Specs'],
   ['quote.html', 'Contact'],
-];
-const PRODUCT_SUB = [
-  ['products.html#wall-roof', 'Wall &amp; roof panels'],
-  ['products.html#fire-rated', 'Fire-rated panels'],
-  ['products.html#cold-storage', 'Cold storage panels'],
-  ['doors.html', 'Doors'],
-  ['trim.html', 'Trim &amp; hardware'],
-  ['architectural.html', 'Architectural panels'],
 ];
 const TEL = '<a href="tel:4057782808">(405) 778-2808</a>';
 
@@ -32,25 +24,18 @@ const PARENT = { 'data-centers.html': 'projects.html', 'doors.html': 'products.h
 
 const cur = (h, file) => (h === (PARENT[file] || file) ? ' aria-current="page"' : '');
 const links = (list, file) => list.map(([h, t]) => `<a href="${h}"${cur(h, file)}>${t}</a>`).join('');
-// desktop: Products carries a dropdown (hover, or keyboard focus)
-const menu = file => LINKS.map(([h, t]) => h !== 'products.html' ? `<a href="${h}"${cur(h, file)}>${t}</a>`
-  : `<div class="has-sub"><a href="${h}"${cur(h, file)} aria-haspopup="true">${t}</a><div class="subnav">${PRODUCT_SUB.map(([sh, st]) => `<a href="${sh}">${st}</a>`).join('')}</div></div>`).join('');
-// phone drawer: the same five items, with the product families listed under Products
-const drawerLinks = file => LINKS.map(([h, t]) => h !== 'products.html' ? `<a href="${h}"${cur(h, file)}>${t}</a>`
-  : `<a href="${h}"${cur(h, file)}>${t}</a><div class="dsub">${PRODUCT_SUB.map(([sh, st]) => `<a href="${sh}">${st}</a>`).join('')}</div>`).join('');
-
 const nav = file => `<!--nav-->
 <header class="nav" id="nav">
   <div class="wrap">
     <a class="brand" href="index.html"><img src="img/logo.webp" alt="US Panels" width="96" height="36"></a>
-    <nav class="menu" aria-label="Main">${menu(file)}</nav>
+    <nav class="menu" aria-label="Main">${links(LINKS, file)}</nav>
     <a class="tel" href="tel:4057782808">(405) 778-2808</a>
     <a class="btn red hide-m" href="quote.html">Get a quote</a>
     <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="drawer"><span></span><span></span><span></span></button>
   </div>
 </header>
 <div class="drawer" id="drawer">
-  ${drawerLinks(file)}
+  ${links(LINKS, file)}
   ${TEL}
   <a class="btn red" href="quote.html">Get a quote</a>
 </div>
