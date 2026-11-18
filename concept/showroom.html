@@ -53,16 +53,18 @@
 
 <section class="s steel" id="room"><div class="wrap">
   <div class="pick" role="group" aria-label="Choose a product">
+    <button class="pk" type="button" data-id="walls"><span class="ph" style="background-image:url('img/products/usp-mw-wall.jpg');background-color:#fff;background-size:cover"></span><span><b>Walls</b><span>Mineral wool and PIR wall panels</span></span></button>
+    <button class="pk" type="button" data-id="ceiling"><span class="ph" style="background-image:url('img/products/usp-mw-interior.jpg');background-color:#fff;background-size:cover"></span><span><b>Ceiling</b><span>Perforated and solid ceiling panels</span></span></button>
+    <button class="pk" type="button" data-id="roof"><span class="ph" style="background-image:url('img/products/usp-fireguard-roof-panel.webp');background-color:#fff;background-size:contain;background-repeat:no-repeat"></span><span><b>Roof</b><span>Roof panels</span></span></button>
     <button class="pk" type="button" data-id="designer"><span class="ph" style="background-image:url('img/prof-trap.webp');background-color:#fff"></span><span><b>Wall &amp; Roof Panels</b><span>Profile, thickness, color</span></span></button>
     <button class="pk" type="button" data-id="fireguard"><span class="ph" style="background-image:url('img/products/usp-fireguard-wall-panel-exposed-fastening.webp');background-color:#fff;background-size:contain"></span><span><b>Fire-Rated Panels</b><span>Mineral wool, walls and roofs</span></span></button>
-    <button class="pk" type="button" data-id="panels"><span class="ph" style="background-image:url('img/products/usp-pir-imp.jpg');background-color:#fff;background-size:cover"></span><span><b>Mineral Wool &amp; PIR Panels</b><span>Wall, interior, PIR IMP</span></span></button>
     <button class="pk" type="button" data-id="doors"><span class="ph" style="background-image:url('img/doors/hinged-4x7_open.jpg')"></span><span><b>Doors</b><span>Hinge, sliding, metal</span></span></button>
     <button class="pk" type="button" data-id="trim"><span class="ph" style="background-image:url('img/trim/al-inside-curved.jpg')"></span><span><b>Trim &amp; Hardware</b><span>Corner angles, T-bar, strut</span></span></button>
   </div>
   <div class="show">
     <div class="stage3d">
-      <div id="sv" data-products="designer,fireguard,panels,doors,trim" role="img" aria-label="Interactive 3D product viewer"></div>
-      <div class="vbar"><button class="vb" type="button" id="rotb">Turn it</button><button class="vb" type="button" data-view="34">3/4</button><button class="vb" type="button" data-view="front">Front</button><button class="vb" type="button" data-view="side">Side</button><button class="vb" type="button" data-view="top">Top</button></div>
+      <div id="sv" data-products="walls,ceiling,roof,designer,fireguard,doors,trim" role="img" aria-label="Interactive 3D product viewer"></div>
+      <div class="vbar"><button class="vb" type="button" id="rotb">Turn it</button><button class="vb" type="button" data-view="34">3/4</button><button class="vb" type="button" data-view="front">Front</button><button class="vb" type="button" data-view="side">Side</button><button class="vb" type="button" data-view="top">Top</button><button class="vb" type="button" data-view="under" hidden>Below</button></div>
       <div class="hint">Drag to turn &middot; click, then scroll to zoom</div>
     </div>
     <aside class="side">

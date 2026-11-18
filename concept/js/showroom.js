@@ -94,15 +94,15 @@
     if(!root) return; const bb=new THREE.Box3().setFromObject(root); if(bb.isEmpty()) return;
     const c=bb.getCenter(new THREE.Vector3()), s=bb.getSize(new THREE.Vector3()), r=Math.max(s.x,s.y,s.z);
     const aspect=host.clientWidth/Math.max(1,host.clientHeight), dist=(r*.74/Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))*Math.max(1,1.05/aspect);
-    const V={'34':[38,20],front:[0,6],side:[90,6],top:[8,80]}[view||'34'];
+    const V={'34':[38,20],front:[0,6],side:[90,6],top:[8,80],under:[38,-14]}[view||'34'];
     const az=V[0]*Math.PI/180, el=V[1]*Math.PI/180;
     controls.target.copy(c); camera.position.set(c.x+Math.sin(az)*Math.cos(el)*dist, c.y+Math.sin(el)*dist, c.z+Math.cos(az)*Math.cos(el)*dist);
     controls.minDistance=r*.35; controls.maxDistance=r*6; camera.near=Math.max(20,dist*.02); camera.far=Math.max(60000,dist*40); camera.updateProjectionMatrix(); controls.update(); wake();
   }
 
   // ================================================================= PRODUCT: wall & roof panel designer
-  // Thickness, R-value (75°F mean) and weight (24/24 steel) are US Panels' own published engineering data (Specs page). Profile shapes are illustrative.
-  const THICK=[['2″',50.8,14.08,2.48,2.85],['3″',76.2,21.13,3.72,3.04],['4″',101.6,28.17,4.96,3.22],['5″',127,35.21,6.20,3.41],['6″',152.4,42.25,7.44,3.60],['8″',203.2,56.34,9.92,3.97]];
+  // Thickness, R-value (75Â°F mean) and weight (24/24 steel) are US Panels' own published engineering data (Specs page). Profile shapes are illustrative.
+  const THICK=[['2â€³',50.8,14.08,2.48,2.85],['3â€³',76.2,21.13,3.72,3.04],['4â€³',101.6,28.17,4.96,3.22],['5â€³',127,35.21,6.20,3.41],['6â€³',152.4,42.25,7.44,3.60],['8â€³',203.2,56.34,9.92,3.97]];
   const PROFILES={
     flat:{n:'Flat',kind:'wall',d:'A smooth, unribbed face for the most minimal, monolithic appearance.',pts:()=>[[-500,0],[500,0]]},
     box:{n:'Box',kind:'wall',d:'Flat pans separated by narrow ribs, the cleanest, most contemporary look.',pts:()=>{ const p=[[-500,0]]; [-375,-125,125,375].forEach(c=>p.push([c-12,0],[c-8,8],[c+8,8],[c+12,0])); p.push([500,0]); return p; }},
@@ -134,7 +134,7 @@
         {type:'chips',label:'Profile',value:'trap',options:Object.keys(PROFILES).map(k=>({v:k,label:PROFILES[k].n})),onChange:v=>{S.profile=v;make();ctx.view('34');}},
         {type:'chips',label:'Thickness',value:2,options:THICK.map((t,i)=>({v:i,label:t[0]})),onChange:v=>{S.thick=v;make();}},
         {type:'swatches',label:'Color',value:'#E7EBDA',options:COLORS.map(c=>({v:c[1],label:c[0]})),onChange:v=>{S.color=v;make();}}],
-      stats:()=>{ const T=THICK[S.thick]; return [['Profile',PROFILES[S.profile].n],['Thickness',T[0]+' ('+T[1].toFixed(0)+' mm)'],['Insulation at 75°F mean','R-'+T[2].toFixed(2)+' (RSI '+T[3].toFixed(2)+')'],['Weight, 24/24 steel',T[4].toFixed(2)+' psf ('+(T[4]*4.8824).toFixed(1)+' kg/m²)']]; },
+      stats:()=>{ const T=THICK[S.thick]; return [['Profile',PROFILES[S.profile].n],['Thickness',T[0]+' ('+T[1].toFixed(0)+' mm)'],['Insulation at 75Â°F mean','R-'+T[2].toFixed(2)+' (RSI '+T[3].toFixed(2)+')'],['Weight, 24/24 steel',T[4].toFixed(2)+' psf ('+(T[4]*4.8824).toFixed(1)+' kg/mÂ²)']]; },
       note:()=>PROFILES[S.profile].d+' Profile shapes are illustrative; R-value shown for reference, exact figures depend on core type and thickness.' };
   }
 
@@ -142,26 +142,26 @@
   // fam = the family the Doors page groups it under (Hinge Cooler, Sliding Cooler, Metal).
   const DOOR_TYPES=[
     {id:'hinged',fam:'hinge',label:'Hinge Cooler',blurb:'Insulated hinged door with a flush leaf, aluminum edge frame, gasketed rebate, heavy hinges and a key latch.',
-     sizes:[['3×7','hinged-3x7','3′ × 7′','900 × 2,100 mm clear opening'],['4×7','hinged-4x7','4′ × 7′','1,200 × 2,100 mm clear opening'],['5×7','hinged-5x7','5′ × 7′','1,500 × 2,100 mm clear opening']],
-     rows:[['Leaf','100 mm (3.94″) insulated, 0.5 mm steel faces'],['Frame','Aluminum edge frame, white door frame'],['Hardware','Hinges + key latch']]},
+     sizes:[['3Ã—7','hinged-3x7','3â€² Ã— 7â€²','900 Ã— 2,100 mm clear opening'],['4Ã—7','hinged-4x7','4â€² Ã— 7â€²','1,200 Ã— 2,100 mm clear opening'],['5Ã—7','hinged-5x7','5â€² Ã— 7â€²','1,500 Ã— 2,100 mm clear opening']],
+     rows:[['Leaf','100 mm (3.94â€³) insulated, 0.5 mm steel faces'],['Frame','Aluminum edge frame, white door frame'],['Hardware','Hinges + key latch']]},
     {id:'double',fam:'hinge',label:'Double Hinge Cooler',blurb:'Two hinged leaves meeting at a gasketed center, with a key latch on the active leaf.',
-     sizes:[['6×7','double-6x7','6′ × 7′','1,800 × 2,100 mm clear opening'],['8×7','double-8x7','8′ × 7′','2,400 × 2,100 mm clear opening'],['6×7 unequal','double-unequal-6x7','6′ × 7′, one-third / two-thirds leaves','1,800 × 2,100 mm clear opening']],
-     rows:[['Leaf','100 mm (3.94″) insulated, 0.5 mm steel faces'],['Frame','Aluminum edge frame, white door frame'],['Hardware','Hinges + key latch on the active leaf']]},
+     sizes:[['6Ã—7','double-6x7','6â€² Ã— 7â€²','1,800 Ã— 2,100 mm clear opening'],['8Ã—7','double-8x7','8â€² Ã— 7â€²','2,400 Ã— 2,100 mm clear opening'],['6Ã—7 unequal','double-unequal-6x7','6â€² Ã— 7â€², one-third / two-thirds leaves','1,800 Ã— 2,100 mm clear opening']],
+     rows:[['Leaf','100 mm (3.94â€³) insulated, 0.5 mm steel faces'],['Frame','Aluminum edge frame, white door frame'],['Hardware','Hinges + key latch on the active leaf']]},
     {id:'sliding',fam:'sliding',label:'Sliding Cooler',blurb:'Heavy-duty insulated sliding door hung from a top rail on roller hangers, in a gasketed U-shape frame, with a stainless pull handle and lock.',
-     sizes:[['5×7','sliding-5x7','5′ × 7′','1,500 × 2,100 mm clear opening',1670],['6×7','sliding-6x7','6′ × 7′','1,800 × 2,100 mm clear opening',1970]],
-     rows:[['Leaf','100 mm (3.94″) insulated, 0.5 mm steel faces'],['Frame','U-shape frame with gasket'],['Hardware','Top rail with roller hangers, floor guide, stainless pull handle + lock']]},
+     sizes:[['5Ã—7','sliding-5x7','5â€² Ã— 7â€²','1,500 Ã— 2,100 mm clear opening',1670],['6Ã—7','sliding-6x7','6â€² Ã— 7â€²','1,800 Ã— 2,100 mm clear opening',1970]],
+     rows:[['Leaf','100 mm (3.94â€³) insulated, 0.5 mm steel faces'],['Frame','U-shape frame with gasket'],['Hardware','Top rail with roller hangers, floor guide, stainless pull handle + lock']]},
     {id:'office',fam:'metal',label:'Metal',blurb:'Flush insulated metal door in an aluminum frame with a lever handle and key cylinder.',
-     sizes:[['2.5×7','office-25x7','2.5′ × 7′','762 × 2,100 mm clear opening'],['3×7','office-3x7','3′ × 7′','900 × 2,100 mm clear opening'],['4×7','office-4x7','4′ × 7′','1,200 × 2,100 mm clear opening']],
+     sizes:[['2.5Ã—7','office-25x7','2.5â€² Ã— 7â€²','762 Ã— 2,100 mm clear opening'],['3Ã—7','office-3x7','3â€² Ã— 7â€²','900 Ã— 2,100 mm clear opening'],['4Ã—7','office-4x7','4â€² Ã— 7â€²','1,200 Ã— 2,100 mm clear opening']],
      rows:[['Leaf','0.5 mm steel faces, aluminum frame'],['Hardware','Lever handle + key cylinder, hinged, door closer']]},
     {id:'officed',fam:'metal',label:'Double Metal',blurb:'Two flush metal leaves in an aluminum frame.',
-     sizes:[['6×7','office-double-6x7','6′ × 7′','1,800 × 2,100 mm clear opening']],
+     sizes:[['6Ã—7','office-double-6x7','6â€² Ã— 7â€²','1,800 Ã— 2,100 mm clear opening']],
      rows:[['Leaf','0.5 mm steel faces, aluminum frame'],['Hardware','Lever handles, hinged, door closers']]},
     {id:'clean',fam:'metal',label:'Vision Window',blurb:'Flush metal door with a round vision window, aluminum frame and lever handle, for clean rooms and labs.',
-     sizes:[['3×7','clean-3x7','3′ × 7′','900 × 2,100 mm clear opening']],
-     rows:[['Leaf','50 mm (1.97″) polyurethane foam, 0.5 mm steel faces'],['Frame','Aluminum'],['Hardware','Lever handle, vision window, door closer']]},
+     sizes:[['3Ã—7','clean-3x7','3â€² Ã— 7â€²','900 Ã— 2,100 mm clear opening']],
+     rows:[['Leaf','50 mm (1.97â€³) polyurethane foam, 0.5 mm steel faces'],['Frame','Aluminum'],['Hardware','Lever handle, vision window, door closer']]},
     {id:'cleand',fam:'metal',label:'Double Vision Window',blurb:'Two flush metal leaves with round vision windows.',
-     sizes:[['6×7','clean-double-6x7','6′ × 7′','1,800 × 2,100 mm clear opening']],
-     rows:[['Leaf','50 mm (1.97″) polyurethane foam, 0.5 mm steel faces'],['Frame','Aluminum'],['Hardware','Lever handles, vision windows, door closers']]}];
+     sizes:[['6Ã—7','clean-double-6x7','6â€² Ã— 7â€²','1,800 Ã— 2,100 mm clear opening']],
+     rows:[['Leaf','50 mm (1.97â€³) polyurethane foam, 0.5 mm steel faces'],['Frame','Aluminum'],['Hardware','Lever handles, vision windows, door closers']]}];
   const DOOR_MATS={
     Door_steel_white:()=>new THREE.MeshPhysicalMaterial({color:0xe6e8e4,roughness:.42,metalness:.03,clearcoat:.15,clearcoatRoughness:.4,envMapIntensity:.55}),
     Frame_white:()=>new THREE.MeshStandardMaterial({color:0xe2e4e0,roughness:.5,envMapIntensity:.55}),
@@ -343,28 +343,30 @@
       note:()=>item().blurb+' Shown at an illustrative thickness and profile, and the perforation is drawn far larger than real so you can see it. Thickness, weight and test data: call (405) 778-2808.' };
   }
 
-  // ================================================================= PRODUCT: mineral wool and PIR panels (built in Blender from the sample photos)
+  // ================================================================= PRODUCTS: Walls / Ceiling / Roof sections (panels built in Blender from the sample photos)
   // Cross sections come from js/panels-data.js, dumped from the same Blender models, drawn at true thickness (2 in mineral wool; PIR 2, 4, 6 or 8 in).
-  // The rib size on the wall panel is read from a sample photo, and the hole size on the interior panel is illustrative.
+  // Each panel keeps its own core: mineral wool and PIR are separate items. The rib size on the exterior wall panel is read from a sample photo, and the hole size
+  // on the interior panel is illustrative. Roof has no new panels yet: it points to the existing roof panels.
   let holeTx=null;
   function holeTexture(){ if(holeTx) return holeTx; const W=256,H=222,c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,W,H); g.fillStyle='#3a4046';
     [[0,0],[128,0],[256,0],[64,111],[192,111],[0,222],[128,222],[256,222]].forEach(([x,y])=>{ g.beginPath(); g.arc(x,y,36,0,7); g.fill(); });
     holeTx=new THREE.CanvasTexture(c); holeTx.encoding=THREE.sRGBEncoding; holeTx.wrapS=holeTx.wrapT=THREE.RepeatWrapping; holeTx.repeat.set(1/12,1/10.392); holeTx.anisotropy=4; return holeTx; }   // one tile = 12 x 10.4 mm: holes 6 mm apart, drawn about twice the real size so they can be seen
   const perfSteel=hex=>{ const m=steelMat(hex); m.map=holeTexture(); m.alphaMap=holeTexture(); m.alphaTest=.5; m.side=THREE.DoubleSide; return m; };
-  const NP=[
-    {id:'mw-wall',label:'Exterior wall',t:'Exterior Wall Panel, Mineral Wool',color:'#6FA3D6',
+  const NP={
+    'mw-wall':{wall:'Exterior wall, mineral wool',t:'Exterior Wall Panel, Mineral Wool',color:'#6FA3D6',
      blurb:'An exterior wall panel with a mineral wool core, a painted steel outer face with two stepped ribs, a steel liner and a lapped joint.',
      rows:()=>[['Core','Mineral wool'],['Thickness','2 in (50.8 mm)'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm steel'],['Outer face','Two stepped ribs'],['Joint','Lapped']]},
-    {id:'mw-interior',label:'Interior wall and ceiling',t:'Interior Wall and Ceiling Panel, Mineral Wool',color:'#E7EBDA',
+    'mw-interior':{wall:'Interior wall, mineral wool',ceil:'Interior ceiling, mineral wool',t:'Interior Wall and Ceiling Panel, Mineral Wool',color:'#E7EBDA',
      blurb:'An interior wall and ceiling panel with a mineral wool core, perforated on one face, on both faces, or on neither.',
      rows:S=>[['Core','Mineral wool'],['Thickness','2 in (50.8 mm)'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm steel'],['Perforation',{none:'None',one:'One face',both:'Both faces'}[S.perf]],['Joint','Tongue-and-groove with gasket']]},
-    {id:'pir-imp',label:'PIR Insulated Metal Panel (IMP)',t:'PIR Insulated Metal Panel (IMP)',color:'#E7EBDA',
+    'pir-imp':{wall:'PIR Insulated Metal Panel (IMP)',ceil:'PIR Insulated Metal Panel (IMP)',t:'PIR Insulated Metal Panel (IMP)',color:'#E7EBDA',
      blurb:'A rigid PIR foam core between 0.5 mm satin steel faces, with a locking tongue-and-groove joint, in ten colors and four thicknesses.',
-     rows:S=>[['Core','PIR foam'],['Thickness',({'50.8':'2 in (50.8 mm)','101.6':'4 in (100 mm)','152.4':'6 in (150 mm)','203.2':'8 in (200 mm)'})[S.thick]],['Insulation value',S.thick==='101.6'?'R-30 (RSI 5.3)':'Call for this thickness'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm satin steel'],['Joint','Locking tongue-and-groove with gasket']]}];
-  function buildPanels(ctx){
-    const D=window.USPanelsData, S={id:'mw-wall',color:NP[0].color,perf:'none',thick:'101.6',layers:0,join:0}, rootG=new THREE.Group(); let inner=null;
+     rows:S=>[['Core','PIR foam'],['Thickness',({'50.8':'2 in (50.8 mm)','101.6':'4 in (100 mm)','152.4':'6 in (150 mm)','203.2':'8 in (200 mm)'})[S.thick]],['Insulation value',S.thick==='101.6'?'R-30 (RSI 5.3)':'Call for this thickness'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm satin steel'],['Joint','Locking tongue-and-groove with gasket']]}};
+  const SECTIONS={walls:['mw-wall','mw-interior','pir-imp'],ceiling:['mw-interior','pir-imp']};
+  const buildSection=kind=>function(ctx){
+    const D=window.USPanelsData, ids=SECTIONS[kind], ceil=kind==='ceiling', S={id:ids[0],color:NP[ids[0]].color,perf:'none',thick:'101.6',layers:0,join:0}, rootG=new THREE.Group(); let inner=null;
     if(!D){ return {root:rootG,controls:[],stats:()=>[],title:()=>'',blurb:()=>'',note:()=>'The panel data did not load.'}; }
-    const item=()=>NP.find(p=>p.id===S.id), mesh=(pts,LEN,mat)=>sh(new THREE.Mesh(extrude(pts,LEN),mat));
+    const item=()=>NP[S.id], label=id=>(ceil&&NP[id].ceil)||NP[id].wall, mesh=(pts,LEN,mat)=>sh(new THREE.Mesh(extrude(pts,LEN),mat));
     function makePanel(LEN){
       const g=new THREE.Group(), top=new THREE.Group(), mid=new THREE.Group(), low=new THREE.Group(), wool=new THREE.MeshStandardMaterial({map:woolTexture(),roughness:.95});
       if(S.id==='mw-wall'){ const W=D.wall;
@@ -372,8 +374,9 @@
         mid.add(mesh(W.wool,LEN,wool)); W.foam.forEach(f=>mid.add(mesh(f,LEN,foamMat())));
         low.add(mesh(W.liner,LEN,steelMat('#C9CFD2')));
       } else { const H=D.hs[S.id==='pir-imp'?S.thick:'50.8'], interior=S.id==='mw-interior';
-        const skinTop=interior&&S.perf!=='none'?perfSteel(S.color):steelMat(S.color), skinBot=interior&&S.perf==='both'?perfSteel(S.color):steelMat(S.color);
-        top.add(mesh(H.top,LEN,skinTop)); low.add(mesh(H.bot,LEN,skinBot));
+        // one perforated face = the face you see: the front of a wall, the underside of a ceiling
+        const perfTop=interior&&(S.perf==='both'||(S.perf==='one'&&!ceil)), perfBot=interior&&(S.perf==='both'||(S.perf==='one'&&ceil));
+        top.add(mesh(H.top,LEN,perfTop?perfSteel(S.color):steelMat(S.color))); low.add(mesh(H.bot,LEN,perfBot?perfSteel(S.color):steelMat(S.color)));
         mid.add(mesh(H.core,LEN,interior?wool:foamMat())); mid.add(mesh(H.gasket,LEN,new THREE.MeshStandardMaterial({color:0x1b1b1e,roughness:.95})));
       }
       top.position.y=S.layers*120; low.position.y=-S.layers*120; g.add(top,mid,low); return g;
@@ -382,35 +385,47 @@
       if(inner){ rootG.remove(inner); inner.traverse(o=>{ if(o.geometry) o.geometry.dispose(); }); }
       const LEN=1800; inner=new THREE.Group(); const pair=new THREE.Group(); pair.add(makePanel(LEN));
       const B=makePanel(LEN); B.position.x=1000+S.join*300; pair.add(B); pair.position.x=-500;
-      pair.rotation.x=Math.PI/2; pair.position.y=LEN/2; inner.add(pair); rootG.add(inner); ctx.update(); wake();
+      if(ceil){ pair.position.y=1500; }                                       // overhead, flat, outer face up, the inside face looks down at you
+      else { pair.rotation.x=Math.PI/2; pair.position.y=LEN/2; }              // standing like a wall
+      inner.add(pair); rootG.add(inner); ctx.update(); wake();
     }
-    const swatches=COLORS.map(c=>({v:c[1],label:c[0]})); if(!swatches.some(s=>s.v===NP[0].color)) swatches.push({v:NP[0].color,label:'Blue'});
+    const swatches=COLORS.map(c=>({v:c[1],label:c[0]})); if(!swatches.some(s=>s.v===NP['mw-wall'].color)) swatches.push({v:NP['mw-wall'].color,label:'Blue'});
     const ctl={
-      item:{type:'chips',label:'Panel',value:S.id,options:NP.map(p=>({v:p.id,label:p.label})),onChange:v=>setItem(v)},
+      item:{type:'chips',label:'Panel',value:S.id,options:ids.map(id=>({v:id,label:label(id)})),onChange:v=>setItem(v)},
       color:{type:'swatches',label:'Color',value:S.color,options:swatches,onChange:v=>{ S.color=v; make(); }},
       perf:{type:'chips',label:'Perforation',value:S.perf,options:[{v:'none',label:'None'},{v:'one',label:'One face'},{v:'both',label:'Both faces'}],onChange:v=>{ S.perf=v; make(); }},
-      thick:{type:'chips',label:'Thickness',value:S.thick,options:[{v:'50.8',label:'2″'},{v:'101.6',label:'4″'},{v:'152.4',label:'6″'},{v:'203.2',label:'8″'}],onChange:v=>{ S.thick=v; make(); }},
+      thick:{type:'chips',label:'Thickness',value:S.thick,options:[{v:'50.8',label:'2â€³'},{v:'101.6',label:'4â€³'},{v:'152.4',label:'6â€³'},{v:'203.2',label:'8â€³'}],onChange:v=>{ S.thick=v; make(); }},
       layers:{type:'slider',label:'Pull the layers apart',min:0,max:100,value:0,fmt:v=>v+'%',onChange:v=>{ S.layers=v/100; make(); }},
       join:{type:'slider',label:'Join the panels',min:0,max:100,value:0,fmt:v=>(100-v)+'%',onChange:v=>{ S.join=v/100; make(); }}};
-    const ctlList=[];
-    function setItem(v){ if(!NP.some(p=>p.id===v)) return; S.id=v; S.color=item().color; S.layers=0; S.join=0; ctl.item.value=v; ctl.color.value=S.color; ctl.layers.value=0; ctl.join.value=0;
-      ctlList.length=0; ctlList.push(ctl.item,ctl.color); if(v==='mw-interior') ctlList.push(ctl.perf); if(v==='pir-imp') ctlList.push(ctl.thick); ctlList.push(ctl.layers,ctl.join);
-      renderControls(ctlList); make(); ctx.update(); ctx.view('34'); }
-    ctlList.push(ctl.item,ctl.color,ctl.layers,ctl.join);
-    return { root:rootG, build:make, controls:ctlList, setItem,
-      title:()=>item().t, blurb:()=>item().blurb,
-      stats:()=>[['Panel',item().t]].concat(item().rows(S),[['Color',(swatches.find(c=>c.v===S.color)||{label:''}).label]]),
+    const ctlList=[], list=()=>{ ctlList.length=0; ctlList.push(ctl.item,ctl.color); if(S.id==='mw-interior') ctlList.push(ctl.perf); if(S.id==='pir-imp') ctlList.push(ctl.thick); ctlList.push(ctl.layers,ctl.join); };
+    function setItem(v){ if(ids.indexOf(v)<0) return; S.id=v; S.color=item().color; S.layers=0; S.join=0; ctl.item.value=v; ctl.color.value=S.color; ctl.layers.value=0; ctl.join.value=0;
+      list(); renderControls(ctlList); make(); ctx.update(); ctx.view(ceil?'under':'34'); }
+    list();
+    return { root:rootG, build:make, controls:ctlList, setItem, defaultView:ceil?'under':'34',
+      title:()=>label(S.id), blurb:()=>item().blurb,
+      stats:()=>[['Panel',label(S.id)],['Section',ceil?'Ceiling':'Walls']].concat(item().rows(S),[['Color',(swatches.find(c=>c.v===S.color)||{label:''}).label]]),
       note:()=>item().blurb+' Drawn to scale from the Blender models'+(S.id==='mw-interior'&&S.perf!=='none'?', with the holes drawn about twice their real size so you can see them':'')+'. Thickness, weight and test data: call (405) 778-2808.' };
+  };
+  // Roof: no new panels placed here yet, so it points to the roof panels that already exist
+  function buildRoof(ctx){
+    const rootG=new THREE.Group();
+    const c=document.createElement('canvas'); c.width=1024; c.height=512; const g=c.getContext('2d'); g.fillStyle='#eef0f2'; g.fillRect(0,0,1024,512); g.fillStyle='#5d6872'; g.font='600 54px Inter,sans-serif'; g.textAlign='center'; g.fillText('No new roof panels yet',512,236); g.font='400 36px Inter,sans-serif'; g.fillText('See Fire-Rated Panels or Wall & Roof Panels',512,306);
+    const tx=new THREE.CanvasTexture(c); tx.encoding=THREE.sRGBEncoding; const plate=sh(new THREE.Mesh(new THREE.PlaneGeometry(1600,800),new THREE.MeshBasicMaterial({map:tx}))); plate.position.y=400; rootG.add(plate);
+    const ctl=[{type:'button',text:'Fire-Rated roof panels',onClick:()=>show('fireguard')},{type:'button',text:'Wall & Roof Panels (Cop, Grecata)',onClick:()=>show('designer')}];
+    return { root:rootG, controls:ctl, title:()=>'Roof', blurb:()=>'Roof panels live here.', stats:()=>[['Section','Roof'],['New panels placed here','None yet']],
+      note:()=>'No panel from today\'s new set has been placed in Roof yet. The roof panels we already show are in Fire-Rated Panels (Fireguard roof and acoustic roof) and Wall & Roof Panels (Cop and Grecata).' };
   }
 
   // ---------------- registry + switching ----------------
-  const reg={doors:buildDoors,trim:buildTrim,designer:buildDesigner,fireguard:buildFireguard,panels:buildPanels};
+  const reg={doors:buildDoors,trim:buildTrim,designer:buildDesigner,fireguard:buildFireguard,walls:buildSection('walls'),ceiling:buildSection('ceiling'),roof:buildRoof};
   const meta={
     doors:{t:'Doors',b:'Pick a door and a size, swing it open, and look at the hardware up close.'},
     trim:{t:'Trim & Hardware',b:'Pick an item and turn it around to see the profile up close.'},
     designer:{t:'Wall & Roof Panels',b:'Pick a profile, a thickness and a color. The insulation value and weight update with your choice.'},
     fireguard:{t:'Fire-Rated Panels',b:'Mineral wool panels for walls and roofs. Pick one, pull the layers apart, and join two panels edge to edge.'},
-    panels:{t:'Mineral Wool & PIR Panels',b:'Pick a panel, a color and a perforation or thickness, pull the layers apart, and join two panels edge to edge.'}
+    walls:{t:'Walls',b:'Pick a wall panel, a color and a perforation or thickness, pull the layers apart, and join two panels edge to edge.'},
+    ceiling:{t:'Ceiling',b:'Pick a ceiling panel and look up at it from below. Change the color, perforation or thickness, pull the layers apart and join two panels.'},
+    roof:{t:'Roof',b:'Roof panels.'}
   };
   const offered=(host.dataset.products||'doors,trim,designer').split(',').map(s=>s.trim()).filter(k=>reg[k]);
   const multi=offered.length>1;
@@ -423,7 +438,8 @@
         if(ui.blurb) ui.blurb.textContent=(!multi&&current.blurb)?current.blurb():meta[currentId].b; },
       view:v=>frame(v)};
     currentId=id; current=reg[id](ctx); root=current.root; scene.add(root);
-    renderControls(current.controls); if(current.build) current.build(); ctx.update(); frame('34');
+    controls.maxPolarAngle=current.defaultView==='under'?Math.PI*.8:Math.PI*.495; const ub=$('[data-view="under"]'); if(ub) ub.hidden=current.defaultView!=='under';
+    renderControls(current.controls); if(current.build) current.build(); ctx.update(); frame(current.defaultView||'34');
     $$('.pick [data-id]').forEach(c=>{ const on=c.dataset.id===id; c.classList.toggle('on',on); c.setAttribute('aria-pressed',String(on)); });
     if(multi) history.replaceState(null,'','#'+id);
   }
@@ -436,7 +452,7 @@
   resize();
   // links can name a product and one item in it: showroom.html#doors/office, #trim/al-t, #fireguard/roof-acoustic
   const hashParts=()=>(location.hash||'').slice(1).split('/');
-  function applySub(id,sub){ if(!sub||!current) return; if(id==='doors'&&current.setType) current.setType(sub,0); else if(id==='trim'&&current.setItem) current.setItem(sub); else if(id==='fireguard'&&current.setPanel) current.setPanel(sub); else if(id==='panels'&&current.setItem) current.setItem(sub); }
+  function applySub(id,sub){ if(!sub||!current) return; if(id==='doors'&&current.setType) current.setType(sub,0); else if(id==='trim'&&current.setItem) current.setItem(sub); else if(id==='fireguard'&&current.setPanel) current.setPanel(sub); else if((id==='walls'||id==='ceiling')&&current.setItem) current.setItem(sub); }
   const [start,startSub]=hashParts(); show(offered.indexOf(start)>=0?start:(offered.indexOf(host.dataset.start)>=0?host.dataset.start:offered[0])); if(offered.indexOf(start)>=0) applySub(currentId,startSub);
   addEventListener('hashchange',()=>{ const [h,sub]=hashParts(); if(multi&&offered.indexOf(h)>=0){ if(h!==currentId) show(h); applySub(h,sub); } });
 
@@ -445,7 +461,8 @@
     door:(type,size)=>{ if(currentId!=='doors') show('doors'); current.setType&&current.setType(type,size||0); },
     trim:id=>{ if(currentId!=='trim') show('trim'); current.setItem&&current.setItem(id); },
     fireguard:id=>{ if(currentId!=='fireguard') show('fireguard'); current.setPanel&&current.setPanel(id); },
-    panels:id=>{ if(currentId!=='panels') show('panels'); current.setItem&&current.setItem(id); } };
+    walls:id=>{ if(currentId!=='walls') show('walls'); current.setItem&&current.setItem(id); },
+    ceiling:id=>{ if(currentId!=='ceiling') show('ceiling'); current.setItem&&current.setItem(id); } };
   document.dispatchEvent(new Event('usp3d-ready'));
 
   (function loop(now){ requestAnimationFrame(loop); if(document.hidden) return; if(controls.update()) wake(300,true); if(now>wakeUntil && now-lastBeat<600) return; lastBeat=now; setRes(now-lastMove<220?moveRatio:baseRatio); renderer.render(scene,camera); })();
