@@ -8,93 +8,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="arch.css">
 <style>
 .hero.short{min-height:76svh}
 .hero.short h1{font-size:clamp(56px,9.4vw,150px);max-width:9em}
 .hero.short .wrap{padding:150px 0 70px}
 .hero.short::after{background:linear-gradient(90deg,rgba(10,14,18,.82) 0%,rgba(10,14,18,.45) 55%,rgba(10,14,18,.05) 100%),linear-gradient(0deg,rgba(10,14,18,.6) 0%,transparent 40%)}
 @media(max-width:760px){.hero.short::after{background:linear-gradient(0deg,rgba(10,14,18,.92) 0%,rgba(10,14,18,.5) 60%,rgba(10,14,18,.3) 100%)}.hero.short .wrap{padding:120px 0 44px}}
-
-/* configurator: pick on the left, your look on the right */
-.cfg{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(300px,1fr);gap:24px;align-items:start}
-.pick{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
-.step-h{display:flex;align-items:baseline;gap:14px;margin:0 0 16px}
-.step-h i{font:normal 500 13px "JetBrains Mono";color:var(--red);letter-spacing:.1em}
-.step-h b{font:800 34px/1 "Big Shoulders Display";text-transform:uppercase}
-.step-h span{margin-left:auto;color:var(--mute);font-size:14px;font-weight:600;text-align:right}
-
-.profs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.pc{position:relative;text-align:left;background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:12px;cursor:pointer;font:inherit;color:inherit;transition:border-color .2s,box-shadow .2s,transform .2s}
-.pc:hover{border-color:var(--ink);transform:translateY(-2px)}
-.pc .im{aspect-ratio:16/9;background:#fff;border-radius:10px;overflow:hidden}
-.pc .im img{width:100%;height:100%;object-fit:contain}
-.pc b{display:block;font:800 28px/1 "Big Shoulders Display";text-transform:uppercase;margin:2px 0 6px}
-.pc .tx>span{display:block;font-size:13.5px;line-height:1.45;color:var(--mute)}
-.pc[aria-pressed=true]{border-color:var(--red);box-shadow:0 0 0 4px rgba(200,32,47,.12)}
-.pc[aria-pressed=true]::after,.ct[aria-pressed=true]::after{content:"\2713";position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;font:700 14px/26px Inter;text-align:center}
-
-.cols{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.ct{position:relative;text-align:left;background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px;display:flex;flex-direction:column;gap:7px;cursor:pointer;font:inherit;color:inherit;transition:border-color .2s,box-shadow .2s,transform .2s}
-.ct:hover{border-color:var(--ink);transform:translateY(-2px)}
-.ct .im{aspect-ratio:4/3;border-radius:8px;overflow:hidden;background:var(--steel)}
-.ct .im img{width:100%;height:100%;object-fit:cover}
-.ct b{font-size:13px;font-weight:600;line-height:1.2;padding:0 2px}
-.ct em{font:normal 500 10px "JetBrains Mono";letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding:0 2px 2px}
-.ct.stock em{color:#1b6b3a}
-.ct[aria-pressed=true]{border-color:var(--red);box-shadow:0 0 0 4px rgba(200,32,47,.12)}
-.ct[aria-pressed=true]::after{top:14px;right:14px;width:22px;height:22px;font-size:12px;line-height:22px}
-.pc:focus-visible,.ct:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-
-/* your look */
-.sum{position:sticky;top:96px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:22px;display:grid;gap:18px}
-.sum h3{margin:0;font:800 32px/1 "Big Shoulders Display";text-transform:uppercase}
-.insets{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.inset{position:relative;border-radius:12px;overflow:hidden;background:var(--steel)}
-.inset img{width:100%;aspect-ratio:1/1;object-fit:cover}
-.inset.pf img{object-fit:contain;background:#fff}
-.inset span{position:absolute;left:8px;bottom:8px;background:rgba(15,19,23,.85);color:#fff;padding:4px 10px;border-radius:99px;font:500 10px "JetBrains Mono";letter-spacing:.1em;text-transform:uppercase}
-.spec{margin:0;padding:0;list-style:none}
-.spec li{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
-.spec li:last-child{border-bottom:0}.spec b{font-weight:600}.spec span{color:var(--mute);text-align:right}
-.btns2{display:grid;gap:10px}.btns2 .btn{justify-content:center}
-.fine{font-size:12.5px;color:var(--mute);margin:0;line-height:1.5}
-
-/* phone: the look stays pinned under the menu while you scroll through the choices */
-.sumbar{display:none}
-@media(max-width:980px){
-  .cfg{grid-template-columns:minmax(0,1fr);gap:18px}
-  .sum{display:none}
-  .sumbar{display:flex;align-items:center;gap:10px;position:sticky;top:88px;z-index:20;background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px 8px 8px 8px;box-shadow:0 12px 30px rgba(8,12,16,.16)}
-  .sumbar img{width:56px;height:42px;border-radius:8px;object-fit:cover;background:var(--steel);flex:none}
-  .sumbar img.pf{object-fit:contain;background:#fff;border:1px solid var(--line)}
-  .sumbar .tx{min-width:0;flex:1;line-height:1.25}
-  .sumbar .tx b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .sumbar .tx span{display:block;font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .sumbar .btn{padding:11px 16px;font-size:14px;flex:none}
-}
-@media(max-width:640px){.cols{grid-template-columns:1fr 1fr}.step-h b{font-size:30px}}
-@media(max-width:560px){.profs{grid-template-columns:1fr}}
-@media(max-width:420px){.sumbar img.t2{display:none}}
-@media(max-width:380px){.sumbar img{width:46px;height:36px}.sumbar .btn{padding:11px 14px}}
-
-/* steps */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.step{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:30px 28px}
-.step i{font:normal 500 13px "JetBrains Mono";color:var(--red);letter-spacing:.1em}
-.step h3{font:800 40px/1 "Big Shoulders Display";text-transform:uppercase;margin:16px 0 12px}
-.step p{margin:0;color:var(--mute)}
-@media(max-width:900px){.steps{grid-template-columns:1fr}}
-
-/* brief form */
-.brief{background:var(--navy);color:#fff;position:relative;overflow:hidden}
-.brief::before{content:"";position:absolute;inset:auto -10% -70% 45%;height:120%;background:radial-gradient(closest-side,rgba(200,32,47,.5),transparent)}
-.brief .wrap{position:relative;display:grid;grid-template-columns:1fr 1.15fr;gap:56px;align-items:start}
-.brief h2{margin:0 0 18px;font-size:clamp(46px,6.4vw,96px)}
-.brief .sub{color:#c8d3e0}
-.brief .copylook{margin-top:26px}
-.form label{display:grid;gap:6px;font-size:13px;font-weight:600;color:var(--ink2)}
-.form input{font:600 15px Inter,sans-serif;padding:13px 14px;border:1.5px solid var(--line);border-radius:10px;background:var(--steel);color:var(--ink);width:100%}
-@media(max-width:900px){.brief .wrap{grid-template-columns:1fr;gap:34px}}
 </style>
 </head>
 <body>
@@ -120,52 +40,87 @@
   <div class="wrap">
     <div class="mono" style="opacity:.9">Architectural panels</div>
     <h1 class="disp">Pick the profile.<br>Pick the <em>finish.</em></h1>
-    <p class="lead">Four face profiles and ten colors. Choose your look, then tell us about the project. We work alongside architects, engineers and designers on every job.</p>
-    <div class="cta"><a class="btn red" href="#look">Choose a look</a><a class="btn ghost" href="#brief">Talk to our team</a></div>
+    <p class="lead">Four profiles, solid or perforated, in steel or aluminum and ten colors. Choose your look, then tell us about the project. We work alongside architects, engineers and designers on every job.</p>
+    <div class="cta"><a class="btn red" href="#profiles">Choose a profile</a><a class="btn ghost" href="#brief">Talk to our team</a></div>
   </div>
 </section>
 
-<section class="s steel" id="look"><div class="wrap">
-  <div class="head rv"><div><p class="mono eyebrow">Choose a look</p><h2 class="disp">Profile. Color.<br>Your look.</h2></div><p class="sub">Pick one of four face profiles and one of ten colors. Your choice is saved in the page link, so you can send it to anyone on your team.</p></div>
-  <div class="cfg">
-    <div class="sumbar" id="sumbar">
-      <img class="pf t1" id="mbP" src="img/prof-trap.webp" alt=""><img class="t2" id="mbC" src="img/col-grey-white.webp" alt="">
-      <div class="tx"><b id="mbT">Trapezoidal</b><span id="mbS">Grey White &middot; In stock</span></div>
-      <a class="btn red" href="#brief">Get pricing</a>
-    </div>
-    <div class="pick">
-      <div class="rv">
-        <div class="step-h"><i>01</i><b>Profile</b></div>
-        <div class="profs" id="profs"></div>
-      </div>
-      <div class="rv">
-        <div class="step-h"><i>02</i><b>Color</b><span id="stepC">Grey White</span></div>
-        <div class="cols" id="cols"></div>
-      </div>
-    </div>
-    <aside class="sum rv">
-      <h3>Your look</h3>
-      <div class="insets"><div class="inset pf"><img id="insP" src="img/prof-trap.webp" alt="Selected panel profile"><span>Profile</span></div><div class="inset"><img id="insC" src="img/col-grey-white.webp" alt="Selected panel finish"><span>Finish</span></div></div>
-      <ul class="spec"><li><b>Profile</b><span id="sP">Trapezoidal</span></li><li><b>Color</b><span id="sC">Grey White</span></li><li><b>Availability</b><span id="sA">In stock</span></li></ul>
-      <div class="btns2"><a class="btn red" href="#brief">Request pricing for this look</a><button class="btn line copylook" type="button">Copy link to this look</button></div>
-      <p class="fine">Final profiles, sizes and colors are confirmed on your quote. Grey White is kept in stock; every other color is made to order, and custom panel colors are available on request.</p>
-    </aside>
+<section class="s steel" id="profiles"><div class="wrap">
+  <div class="head rv"><div><p class="mono eyebrow">Architectural panels</p><h2 class="disp">Four profiles.<br>One look.</h2></div><p class="sub">Single-skin metal sheet panels in four profiles, solid or perforated, in steel or aluminum, for interior and exterior walls, ceilings and facades. Not insulated. Tap a profile to open the designer.</p></div>
+  <div class="ar-pgrid">
+    <a class="ar-pcard rv" href="#look/p=wave&amp;d=v" data-use="wave"><div class="ph" style="background-image:url('img/arch/wave-solid.jpg')" role="img" aria-label="Soft Wave architectural panel"></div>
+      <div class="tx"><span class="tag2">Architectural Panels</span><h3>Soft Wave</h3><p>A smooth, continuous wave.</p><div class="meta">Steel or aluminum &middot; solid or perforated</div><span class="go">Open the designer</span></div></a>
+    <a class="ar-pcard rv" href="#look/p=saw&amp;d=h" data-use="saw"><div class="ph" style="background-image:url('img/arch/saw-solid.jpg')" role="img" aria-label="Sawtooth architectural panel"></div>
+      <div class="tx"><span class="tag2">Architectural Panels</span><h3>Sawtooth</h3><p>Angled blades, like layered louvers.</p><div class="meta">Steel or aluminum &middot; solid or perforated</div><span class="go">Open the designer</span></div></a>
+    <a class="ar-pcard rv" href="#look/p=flute&amp;d=v" data-use="flute"><div class="ph" style="background-image:url('img/arch/flute-solid.jpg')" role="img" aria-label="Flute architectural panel"></div>
+      <div class="tx"><span class="tag2">Architectural Panels</span><h3>Flute</h3><p>Rounded half-round flutes in a steady rhythm.</p><div class="meta">Steel or aluminum &middot; solid or perforated</div><span class="go">Open the designer</span></div></a>
+    <a class="ar-pcard rv" href="#look/p=pin&amp;d=h" data-use="pin"><div class="ph" style="background-image:url('img/arch/pin-solid.jpg')" role="img" aria-label="Pinstripe architectural panel"></div>
+      <div class="tx"><span class="tag2">Architectural Panels</span><h3>Pinstripe</h3><p>A flat face with fine, evenly spaced grooves.</p><div class="meta">Steel or aluminum &middot; solid or perforated</div><span class="go">Open the designer</span></div></a>
   </div>
-</div></section>
 
-<section class="s" id="how"><div class="wrap">
-  <div class="head rv"><div><p class="mono eyebrow">Working with design teams</p><h2 class="disp">From sketch<br>to delivery.</h2></div><p class="sub">Budgeting, design assistance, continuous communication and quality workmanship on every project.</p></div>
-  <div class="steps">
-    <div class="step rv"><i>01</i><h3>Share the idea</h3><p>Send drawings or just a direction. We give you budgeting help and a no-cost estimate on every project.</p></div>
-    <div class="step rv"><i>02</i><h3>Spec it together</h3><p>Our team works directly with architects, designers and engineers to spec the right panel size, insulation type and finish.</p></div>
-    <div class="step rv"><i>03</i><h3>We deliver</h3><p>Consistent supply of pre-cut panels, with custom orders typically fulfilled within 30 days and delivery anywhere in the U.S.</p></div>
+  <noscript><style>.ar-panel[hidden]{display:block}</style></noscript>
+  <div class="ar-panel" id="ar-panel" hidden>
+    <div class="ar-panelbar"><span>Architectural Panels</span><button class="ar-close" type="button">Close</button></div>
+    <div class="ar-one">
+      <article class="ar-card" id="profile-wave"><div class="im"><img width="1000" height="750" src="img/arch/wave-solid.jpg" data-src-solid="img/arch/wave-solid.jpg" data-src-perf="img/arch/wave-perf.jpg" alt="" loading="lazy"><div class="ar-toggle" role="group" aria-label="Show solid or perforated"><button type="button" class="on" aria-pressed="true" data-mode="solid">Solid</button><button type="button" aria-pressed="false" data-mode="perf">Perforated</button></div></div><div class="bd"><h3>Soft Wave</h3><p>A smooth, continuous wave. Soft shadows that shift with the light across the day.</p><div class="ar-sec" data-section="wave"></div><div class="ar-tags"><span>Steel or aluminum</span><span>Solid or perforated</span><span>Interior and exterior</span></div></div></article>
+      <article class="ar-card" id="profile-saw"><div class="im"><img width="1000" height="750" src="img/arch/saw-solid.jpg" data-src-solid="img/arch/saw-solid.jpg" data-src-perf="img/arch/saw-perf.jpg" alt="" loading="lazy"><div class="ar-toggle" role="group" aria-label="Show solid or perforated"><button type="button" class="on" aria-pressed="true" data-mode="solid">Solid</button><button type="button" aria-pressed="false" data-mode="perf">Perforated</button></div></div><div class="bd"><h3>Sawtooth</h3><p>Angled blades that catch the light on one side and shade the other. Hung horizontally it reads like layered louvers.</p><div class="ar-sec" data-section="saw"></div><div class="ar-tags"><span>Steel or aluminum</span><span>Solid or perforated</span><span>Interior and exterior</span></div></div></article>
+      <article class="ar-card" id="profile-flute"><div class="im"><img width="1000" height="750" src="img/arch/flute-solid.jpg" data-src-solid="img/arch/flute-solid.jpg" data-src-perf="img/arch/flute-perf.jpg" alt="" loading="lazy"><div class="ar-toggle" role="group" aria-label="Show solid or perforated"><button type="button" class="on" aria-pressed="true" data-mode="solid">Solid</button><button type="button" aria-pressed="false" data-mode="perf">Perforated</button></div></div><div class="bd"><h3>Flute</h3><p>Rounded half-round flutes in a steady rhythm. A rich, tactile surface with a crafted feel.</p><div class="ar-sec" data-section="flute"></div><div class="ar-tags"><span>Steel or aluminum</span><span>Solid or perforated</span><span>Interior and exterior</span></div></div></article>
+      <article class="ar-card" id="profile-pin"><div class="im"><img width="1000" height="750" src="img/arch/pin-solid.jpg" data-src-solid="img/arch/pin-solid.jpg" data-src-perf="img/arch/pin-perf.jpg" alt="" loading="lazy"><div class="ar-toggle" role="group" aria-label="Show solid or perforated"><button type="button" class="on" aria-pressed="true" data-mode="solid">Solid</button><button type="button" aria-pressed="false" data-mode="perf">Perforated</button></div></div><div class="bd"><h3>Pinstripe</h3><p>A flat face cut by fine, evenly spaced grooves. Quiet and modern, and it shows color and perforation best.</p><div class="ar-sec" data-section="pin"></div><div class="ar-tags"><span>Steel or aluminum</span><span>Solid or perforated</span><span>Interior and exterior</span></div></div></article>
+    </div>
+
+    <div class="ar-sub"><h3>Pick the look.</h3><p>Choose a profile, a finish, a material and a color. It updates live, and you can send your look straight to us.</p></div>
+    <div class="ar-designer" id="ar-pick">
+      <div class="ar-stagecard">
+        <svg class="ar-stage" id="ar-stage" viewBox="0 0 1000 560" role="img" aria-label="Panel sample preview"></svg>
+        <div class="ar-ctrls">
+          <div class="ar-grp" data-g="p"><label>Profile</label><div class="chips2"><button class="pill" type="button" data-v="wave">Soft Wave</button><button class="pill" type="button" data-v="saw">Sawtooth</button><button class="pill" type="button" data-v="flute">Flute</button><button class="pill" type="button" data-v="pin">Pinstripe</button></div></div>
+          <div class="ar-grp" data-g="f"><label>Finish</label><div class="chips2"><button class="pill" type="button" data-v="solid">Solid</button><button class="pill" type="button" data-v="fine">Fine perforation</button><button class="pill" type="button" data-v="medium">Medium perforation</button><button class="pill" type="button" data-v="bold">Bold perforation</button></div></div>
+          <div class="ar-grp" data-g="m"><label>Material</label><div class="chips2"><button class="pill" type="button" data-v="steel">Steel</button><button class="pill" type="button" data-v="alu">Aluminum</button></div></div>
+          <div class="ar-grp"><label>Color</label><div class="ar-cname" id="ar-cn">Grey White</div><div class="swrow" id="ar-sw"></div></div>
+          <div class="ar-row">
+            <div class="ar-grp" data-g="d"><label>Direction</label><div class="chips2"><button class="pill" type="button" data-v="v">Vertical</button><button class="pill" type="button" data-v="h">Horizontal</button></div></div>
+          </div>
+        </div>
+      </div>
+      <aside class="ar-side">
+        <h3>Your look</h3>
+        <p class="ar-fine" id="ar-profd"></p>
+        <div class="ar-two"><div class="ar-box"><div id="ar-secP"></div><span>Profile section</span></div><div class="ar-box"><div id="ar-secF"></div><span>Finish</span></div></div>
+        <ul class="ar-spec"><li><b>Profile</b><span id="ar-sP"></span></li><li><b>Finish</b><span id="ar-sF"></span></li><li><b>Material</b><span id="ar-sM"></span></li><li><b>Color</b><span id="ar-sC"></span></li><li><b>Direction</b><span id="ar-sD"></span></li></ul>
+        <input class="ar-look" id="ar-look" readonly aria-label="Your look" value="">
+        <div class="ar-btns"><button class="btn red" id="ar-copy" type="button">Copy my look</button><a class="ar-btn2" href="#brief">Open the quote form</a><a class="ar-link" id="ar-mail" href="mailto:Sales@uspanels.com">Or email it to us</a><button class="ar-link" id="ar-share" type="button">Copy a link to this look</button></div>
+        <p class="ar-fine">An illustration to help you choose a look. Final profiles, sizes, finishes and lead times are confirmed on your quote. Custom sizes and colors are available.</p>
+      </aside>
+    </div>
+
+    <div class="ar-sub"><h3>Solid or perforated.</h3><p>Perforation turns a plain sheet into a pattern. Try the three patterns in the designer, and ask us about other patterns and open areas.</p></div>
+    <div class="ar-perf" id="ar-perforation">
+      <figure><div data-perf="solid"></div><figcaption>Solid</figcaption></figure>
+      <figure><div data-perf="fine"></div><figcaption>Fine</figcaption></figure>
+      <figure><div data-perf="medium"></div><figcaption>Medium</figcaption></figure>
+      <figure><div data-perf="bold"></div><figcaption>Bold</figcaption></figure>
+    </div>
+
+    <div class="ar-sub"><h3>Specifications.</h3><p>Sizes, gauges and finishes are confirmed with your quote. Call or reach out and we will go through them with you.</p></div>
+    <div class="ar-specs" id="arch-specs">
+      <ul class="ar-spec ar-speccard"><li><b>Panel width</b><span>Call or reach out for more details</span></li><li><b>Profile depth</b><span>Call or reach out for more details</span></li><li><b>Material and gauge</b><span>Call or reach out for more details</span></li><li><b>Panel length</b><span>Call or reach out for more details</span></li><li><b>Finish and coating</b><span>Call or reach out for more details</span></li><li><b>Perforation patterns and open area</b><span>Call or reach out for more details</span></li><li><b>Fastening and installation</b><span>Call or reach out for more details</span></li><li><b>Lead time</b><span>Call or reach out for more details</span></li></ul>
+      <aside class="ar-call"><h3>Call or reach out for more details</h3><p>Tell us the profile, finish and color you like and we will come back with sizes, lead time and price.</p><a class="btn red" href="tel:4057782808">Call (405) 778-2808</a><a class="ar-btn2" href="#brief">Open the quote form</a><a class="ar-link" href="mailto:Sales@uspanels.com?subject=Architectural%20panels%20details">Or email Sales@uspanels.com</a></aside>
+    </div>
+
+    <div class="ar-sub"><h3>How to order.</h3><p>From a look on the screen to a quote for your project.</p></div>
+    <div class="ar-steps" id="ar-order">
+      <div class="ar-step"><i>1</i><h3>Pick your look</h3><p>Use the designer, then tap Copy my look.</p></div>
+      <div class="ar-step"><i>2</i><h3>Send it to us</h3><p>Paste it into the quote form, or email it straight from the page.</p></div>
+      <div class="ar-step"><i>3</i><h3>We confirm the details</h3><p>We come back with sizes, lead time and price for your project.</p></div>
+    </div>
+    <p class="ar-note">Pictures and drawings are illustrations of the look. These are single-skin sheet panels and are not insulated. For insulated wall and roof panels, see our Insulated Metal Panels (IMP). Custom sizes and colors are available.</p>
   </div>
 </div></section>
 
 <section class="s brief" id="brief"><div class="wrap">
-  <div class="rv"><p class="mono" style="opacity:.8;margin:0 0 14px">Architectural panels</p><h2 class="disp">Tell us what<br>you're designing.</h2><p class="sub">Looking for something specific? Describe the project and our team will come back with options and pricing.</p><button class="btn ghost copylook" type="button">Copy link to this look</button></div>
-  <div class="form rv">
-    <label>Your look<input id="look-field" name="look" readonly value="Trapezoidal · Grey White"></label>
+  <div><p class="mono" style="opacity:.8;margin:0 0 14px">Architectural panels</p><h2 class="disp">Tell us what<br>you're designing.</h2><p class="sub">Looking for something specific? Describe the project and our team will come back with options and pricing.</p></div>
+  <div class="form">
+    <label>Your look<input id="look-field" name="look" readonly value="Soft Wave · Solid · Steel · Grey White · Vertical"></label>
     <p class="fine">Put this look in your message so we price the right panel. <button class="txtbtn" type="button" data-copy="#look-field" data-prefix="Architectural panels: ">Copy it</button></p>
     <div class="pd-form"></div>
     <p class="fine">By submitting this form you agree to be contacted by US Panels regarding your inquiry.</p>
@@ -183,45 +138,6 @@
 <!--/footer-->
 
 <script src="site.js"></script>
-<script>
-/* ---------- look picker: the real profile and finish photos, nothing drawn ---------- */
-/* Profile wording is the live site's own (Specs page). */
-const PROFILES=[
-  {k:'flat',n:'Flat',d:'A smooth, unribbed face for the most minimal, monolithic appearance.'},
-  {k:'box',n:'Box',d:'Flat pans separated by narrow ribs, the cleanest, most contemporary look.'},
-  {k:'trap',n:'Trapezoidal',d:'Repeating angular ribs for a bold, structured profile with added rigidity, common on exterior wall and roof panels.'},
-  {k:'emb',n:'Embossed',d:'A subtle textured stucco finish that hides minor surface imperfections and reduces the appearance of oil-canning.'}];
-const COLORS=[['Grey White',1],['White'],['White Aluminum'],['Ivory'],['Light Blue'],['Gentian Blue'],['Signal Green'],['Colza Yellow'],['Pure Orange'],['Flame Red']].map(([n,s])=>({n,stock:!!s,slug:n.toLowerCase().replace(/ /g,'-')}));
-const st={p:'trap',c:'grey-white'};
-const $=id=>document.getElementById(id);
-
-const profsBox=$('profs'), colsBox=$('cols');
-PROFILES.forEach(p=>{ const b=document.createElement('button'); b.type='button'; b.className='pc'; b.dataset.k=p.k;
-  b.innerHTML=`<span class="im"><img src="img/prof-${p.k}.webp" alt="" loading="lazy"></span><span class="tx"><b>${p.n}</b><span>${p.d}</span></span>`;
-  b.onclick=()=>{ st.p=p.k; render(true); }; profsBox.appendChild(b); });
-COLORS.forEach(c=>{ const b=document.createElement('button'); b.type='button'; b.className='ct'+(c.stock?' stock':''); b.dataset.k=c.slug; b.setAttribute('aria-label',c.n+(c.stock?', in stock':', made to order'));
-  b.innerHTML=`<span class="im"><img src="img/col-${c.slug}.webp" alt="" loading="lazy"></span><b>${c.n}</b><em>${c.stock?'In stock':'Made to order'}</em>`;
-  b.onclick=()=>{ st.c=c.slug; render(true); }; colsBox.appendChild(b); });
-
-function render(write){
-  const p=PROFILES.find(x=>x.k===st.p), c=COLORS.find(x=>x.slug===st.c), avail=c.stock?'In stock':'Made to order';
-  profsBox.querySelectorAll('.pc').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.k===st.p)));
-  colsBox.querySelectorAll('.ct').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.k===st.c)));
-  const pi=`img/prof-${p.k}.webp`, ci=`img/col-${c.slug}.webp`;
-  $('insP').src=pi; $('insC').src=ci; $('mbP').src=pi; $('mbC').src=ci;
-  $('insP').alt=p.n+' panel profile'; $('insC').alt=c.n+' panel finish';
-  $('sP').textContent=p.n; $('sC').textContent=c.n; $('sA').textContent=avail; $('stepC').textContent=c.n+' · '+avail;
-  $('mbT').textContent=p.n; $('mbS').textContent=c.n+' · '+avail;
-  $('look-field').value=p.n+' · '+c.n;
-  if(write) history.replaceState(null,'','#look/'+new URLSearchParams(st).toString());
-}
-/* shared looks live at #look/p=..&c=.. (plain #p=.. would clash with the page anchors) */
-function fromHash(){ if(!location.hash.startsWith('#look/')) return false; const q=new URLSearchParams(location.hash.slice(6)); let any=false, p=q.get('p'), c=q.get('c');
-  if(PROFILES.some(x=>x.k===p)){ st.p=p; any=true; } if(COLORS.some(x=>x.slug===c)){ st.c=c; any=true; } return any; }
-if(fromHash()){ render(false); requestAnimationFrame(()=>$('look').scrollIntoView()); } else render(false);
-addEventListener('hashchange',()=>{ if(fromHash()){ render(false); $('look').scrollIntoView(); } });
-document.querySelectorAll('.copylook').forEach(b=>b.onclick=function(){ const t=b.textContent, url=location.origin+location.pathname+'#look/'+new URLSearchParams(st).toString();
-  (navigator.clipboard?navigator.clipboard.writeText(url):Promise.reject()).then(()=>{ b.textContent='Link copied'; },()=>{ b.textContent='Copy it from the address bar'; history.replaceState(null,'','#look/'+new URLSearchParams(st).toString()); }).finally(()=>setTimeout(()=>b.textContent=t,1800)); });
-</script>
+<script src="js/arch.js"></script>
 </body>
 </html>
