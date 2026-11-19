@@ -500,7 +500,7 @@
     const secName=SECNAME[kind];
     return { root:rootG, build:make, controls:ctlList, setItem, setUse, setFaces, setCore, setWProf, defaultView:isPerf?'detail':(ceil?'under':'34'),
       detail:isPerf?spot:null, inset:isPerf?{az:22,el:()=>ceil?-30:9}:null, view34Under:isPerf?()=>ceil:null, below:()=>ceil,
-      title:()=>isPerf?'Interior Perforated Walls and Ceilings':label(S.id), blurb:blurbNow,
+      title:()=>isPerf?'Interior Perforated Walls and Ceilings (Sound Proof)':label(S.id), blurb:blurbNow,
       stats:()=>[['Panel',isPerf?'Interior perforated '+(ceil?'ceiling':'wall'):(isWalls?'Exterior wall, '+(S.core==='pir'?'PIR':'mineral wool')+', '+XPROF[S.wprof].n.toLowerCase():label(S.id))],['Section',secName]].concat(item().rows(S),[['Color',(swatches.find(c=>c.v===S.color)||{label:''}).label]]),
       note:()=>blurbNow()+(isPerf?' The big picture is a close-up, about 100 mm across, so you can see the holes. The small picture shows the whole panel, and the red ring marks where the close-up is looking. Hole size and pattern are drawn as we model them: call for the exact pattern.':' Drawn to scale from the Blender models.')+' Thickness, weight and test data: call (405) 778-2808.' };
   };
@@ -567,7 +567,7 @@
     interior:{t:'Interior Walls',b:'Pick a color and a thickness, pull the layers apart, and join two panels edge to edge.'},
     ceiling:{t:'Ceiling',b:'Look up at a ceiling panel from below. Change the color or thickness, pull the layers apart and join two panels.'},
     arch:{t:'Architectural Panels',b:'Four profiles, solid or perforated, in steel or aluminum and ten colors.'},
-    perf:{t:'Interior Perforated Walls & Ceilings',b:'Perforated on one face or on both. Start close to see the holes, then pick wall or ceiling and a color, pull the layers apart and join two panels.'},
+    perf:{t:'Interior Perforated Walls & Ceilings (Sound Proof)',b:'Perforated on one face or on both. Start close to see the holes, then pick wall or ceiling and a color, pull the layers apart and join two panels.'},
     roof:{t:'Roof',b:'Pick a roof profile, a thickness and a color. The insulation value and weight update with your choice.'}
   };
   const offered=(host.dataset.products||'doors,trim,designer').split(',').map(s=>s.trim()).filter(k=>reg[k]);
