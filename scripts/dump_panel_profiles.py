@@ -44,6 +44,30 @@ for th in (50.8, 101.6, 152.4, 203.2):
     g = hps.GROOVE_OPEN / 2 - 0.1
     hs[str(th)] = {'T': th, 'top': R(top), 'bot': R(bot), 'core': R(core), 'gasket': R([(gb, -g), (gb + hps.GASKET_T, -g), (gb + hps.GASKET_T, g), (gb, g)])}
 
-js = '/* Cross sections of the new panels, dumped from the Blender models (scripts/uspanels_mw.py, hps_panel.py). x = across the width, y = thickness, mm. */\nwindow.USPanelsData=' + json.dumps({'wall': wall, 'hs': hs}, separators=(',', ':')) + ';\n'
+# profiled exterior wall panels (trapezoidal, microrib, ribbed): same build as uspanels_mw.build_prof, cross sections only
+prof = {}
+for key in ('trap', 'micro', 'rib'):
+    prof[key] = {}
+    for th in (50.8, 101.6, 152.4, 203.2):
+        k = th / 100.0
+        hps.THICK = th; hps.GROOVE_OPEN = 3.30 * 25.4 * k; hps.TONGUE_H = 3.26 * 25.4 * k
+        orig = hps.top_outer_profile
+        pp = [(y, th / 2 + h) for y, h in ns['prof_pts'](key)]
+        hps.top_outer_profile = lambda pp=pp: pp
+        cl_top = hps.skin_centerline()
+        hps.top_outer_profile = orig
+        cl_bot = hps.skin_centerline()
+        lt, rt = hps.offset_sides(cl_top, hps.SKIN / 2); top = lt + rt[::-1]
+        lb, rb = hps.offset_sides(cl_bot, hps.SKIN / 2); bot = [(y, -z) for y, z in (lb + rb[::-1])]
+        yend, zend = rt[-1]
+        gb = hps.COVER / 2 - hps.GROOVE_DEPTH - hps.GASKET_T
+        core = list(rt) + [(yend, hps.GROOVE_OPEN / 2), (gb, hps.GROOVE_OPEN / 2), (gb, -hps.GROOVE_OPEN / 2), (yend, -hps.GROOVE_OPEN / 2)]
+        core += [(y, -z) for y, z in rb[::-1]]
+        ts = -hps.COVER / 2
+        core += [(ts, -hps.TONGUE_H / 2), (ts - hps.TONGUE_LEN, -hps.TONGUE_H / 2), (ts - hps.TONGUE_LEN, hps.TONGUE_H / 2), (ts, hps.TONGUE_H / 2)]
+        g = hps.GROOVE_OPEN / 2 - 0.1
+        prof[key][str(th)] = {'T': th, 'top': R(top), 'bot': R(bot), 'core': R(core), 'gasket': R([(gb, -g), (gb + hps.GASKET_T, -g), (gb + hps.GASKET_T, g), (gb, g)])}
+
+js = '/* Cross sections of the new panels, dumped from the Blender models (scripts/uspanels_mw.py, hps_panel.py). x = across the width, y = thickness, mm. */\nwindow.USPanelsData=' + json.dumps({'wall': wall, 'hs': hs, 'prof': prof}, separators=(',', ':')) + ';\n'
 open(out, 'w').write(js)
 print('DUMPED', out, len(js))

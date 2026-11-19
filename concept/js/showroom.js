@@ -26,10 +26,38 @@
   const controls=new THREE.OrbitControls(camera,renderer.domElement);
   controls.enableDamping=true; controls.dampingFactor=.08; controls.autoRotate=false; controls.autoRotateSpeed=1.4;
   controls.maxPolarAngle=Math.PI*0.495;
-  // The wheel scrolls the page until the visitor clicks or touches the model; after that it zooms (and stops again when the pointer leaves).
-  controls.enableZoom=false;
-  renderer.domElement.addEventListener('pointerdown',()=>{ controls.enableZoom=true; host.classList.add('live'); });
-  renderer.domElement.addEventListener('pointerleave',e=>{ if(e.pointerType==='mouse'){ controls.enableZoom=false; host.classList.remove('live'); } });
+  // The wheel zooms as soon as the pointer is over the model, no click needed (the page scrolls when the pointer is anywhere else).
+  controls.enableZoom=true;
+  // Zoom for every product. Zooming in goes toward the point under the cursor, so any part of a panel, door or trim piece can be reached; zooming out backs away
+  // and drifts the view back to the middle of the model, so it never gets lost. Wheel ticks, trackpad pinch and mouse gliding are smoothed over a few frames.
+  const zoomRay=new THREE.Raycaster(), zoomNdc=new THREE.Vector2(), zoomHit=new THREE.Vector3(), zoomBox=new THREE.Box3(), zoomMid=new THREE.Vector3();
+  let zRemain=0, zX=0, zY=0, zBusy=false, zHitOk=false, zCx=-999, zCy=-999, zLast=0;
+  function zoomStep(now){
+    zBusy=false; if(!root||Math.abs(zRemain)<.0005){ zRemain=0; return; }
+    const frac=zLast?1-Math.exp(-Math.min(now-zLast,600)/90):.17; zLast=now;   // the glide takes the same time on a fast or a slow computer
+    const step=Math.abs(zRemain)<.01?zRemain:zRemain*frac; zRemain-=step;
+    zoomBox.setFromObject(root); if(zoomBox.isEmpty()) return;
+    const size=zoomBox.getSize(new THREE.Vector3()), R=Math.max(size.x,size.y,size.z); zoomBox.getCenter(zoomMid);
+    const d0=camera.position.distanceTo(controls.target); let s=clamp(d0*Math.exp(step),controls.minDistance,controls.maxDistance)/d0, p=controls.target.clone();
+    if(s<1){ // in: toward the surface under the cursor
+      if(Math.hypot(zX-zCx,zY-zCy)>3){ const r=renderer.domElement.getBoundingClientRect(); zoomNdc.set(((zX-r.left)/r.width)*2-1,-((zY-r.top)/r.height)*2+1); zoomRay.setFromCamera(zoomNdc,camera);
+        const hit=zoomRay.intersectObject(root,true)[0]; zHitOk=!!hit; if(hit) zoomHit.copy(hit.point); zCx=zX; zCy=zY; }
+      if(zHitOk) p.copy(zoomHit);
+      const near=(current&&current.detail)?24:Math.max(30,R*.02), dp=camera.position.distanceTo(p); if(dp*s<near) s=Math.min(1,near/dp);   // never go through the surface
+    }
+    camera.position.sub(p).multiplyScalar(s).add(p); controls.target.sub(p).multiplyScalar(s).add(p);
+    if(s>1){ const dv=zoomMid.clone().sub(controls.target).multiplyScalar(1-1/s); controls.target.add(dv); camera.position.add(dv); }   // out: ease back toward the middle
+    const pad=R*.05, t=controls.target, dv=new THREE.Vector3(clamp(t.x,zoomBox.min.x-pad,zoomBox.max.x+pad)-t.x,clamp(t.y,zoomBox.min.y-pad,zoomBox.max.y+pad)-t.y,clamp(t.z,zoomBox.min.z-pad,zoomBox.max.z+pad)-t.z);
+    controls.target.add(dv); camera.position.add(dv);   // the view point stays on the model
+    controls.update(); wake(400,true);
+    if(Math.abs(zRemain)>=.0005){ zBusy=true; requestAnimationFrame(zoomStep); } else zLast=0;
+  }
+  renderer.domElement.addEventListener('wheel',e=>{
+    if(!current) return; e.preventDefault(); e.stopImmediatePropagation();
+    const k=e.ctrlKey?.012:.0012, dy=e.deltaMode===1?e.deltaY*33:e.deltaMode===2?e.deltaY*400:e.deltaY;
+    zRemain=clamp(zRemain+clamp(dy*k,-.5,.5),-1.2,1.2); zX=e.clientX; zY=e.clientY; wake(600,true);
+    if(!zBusy){ zCx=-999; zLast=0; zBusy=true; requestAnimationFrame(zoomStep); }   // a new burst of scrolling looks under the cursor again
+  },{passive:false,capture:true});
 
   (function(){ // studio reflections
     const es=new THREE.Scene();
@@ -90,29 +118,48 @@
 
   // ---------------- camera framing ----------------
   let root=null, current=null, currentId=null;
+  // small "whole panel" picture in the corner, drawn by a second camera into a scissored square of the same canvas (used by the perforated section)
+  let inset=null; const insetCam=new THREE.PerspectiveCamera(30,1,20,60000); insetCam.layers.enable(1);
+  const insetEl=document.createElement('div'); insetEl.className='inset'; insetEl.hidden=true; insetEl.innerHTML='<span>Whole panel</span>'; host.appendChild(insetEl);
+  const insetRect=()=>{ const w=host.clientWidth, h=host.clientHeight, s=Math.round(clamp(Math.min(w,h)*.36,118,230)); return {x:12,y:h-12-s,w:s,h:s,top:12}; };
+  function frameInset(){
+    if(!inset||!root) return; const bb=new THREE.Box3().setFromObject(root); if(bb.isEmpty()) return;
+    const c=bb.getCenter(new THREE.Vector3()), s=bb.getSize(new THREE.Vector3()), r=Math.max(s.x,s.y,s.z), dist=r*.74/Math.tan(THREE.MathUtils.degToRad(insetCam.fov/2))*1.05;
+    const az=inset.az*Math.PI/180, el=(typeof inset.el==='function'?inset.el():inset.el)*Math.PI/180;
+    insetCam.position.set(c.x+Math.sin(az)*Math.cos(el)*dist,c.y+Math.sin(el)*dist,c.z+Math.cos(az)*Math.cos(el)*dist); insetCam.lookAt(c); insetCam.near=Math.max(20,dist*.02); insetCam.far=Math.max(60000,dist*40); insetCam.updateProjectionMatrix(); wake();
+    const R=insetRect(); insetEl.style.width=insetEl.style.height=R.w+'px'; }
   function frame(view){
-    if(!root) return; const bb=new THREE.Box3().setFromObject(root); if(bb.isEmpty()) return;
+    if(!root) return;
+    if(view==='34'&&current&&current.view34Under&&current.view34Under()) view='under';   // a ceiling is looked at from below
+    if(view==='detail'&&current&&current.detail){ // close-up on the surface (perforated panels): the small picture in the corner keeps the whole panel in view
+      const d=current.detail(); controls.target.copy(d.target); camera.position.copy(d.target).addScaledVector(d.dir,d.dist);
+      controls.minDistance=40; controls.maxDistance=7000; camera.near=4; camera.far=30000; camera.updateProjectionMatrix(); controls.update(); wake(); return; }
+    const bb=new THREE.Box3().setFromObject(root); if(bb.isEmpty()) return;
     const c=bb.getCenter(new THREE.Vector3()), s=bb.getSize(new THREE.Vector3()), r=Math.max(s.x,s.y,s.z);
     const aspect=host.clientWidth/Math.max(1,host.clientHeight), dist=(r*.74/Math.tan(THREE.MathUtils.degToRad(camera.fov/2)))*Math.max(1,1.05/aspect);
     const V={'34':[38,20],front:[0,6],side:[90,6],top:[8,80],under:[38,-14]}[view||'34'];
     const az=V[0]*Math.PI/180, el=V[1]*Math.PI/180;
     controls.target.copy(c); camera.position.set(c.x+Math.sin(az)*Math.cos(el)*dist, c.y+Math.sin(el)*dist, c.z+Math.cos(az)*Math.cos(el)*dist);
-    controls.minDistance=r*.35; controls.maxDistance=r*6; camera.near=Math.max(20,dist*.02); camera.far=Math.max(60000,dist*40); camera.updateProjectionMatrix(); controls.update(); wake();
+    controls.minDistance=r*.18; controls.maxDistance=r*6; camera.near=Math.max(20,dist*.02); camera.far=Math.max(60000,dist*40); camera.updateProjectionMatrix(); controls.update(); wake();
   }
 
   // ================================================================= PRODUCT: wall & roof panel designer
-  // Thickness, R-value (75Â°F mean) and weight (24/24 steel) are US Panels' own published engineering data (Specs page). Profile shapes are illustrative.
-  const THICK=[['2â€³',50.8,14.08,2.48,2.85],['3â€³',76.2,21.13,3.72,3.04],['4â€³',101.6,28.17,4.96,3.22],['5â€³',127,35.21,6.20,3.41],['6â€³',152.4,42.25,7.44,3.60],['8â€³',203.2,56.34,9.92,3.97]];
+  // Thickness, R-value (75°F mean) and weight (24/24 steel) are US Panels' own published engineering data (Specs page). Profile shapes are illustrative.
+  const THICK=[['2″',50.8,14.08,2.48,2.85],['3″',76.2,21.13,3.72,3.04],['4″',101.6,28.17,4.96,3.22],['5″',127,35.21,6.20,3.41],['6″',152.4,42.25,7.44,3.60],['8″',203.2,56.34,9.92,3.97]];
   const PROFILES={
     flat:{n:'Flat',kind:'wall',d:'A smooth, unribbed face for the most minimal, monolithic appearance.',pts:()=>[[-500,0],[500,0]]},
     box:{n:'Box',kind:'wall',d:'Flat pans separated by narrow ribs, the cleanest, most contemporary look.',pts:()=>{ const p=[[-500,0]]; [-375,-125,125,375].forEach(c=>p.push([c-12,0],[c-8,8],[c+8,8],[c+12,0])); p.push([500,0]); return p; }},
     trap:{n:'Trapezoidal',kind:'wall',d:'Repeating angular ribs for a bold, structured profile with added rigidity.',pts:()=>{ const p=[[-500,0]]; [-375,-125,125,375].forEach(c=>p.push([c-35,0],[c-15,28],[c+15,28],[c+35,0])); p.push([500,0]); return p; }},
     emb:{n:'Embossed',kind:'wall',d:'A subtle textured stucco finish that hides minor surface imperfections.',pts:()=>[[-500,0],[500,0]],emboss:true},
+    micro:{n:'Microrib',kind:'wall',d:'Fine, closely spaced ribs for a quiet, finely lined face.',pts:()=>{ const p=[[-500,0]]; for(let c=-500;c<500;c+=25) p.push([c+3,0],[c+7,2.5],[c+16,2.5],[c+20,0]); p.push([500,0]); return p; }},   // placeholder shape until the profile drawing arrives
+    rib:{n:'Ribbed',kind:'wall',d:'Bold, evenly spaced ribs that give strong shadow lines and added stiffness.',pts:()=>{ const p=[[-500,0]]; for(let c=-450;c<=450;c+=100) p.push([c-22,0],[c-11,15],[c+11,15],[c+22,0]); p.push([500,0]); return p; }},   // placeholder shape until the profile drawing arrives
     cop:{n:'Cop Roof',kind:'roof',d:'A double-steel roof profile with standing ribs.',pts:()=>{ const p=[[-500,0]]; [-250,250].forEach(c=>{ p.push([c-45,0],[c-20,38],[c+20,38],[c+45,0]); }); p.push([500,0]); return p; }},
     grec:{n:'Grecata Roof',kind:'roof',d:'A corrugated roof profile with U-ribs, for long roof runs.',pts:()=>{ const p=[]; for(let x=-500;x<=500;x+=4){ const s=Math.sin(x/125*2*Math.PI); p.push([x,15*.5*(1+Math.tanh(2.6*s))]); } return p; }}
   };
-  function buildDesigner(ctx){
-    const S={profile:'trap',thick:2,color:'#E7EBDA'}; const rootG=new THREE.Group(); let inner=null;
+  // keys = the profiles this section offers (Wall & Roof Panels: flat, embossed; Roof: Cop, Grecata)
+  function buildDesigner(ctx,keys){
+    keys=keys||Object.keys(PROFILES);
+    const S={profile:keys[0],thick:2,color:'#E7EBDA'}; const rootG=new THREE.Group(); let inner=null;
     function make(){
       if(inner){ rootG.remove(inner); inner.traverse(o=>{ if(o.geometry) o.geometry.dispose(); }); }
       inner=new THREE.Group(); const P=PROFILES[S.profile], T=THICK[S.thick][1], y0=T/2, t=.8, LEN=P.kind==='roof'?2000:1800;
@@ -131,10 +178,10 @@
       rootG.add(inner); ctx.update(); wake(); }
     return { root:rootG, build:make,
       controls:[
-        {type:'chips',label:'Profile',value:'trap',options:Object.keys(PROFILES).map(k=>({v:k,label:PROFILES[k].n})),onChange:v=>{S.profile=v;make();ctx.view('34');}},
+        {type:'chips',label:'Profile',value:keys[0],options:keys.map(k=>({v:k,label:PROFILES[k].n})),onChange:v=>{S.profile=v;make();ctx.view('34');}},
         {type:'chips',label:'Thickness',value:2,options:THICK.map((t,i)=>({v:i,label:t[0]})),onChange:v=>{S.thick=v;make();}},
         {type:'swatches',label:'Color',value:'#E7EBDA',options:COLORS.map(c=>({v:c[1],label:c[0]})),onChange:v=>{S.color=v;make();}}],
-      stats:()=>{ const T=THICK[S.thick]; return [['Profile',PROFILES[S.profile].n],['Thickness',T[0]+' ('+T[1].toFixed(0)+' mm)'],['Insulation at 75Â°F mean','R-'+T[2].toFixed(2)+' (RSI '+T[3].toFixed(2)+')'],['Weight, 24/24 steel',T[4].toFixed(2)+' psf ('+(T[4]*4.8824).toFixed(1)+' kg/mÂ²)']]; },
+      stats:()=>{ const T=THICK[S.thick]; return [['Profile',PROFILES[S.profile].n],['Thickness',T[0]+' ('+T[1].toFixed(0)+' mm)'],['Insulation at 75°F mean','R-'+T[2].toFixed(2)+' (RSI '+T[3].toFixed(2)+')'],['Weight, 24/24 steel',T[4].toFixed(2)+' psf ('+(T[4]*4.8824).toFixed(1)+' kg/m²)']]; },
       note:()=>PROFILES[S.profile].d+' Profile shapes are illustrative; R-value shown for reference, exact figures depend on core type and thickness.' };
   }
 
@@ -142,26 +189,26 @@
   // fam = the family the Doors page groups it under (Hinge Cooler, Sliding Cooler, Metal).
   const DOOR_TYPES=[
     {id:'hinged',fam:'hinge',label:'Hinge Cooler',blurb:'Insulated hinged door with a flush leaf, aluminum edge frame, gasketed rebate, heavy hinges and a key latch.',
-     sizes:[['3Ã—7','hinged-3x7','3â€² Ã— 7â€²','900 Ã— 2,100 mm clear opening'],['4Ã—7','hinged-4x7','4â€² Ã— 7â€²','1,200 Ã— 2,100 mm clear opening'],['5Ã—7','hinged-5x7','5â€² Ã— 7â€²','1,500 Ã— 2,100 mm clear opening']],
-     rows:[['Leaf','100 mm (3.94â€³) insulated, 0.5 mm steel faces'],['Frame','Aluminum edge frame, white door frame'],['Hardware','Hinges + key latch']]},
+     sizes:[['3×7','hinged-3x7','3′ × 7′','900 × 2,100 mm clear opening'],['4×7','hinged-4x7','4′ × 7′','1,200 × 2,100 mm clear opening'],['5×7','hinged-5x7','5′ × 7′','1,500 × 2,100 mm clear opening']],
+     rows:[['Leaf','100 mm (3.94″) insulated, 0.5 mm steel faces'],['Frame','Aluminum edge frame, white door frame'],['Hardware','Hinges + key latch']]},
     {id:'double',fam:'hinge',label:'Double Hinge Cooler',blurb:'Two hinged leaves meeting at a gasketed center, with a key latch on the active leaf.',
-     sizes:[['6Ã—7','double-6x7','6â€² Ã— 7â€²','1,800 Ã— 2,100 mm clear opening'],['8Ã—7','double-8x7','8â€² Ã— 7â€²','2,400 Ã— 2,100 mm clear opening'],['6Ã—7 unequal','double-unequal-6x7','6â€² Ã— 7â€², one-third / two-thirds leaves','1,800 Ã— 2,100 mm clear opening']],
-     rows:[['Leaf','100 mm (3.94â€³) insulated, 0.5 mm steel faces'],['Frame','Aluminum edge frame, white door frame'],['Hardware','Hinges + key latch on the active leaf']]},
+     sizes:[['6×7','double-6x7','6′ × 7′','1,800 × 2,100 mm clear opening'],['8×7','double-8x7','8′ × 7′','2,400 × 2,100 mm clear opening'],['6×7 unequal','double-unequal-6x7','6′ × 7′, one-third / two-thirds leaves','1,800 × 2,100 mm clear opening']],
+     rows:[['Leaf','100 mm (3.94″) insulated, 0.5 mm steel faces'],['Frame','Aluminum edge frame, white door frame'],['Hardware','Hinges + key latch on the active leaf']]},
     {id:'sliding',fam:'sliding',label:'Sliding Cooler',blurb:'Heavy-duty insulated sliding door hung from a top rail on roller hangers, in a gasketed U-shape frame, with a stainless pull handle and lock.',
-     sizes:[['5Ã—7','sliding-5x7','5â€² Ã— 7â€²','1,500 Ã— 2,100 mm clear opening',1670],['6Ã—7','sliding-6x7','6â€² Ã— 7â€²','1,800 Ã— 2,100 mm clear opening',1970]],
-     rows:[['Leaf','100 mm (3.94â€³) insulated, 0.5 mm steel faces'],['Frame','U-shape frame with gasket'],['Hardware','Top rail with roller hangers, floor guide, stainless pull handle + lock']]},
+     sizes:[['5×7','sliding-5x7','5′ × 7′','1,500 × 2,100 mm clear opening',1670],['6×7','sliding-6x7','6′ × 7′','1,800 × 2,100 mm clear opening',1970]],
+     rows:[['Leaf','100 mm (3.94″) insulated, 0.5 mm steel faces'],['Frame','U-shape frame with gasket'],['Hardware','Top rail with roller hangers, floor guide, stainless pull handle + lock']]},
     {id:'office',fam:'metal',label:'Metal',blurb:'Flush insulated metal door in an aluminum frame with a lever handle and key cylinder.',
-     sizes:[['2.5Ã—7','office-25x7','2.5â€² Ã— 7â€²','762 Ã— 2,100 mm clear opening'],['3Ã—7','office-3x7','3â€² Ã— 7â€²','900 Ã— 2,100 mm clear opening'],['4Ã—7','office-4x7','4â€² Ã— 7â€²','1,200 Ã— 2,100 mm clear opening']],
+     sizes:[['2.5×7','office-25x7','2.5′ × 7′','762 × 2,100 mm clear opening'],['3×7','office-3x7','3′ × 7′','900 × 2,100 mm clear opening'],['4×7','office-4x7','4′ × 7′','1,200 × 2,100 mm clear opening']],
      rows:[['Leaf','0.5 mm steel faces, aluminum frame'],['Hardware','Lever handle + key cylinder, hinged, door closer']]},
     {id:'officed',fam:'metal',label:'Double Metal',blurb:'Two flush metal leaves in an aluminum frame.',
-     sizes:[['6Ã—7','office-double-6x7','6â€² Ã— 7â€²','1,800 Ã— 2,100 mm clear opening']],
+     sizes:[['6×7','office-double-6x7','6′ × 7′','1,800 × 2,100 mm clear opening']],
      rows:[['Leaf','0.5 mm steel faces, aluminum frame'],['Hardware','Lever handles, hinged, door closers']]},
     {id:'clean',fam:'metal',label:'Vision Window',blurb:'Flush metal door with a round vision window, aluminum frame and lever handle, for clean rooms and labs.',
-     sizes:[['3Ã—7','clean-3x7','3â€² Ã— 7â€²','900 Ã— 2,100 mm clear opening']],
-     rows:[['Leaf','50 mm (1.97â€³) polyurethane foam, 0.5 mm steel faces'],['Frame','Aluminum'],['Hardware','Lever handle, vision window, door closer']]},
+     sizes:[['3×7','clean-3x7','3′ × 7′','900 × 2,100 mm clear opening']],
+     rows:[['Leaf','50 mm (1.97″) polyurethane foam, 0.5 mm steel faces'],['Frame','Aluminum'],['Hardware','Lever handle, vision window, door closer']]},
     {id:'cleand',fam:'metal',label:'Double Vision Window',blurb:'Two flush metal leaves with round vision windows.',
-     sizes:[['6Ã—7','clean-double-6x7','6â€² Ã— 7â€²','1,800 Ã— 2,100 mm clear opening']],
-     rows:[['Leaf','50 mm (1.97â€³) polyurethane foam, 0.5 mm steel faces'],['Frame','Aluminum'],['Hardware','Lever handles, vision windows, door closers']]}];
+     sizes:[['6×7','clean-double-6x7','6′ × 7′','1,800 × 2,100 mm clear opening']],
+     rows:[['Leaf','50 mm (1.97″) polyurethane foam, 0.5 mm steel faces'],['Frame','Aluminum'],['Hardware','Lever handles, vision windows, door closers']]}];
   const DOOR_MATS={
     Door_steel_white:()=>new THREE.MeshPhysicalMaterial({color:0xe6e8e4,roughness:.42,metalness:.03,clearcoat:.15,clearcoatRoughness:.4,envMapIntensity:.55}),
     Frame_white:()=>new THREE.MeshStandardMaterial({color:0xe2e4e0,roughness:.5,envMapIntensity:.55}),
@@ -348,31 +395,65 @@
   // Each panel keeps its own core: mineral wool and PIR are separate items. The rib size on the exterior wall panel is read from a sample photo, and the hole size
   // on the interior panel is illustrative. Roof has no new panels yet: it points to the existing roof panels.
   let holeTx=null;
-  function holeTexture(){ if(holeTx) return holeTx; const W=256,H=222,c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,W,H); g.fillStyle='#3a4046';
-    [[0,0],[128,0],[256,0],[64,111],[192,111],[0,222],[128,222],[256,222]].forEach(([x,y])=>{ g.beginPath(); g.arc(x,y,36,0,7); g.fill(); });
-    holeTx=new THREE.CanvasTexture(c); holeTx.encoding=THREE.sRGBEncoding; holeTx.wrapS=holeTx.wrapT=THREE.RepeatWrapping; holeTx.repeat.set(1/12,1/10.392); holeTx.anisotropy=4; return holeTx; }   // one tile = 12 x 10.4 mm: holes 6 mm apart, drawn about twice the real size so they can be seen
-  const perfSteel=hex=>{ const m=steelMat(hex); m.map=holeTexture(); m.alphaMap=holeTexture(); m.alphaTest=.5; m.side=THREE.DoubleSide; return m; };
+  function holeTexture(){ if(holeTx) return holeTx; const W=1024,H=887,c=document.createElement('canvas'); c.width=W; c.height=H; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,W,H); g.fillStyle='#3a4046';
+    [[0,0],[512,0],[1024,0],[256,443.5],[768,443.5],[0,887],[512,887],[1024,887]].forEach(([x,y])=>{ g.beginPath(); g.arc(x,y,144,0,7); g.fill(); });
+    holeTx=new THREE.CanvasTexture(c); holeTx.encoding=THREE.sRGBEncoding; holeTx.wrapS=holeTx.wrapT=THREE.RepeatWrapping; holeTx.repeat.set(1/6,1/5.196); holeTx.anisotropy=8; return holeTx; }   // one tile = 6 x 5.2 mm: holes 3 mm apart, 1.7 mm across (the size we model; confirm against the data sheet)
+  const perfSteel=hex=>{ const m=steelMat(hex); m.map=holeTexture(); m.alphaMap=holeTexture(); m.alphaTest=.5; m.alphaToCoverage=true; m.side=THREE.DoubleSide; return m; };
   const NP={
     'mw-wall':{wall:'Exterior wall, mineral wool',t:'Exterior Wall Panel, Mineral Wool',color:'#6FA3D6',
      blurb:'An exterior wall panel with a mineral wool core, a painted steel outer face with two stepped ribs, a steel liner and a lapped joint.',
      rows:()=>[['Core','Mineral wool'],['Thickness','2 in (50.8 mm)'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm steel'],['Outer face','Two stepped ribs'],['Joint','Lapped']]},
-    'mw-interior':{wall:'Interior wall, mineral wool',ceil:'Interior ceiling, mineral wool',t:'Interior Wall and Ceiling Panel, Mineral Wool',color:'#E7EBDA',
-     blurb:'An interior wall and ceiling panel with a mineral wool core, perforated on one face, on both faces, or on neither.',
-     rows:S=>[['Core','Mineral wool'],['Thickness','2 in (50.8 mm)'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm steel'],['Perforation',{none:'None',one:'One face',both:'Both faces'}[S.perf]],['Joint','Tongue-and-groove with gasket']]},
+    'mw-interior':{wall:'Interior wall, mineral wool',ceil:'Interior ceiling, mineral wool',t:'Interior Wall and Ceiling Panel, Mineral Wool',color:'#727375',
+     blurb:'An interior wall and ceiling panel with a mineral wool core and micro-perforated steel, on one face or on both faces. The holes open the steel face to the mineral wool core.',
+     rows:S=>[['Core','Mineral wool'],['Thickness','2 in (50.8 mm)'],['Cover width','1,000 mm (3.28 ft)'],['Steel','0.5 mm'],['Perforated',S.perf==='both'?'Both faces':'One face'],['Joint','Tongue-and-groove with gasket']]},
     'pir-imp':{wall:'PIR Insulated Metal Panel (IMP)',ceil:'PIR Insulated Metal Panel (IMP)',t:'PIR Insulated Metal Panel (IMP)',color:'#E7EBDA',
      blurb:'A rigid PIR foam core between 0.5 mm satin steel faces, with a locking tongue-and-groove joint, in ten colors and four thicknesses.',
      rows:S=>[['Core','PIR foam'],['Thickness',({'50.8':'2 in (50.8 mm)','101.6':'4 in (100 mm)','152.4':'6 in (150 mm)','203.2':'8 in (200 mm)'})[S.thick]],['Insulation value',S.thick==='101.6'?'R-30 (RSI 5.3)':'Call for this thickness'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm satin steel'],['Joint','Locking tongue-and-groove with gasket']]}};
-  const SECTIONS={walls:['mw-wall','mw-interior','pir-imp'],ceiling:['mw-interior','pir-imp']};
+  // Profile panels from the old Wall & Roof designer (same shapes and thickness table). They keep the designer's insulated build and R-value table; the
+  // Microrib and Ribbed shapes are placeholders until the drawings arrive.
+  const profRows=(key)=>S=>{ const T=THICK[S.pt]; return [['Profile',PROFILES[key].n],['Thickness',T[0]+' ('+T[1].toFixed(0)+' mm)'],['Insulation at 75°F mean','R-'+T[2].toFixed(2)+' (RSI '+T[3].toFixed(2)+')'],['Weight, 24/24 steel',T[4].toFixed(2)+' psf ('+(T[4]*4.8824).toFixed(1)+' kg/m²)']]; };
+  [['trap','Trapezoidal','#E7EBDA'],['micro','Microrib','#E7EBDA'],['rib','Ribbed','#E7EBDA'],['box','Box','#E7EBDA']].forEach(([k,n,c])=>{ NP[k]={wall:n,t:n,color:c,prof:k,blurb:PROFILES[k].d,rows:profRows(k)}; });
+  // Exterior Walls is one panel with two cores (PIR or mineral wool) and five profiles; the cores and profiles are chosen with chips, not listed as separate panels.
+  const XCORE={pir:'PIR foam',mw:'Mineral wool'};
+  const XPROF={flat:{n:'Flat',d:'A smooth, flat face for the most minimal, monolithic appearance.'},step:{n:'Stepped Rib',d:'A painted steel face with two stepped ribs.'},
+    trap:{n:'Trapezoidal',d:PROFILES.trap.d},micro:{n:'Microrib',d:PROFILES.micro.d},rib:{n:'Ribbed',d:PROFILES.rib.d}};
+  const THK_PIR={'50.8':'2 in (50.8 mm)','101.6':'4 in (100 mm)','152.4':'6 in (150 mm)','203.2':'8 in (200 mm)'};
+  NP.xwall={wall:'Exterior wall',t:'Exterior Wall',color:'#6FA3D6',xw:true,blurb:'An insulated exterior wall panel.',
+    rows:S=>{ const r=[['Core',XCORE[S.core]],['Profile',XPROF[S.wprof].n]];
+      if(S.wprof==='step') return r.concat([['Thickness','2 in (50.8 mm)'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm steel'],['Joint','Lapped']]);
+      // the other four profiles share the PIR IMP / interior panel build: same satin steel, tongue-and-groove joint with gasket, 100 mm PIR (2, 4, 6 or 8 in) or 2 in mineral wool
+      return r.concat(S.core==='pir'?[['Thickness',THK_PIR[S.thick]],['Insulation value',S.thick==='101.6'?'R-30 (RSI 5.3)':'Call for this thickness'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm satin steel'],['Joint','Locking tongue-and-groove with gasket']]
+        :[['Thickness','2 in (50.8 mm)'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm steel'],['Joint','Tongue-and-groove with gasket']]); }};
+  const SECTIONS={walls:['xwall'],interior:['box'],ceiling:['pir-imp'],perf:['mw-interior']};
+  const SECNAME={walls:'Exterior walls',interior:'Interior walls',ceiling:'Ceiling',perf:'Interior perforated'};
   const buildSection=kind=>function(ctx){
-    const D=window.USPanelsData, ids=SECTIONS[kind], ceil=kind==='ceiling', S={id:ids[0],color:NP[ids[0]].color,perf:'none',thick:'101.6',layers:0,join:0}, rootG=new THREE.Group(); let inner=null;
+    const D=window.USPanelsData, ids=SECTIONS[kind], isPerf=kind==='perf', isWalls=kind==='walls'; let ceil=kind==='ceiling';
+    const S={id:ids[0],color:NP[ids[0]].color,perf:isPerf?'one':'none',thick:'101.6',pt:2,core:'mw',wprof:'step',layers:0,join:0}, rootG=new THREE.Group(); let inner=null, pairRef=null;
     if(!D){ return {root:rootG,controls:[],stats:()=>[],title:()=>'',blurb:()=>'',note:()=>'The panel data did not load.'}; }
     const item=()=>NP[S.id], label=id=>(ceil&&NP[id].ceil)||NP[id].wall, mesh=(pts,LEN,mat)=>sh(new THREE.Mesh(extrude(pts,LEN),mat));
+    // perforated section: a red ring on the small whole-panel picture marks where the close-up is looking (layer 1: only that picture draws it)
+    const marker=isPerf?new THREE.Mesh(new THREE.RingGeometry(90,150,40),new THREE.MeshBasicMaterial({color:0xd8202f,side:THREE.DoubleSide,depthTest:false,transparent:true})):null;
+    if(marker){ marker.layers.set(1); marker.renderOrder=10; rootG.add(marker); }
+    function spot(){ // where the close-up looks: the perforated face, near the left edge of the first panel, with the edge in view
+      const bb=new THREE.Box3(); if(pairRef){ pairRef.updateMatrixWorld(true); bb.setFromObject(pairRef.children[0]); } if(bb.isEmpty()) bb.set(new THREE.Vector3(-500,0,-30),new THREE.Vector3(500,1800,30));
+      const sz=bb.getSize(new THREE.Vector3()), az=-35*Math.PI/180, el=(ceil?-58:14)*Math.PI/180;
+      return { target:ceil?new THREE.Vector3(bb.min.x+60,bb.min.y,(bb.min.z+bb.max.z)/2):new THREE.Vector3(bb.min.x+60,bb.min.y+sz.y*.55,bb.max.z),
+               normal:ceil?new THREE.Vector3(0,-1,0):new THREE.Vector3(0,0,1), dir:new THREE.Vector3(Math.sin(az)*Math.cos(el),Math.sin(el),Math.cos(az)*Math.cos(el)), dist:140 }; }
     function makePanel(LEN){
       const g=new THREE.Group(), top=new THREE.Group(), mid=new THREE.Group(), low=new THREE.Group(), wool=new THREE.MeshStandardMaterial({map:woolTexture(),roughness:.95});
-      if(S.id==='mw-wall'){ const W=D.wall;
-        top.add(mesh(W.skin,LEN,steelMat(S.color)));
-        mid.add(mesh(W.wool,LEN,wool)); W.foam.forEach(f=>mid.add(mesh(f,LEN,foamMat())));
-        low.add(mesh(W.liner,LEN,steelMat('#C9CFD2')));
+      const gasket=()=>new THREE.MeshStandardMaterial({color:0x1b1b1e,roughness:.95});
+      const profilePanel=(key,T,coreMat)=>{ // shaped steel skin, insulated core, flat liner (cover width 1,000 mm, x 0 to 1000 like the others)
+        const P=PROFILES[key], y0=T/2, t=.8, outer=P.pts().map(([x,o])=>[x+500,y0+o]), inn=outer.map(([x,y])=>[x,y-t]);
+        top.add(mesh(outer.concat(inn.slice().reverse()),LEN,steelMat(S.color)));
+        low.add(mesh([[0,-y0],[1000,-y0],[1000,-y0+t],[0,-y0+t]],LEN,steelMat(S.color)));
+        mid.add(mesh(inn.concat([[1000,-y0+t],[0,-y0+t]]),LEN,coreMat)); };
+      if(isWalls){ const coreMat=S.core==='pir'?foamMat():wool;
+        if(S.wprof==='step'){ const W=D.wall;
+          top.add(mesh(W.skin,LEN,steelMat(S.color))); mid.add(mesh(W.wool,LEN,coreMat)); W.foam.forEach(f=>mid.add(mesh(f,LEN,foamMat()))); low.add(mesh(W.liner,LEN,steelMat('#C9CFD2')));
+        } else { const th=S.core==='pir'?S.thick:'50.8', H=S.wprof==='flat'?D.hs[th]:D.prof[S.wprof][th];   // cross sections dumped from the Blender models
+          top.add(mesh(H.top,LEN,steelMat(S.color))); low.add(mesh(H.bot,LEN,steelMat(S.color))); mid.add(mesh(H.core,LEN,coreMat)); mid.add(mesh(H.gasket,LEN,gasket()));
+        }
+      } else if(item().prof){ profilePanel(item().prof,THICK[S.pt][1],foamMat());
       } else { const H=D.hs[S.id==='pir-imp'?S.thick:'50.8'], interior=S.id==='mw-interior';
         // one perforated face = the face you see: the front of a wall, the underside of a ceiling
         const perfTop=interior&&(S.perf==='both'||(S.perf==='one'&&!ceil)), perfBot=interior&&(S.perf==='both'||(S.perf==='one'&&ceil));
@@ -387,58 +468,121 @@
       const B=makePanel(LEN); B.position.x=1000+S.join*300; pair.add(B); pair.position.x=-500;
       if(ceil){ pair.position.y=1500; }                                       // overhead, flat, outer face up, the inside face looks down at you
       else { pair.rotation.x=Math.PI/2; pair.position.y=LEN/2; }              // standing like a wall
-      inner.add(pair); rootG.add(inner); ctx.update(); wake();
+      inner.add(pair); rootG.add(inner); pairRef=pair;
+      if(marker){ pair.updateMatrixWorld(true); const sp=spot(); marker.position.copy(sp.target).addScaledVector(sp.normal,4); marker.rotation.set(ceil?Math.PI/2:0,0,0); }
+      ctx.update(); wake();
     }
     const swatches=COLORS.map(c=>({v:c[1],label:c[0]})); if(!swatches.some(s=>s.v===NP['mw-wall'].color)) swatches.push({v:NP['mw-wall'].color,label:'Blue'});
+    if(isPerf) swatches.unshift({v:NP['mw-interior'].color,label:'Silver'});   // draws as the silver of the panels in the 3D tour (about #BCBDC0 on screen; the viewer lights colors brighter than their hex)
     const ctl={
       item:{type:'chips',label:'Panel',value:S.id,options:ids.map(id=>({v:id,label:label(id)})),onChange:v=>setItem(v)},
       color:{type:'swatches',label:'Color',value:S.color,options:swatches,onChange:v=>{ S.color=v; make(); }},
-      perf:{type:'chips',label:'Perforation',value:S.perf,options:[{v:'none',label:'None'},{v:'one',label:'One face'},{v:'both',label:'Both faces'}],onChange:v=>{ S.perf=v; make(); }},
-      thick:{type:'chips',label:'Thickness',value:S.thick,options:[{v:'50.8',label:'2â€³'},{v:'101.6',label:'4â€³'},{v:'152.4',label:'6â€³'},{v:'203.2',label:'8â€³'}],onChange:v=>{ S.thick=v; make(); }},
+      perf:{type:'chips',label:'Profile',value:S.perf,options:[{v:'one',label:'One face perforated'},{v:'both',label:'Both faces perforated'}],onChange:v=>{ S.perf=v; make(); }},
+      use:{type:'chips',label:'Install as',value:'wall',options:[{v:'wall',label:'Interior wall'},{v:'ceiling',label:'Interior ceiling'}],onChange:v=>setUse(v)},
+      thick:{type:'chips',label:'Thickness',value:S.thick,options:[{v:'50.8',label:'2″'},{v:'101.6',label:'4″'},{v:'152.4',label:'6″'},{v:'203.2',label:'8″'}],onChange:v=>{ S.thick=v; make(); }},
+      pthick:{type:'chips',label:'Thickness',value:S.pt,options:THICK.map((t,i)=>({v:i,label:t[0]})),onChange:v=>{ S.pt=v; make(); }},
+      core:{type:'chips',label:'Core',value:S.core,options:[{v:'pir',label:'PIR'},{v:'mw',label:'Mineral wool'}],onChange:v=>setCore(v)},
+      wprof:{type:'chips',label:'Profile',value:S.wprof,options:Object.keys(XPROF).map(k=>({v:k,label:XPROF[k].n})),onChange:v=>setWProf(v)},
       layers:{type:'slider',label:'Pull the layers apart',min:0,max:100,value:0,fmt:v=>v+'%',onChange:v=>{ S.layers=v/100; make(); }},
       join:{type:'slider',label:'Join the panels',min:0,max:100,value:0,fmt:v=>(100-v)+'%',onChange:v=>{ S.join=v/100; make(); }}};
-    const ctlList=[], list=()=>{ ctlList.length=0; ctlList.push(ctl.item,ctl.color); if(S.id==='mw-interior') ctlList.push(ctl.perf); if(S.id==='pir-imp') ctlList.push(ctl.thick); ctlList.push(ctl.layers,ctl.join); };
+    const ctlList=[], list=()=>{ ctlList.length=0; if(ids.length>1) ctlList.push(ctl.item); if(isWalls) ctlList.push(ctl.core,ctl.wprof); if(isPerf) ctlList.push(ctl.perf,ctl.use); ctlList.push(ctl.color);
+      if(isWalls){ if(S.wprof!=='step'&&S.core==='pir') ctlList.push(ctl.thick); }   // PIR comes in 2, 4, 6 and 8 in; mineral wool and the stepped rib panel are 2 in
+      else { if(S.id==='pir-imp') ctlList.push(ctl.thick); if(item().prof) ctlList.push(ctl.pthick); }
+      ctlList.push(ctl.layers,ctl.join); };
+    function setCore(v){ if(!XCORE[v]) return; S.core=v; ctl.core.value=v; list(); renderControls(ctlList); make(); }
+    function setWProf(v){ if(!XPROF[v]) return; S.wprof=v; ctl.wprof.value=v; list(); renderControls(ctlList); make(); ctx.view('34'); }
+    const blurbNow=()=>isWalls?(S.core==='pir'?'A rigid PIR foam core between steel faces. ':'A mineral wool core between steel faces. ')+XPROF[S.wprof].d:item().blurb;
     function setItem(v){ if(ids.indexOf(v)<0) return; S.id=v; S.color=item().color; S.layers=0; S.join=0; ctl.item.value=v; ctl.color.value=S.color; ctl.layers.value=0; ctl.join.value=0;
       list(); renderControls(ctlList); make(); ctx.update(); ctx.view(ceil?'under':'34'); }
+    function setUse(v){ ceil=v==='ceiling'; ctl.use.value=v; controls.maxPolarAngle=ceil?Math.PI*.8:Math.PI*.495; const ub=$('[data-view="under"]'); if(ub) ub.hidden=!ceil; make(); ctx.view('detail'); }
+    function setFaces(v){ if(v!=='one'&&v!=='both') return; S.perf=v; ctl.perf.value=v; renderControls(ctlList); make(); }
     list();
-    return { root:rootG, build:make, controls:ctlList, setItem, defaultView:ceil?'under':'34',
-      title:()=>label(S.id), blurb:()=>item().blurb,
-      stats:()=>[['Panel',label(S.id)],['Section',ceil?'Ceiling':'Walls']].concat(item().rows(S),[['Color',(swatches.find(c=>c.v===S.color)||{label:''}).label]]),
-      note:()=>item().blurb+' Drawn to scale from the Blender models'+(S.id==='mw-interior'&&S.perf!=='none'?', with the holes drawn about twice their real size so you can see them':'')+'. Thickness, weight and test data: call (405) 778-2808.' };
+    const secName=SECNAME[kind];
+    return { root:rootG, build:make, controls:ctlList, setItem, setUse, setFaces, setCore, setWProf, defaultView:isPerf?'detail':(ceil?'under':'34'),
+      detail:isPerf?spot:null, inset:isPerf?{az:22,el:()=>ceil?-30:9}:null, view34Under:isPerf?()=>ceil:null, below:()=>ceil,
+      title:()=>isPerf?'Interior Perforated Walls and Ceilings':label(S.id), blurb:blurbNow,
+      stats:()=>[['Panel',isPerf?'Interior perforated '+(ceil?'ceiling':'wall'):(isWalls?'Exterior wall, '+(S.core==='pir'?'PIR':'mineral wool')+', '+XPROF[S.wprof].n.toLowerCase():label(S.id))],['Section',secName]].concat(item().rows(S),[['Color',(swatches.find(c=>c.v===S.color)||{label:''}).label]]),
+      note:()=>blurbNow()+(isPerf?' The big picture is a close-up, about 100 mm across, so you can see the holes. The small picture shows the whole panel, and the red ring marks where the close-up is looking. Hole size and pattern are drawn as we model them: call for the exact pattern.':' Drawn to scale from the Blender models.')+' Thickness, weight and test data: call (405) 778-2808.' };
   };
-  // Roof: no new panels placed here yet, so it points to the roof panels that already exist
-  function buildRoof(ctx){
-    const rootG=new THREE.Group();
-    const c=document.createElement('canvas'); c.width=1024; c.height=512; const g=c.getContext('2d'); g.fillStyle='#eef0f2'; g.fillRect(0,0,1024,512); g.fillStyle='#5d6872'; g.font='600 54px Inter,sans-serif'; g.textAlign='center'; g.fillText('No new roof panels yet',512,236); g.font='400 36px Inter,sans-serif'; g.fillText('See Fire-Rated Panels or Wall & Roof Panels',512,306);
-    const tx=new THREE.CanvasTexture(c); tx.encoding=THREE.sRGBEncoding; const plate=sh(new THREE.Mesh(new THREE.PlaneGeometry(1600,800),new THREE.MeshBasicMaterial({map:tx}))); plate.position.y=400; rootG.add(plate);
-    const ctl=[{type:'button',text:'Fire-Rated roof panels',onClick:()=>show('fireguard')},{type:'button',text:'Wall & Roof Panels (Cop, Grecata)',onClick:()=>show('designer')}];
-    return { root:rootG, controls:ctl, title:()=>'Roof', blurb:()=>'Roof panels live here.', stats:()=>[['Section','Roof'],['New panels placed here','None yet']],
-      note:()=>'No panel from today\'s new set has been placed in Roof yet. The roof panels we already show are in Fire-Rated Panels (Fireguard roof and acoustic roof) and Wall & Roof Panels (Cop and Grecata).' };
+
+  // ================================================================= PRODUCT: architectural panels (single-skin, not insulated)
+  // The four profiles are the same lines as js/arch.js (one 240 mm module, repeated). Sheet thickness, panel size and the three hole patterns are
+  // placeholders until the specs are confirmed: the page says so and sends visitors to a quote for sizes, gauges and finishes.
+  const AMOD=240, ADEG=Math.PI/180;
+  const ARCH={
+    wave:{n:'Soft Wave',dir:'v',d:'A smooth, continuous wave. Soft shadows that shift with the light across the day.',pts:()=>Array.from({length:49},(_,i)=>[i*5,14*(1-Math.cos(Math.PI*i*5/60))])},
+    saw:{n:'Sawtooth',dir:'h',d:'Angled blades that catch the light on one side and shade the other. Hung horizontally it reads like layered louvers.',pts:()=>{ const p=[]; for(let b=0;b<3;b++) p.push([80*b,0],[80*b+62,26]); return p.concat([[240,0]]); }},
+    flute:{n:'Flute',dir:'v',d:'Rounded half-round flutes in a steady rhythm. A rich, tactile surface with a crafted feel.',pts:()=>{ const p=[]; for(let b=0;b<4;b++){ const x=60*b; p.push([x,0],[x+7,0]); for(let a=8;a<173;a+=12) p.push([x+7+23*(1-Math.cos(a*ADEG)),19*Math.sin(a*ADEG)]); p.push([x+53,0]); } return p.concat([[240,0]]); }},
+    pin:{n:'Pinstripe',dir:'h',d:'A flat face cut by fine, evenly spaced grooves. Quiet and modern, and it shows color and perforation best.',pts:()=>{ const p=[]; for(let b=0;b<6;b++){ const x=40*b; p.push([x,5],[x+34,5],[x+37,0]); } return p.concat([[240,5]]); }}};
+  const APERF={solid:{n:'Solid'},fine:{n:'Fine',p:6,r:1.3},medium:{n:'Medium',p:9,r:2.3},bold:{n:'Bold',p:15,r:4.4}};   // hole pitch and radius, mm
+  const aperfTx={};
+  function archHoleTexture(k){ if(aperfTx[k]) return aperfTx[k]; const f=APERF[k], S=512, c=document.createElement('canvas'); c.width=c.height=S; const g=c.getContext('2d'); g.fillStyle='#fff'; g.fillRect(0,0,S,S); g.fillStyle='#3a4046';
+    const R=f.r/f.p*S; [[0,0],[S,0],[0,S],[S,S],[S/2,S/2]].forEach(([x,y])=>{ g.beginPath(); g.arc(x,y,R,0,7); g.fill(); });
+    const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(1/f.p,1/f.p); t.anisotropy=8; return aperfTx[k]=t; }   // staggered holes, one tile = one pitch square
+  function buildArch(ctx){
+    const S={p:'wave',f:'solid',m:'steel',c:'#727375',d:'v'}, rootG=new THREE.Group(); let inner=null, panelRef=null;
+    const T=1.5, MODS=4, LEN=1800;   // placeholder sheet thickness (mm), 4 modules wide (960 mm), 1.8 m long
+    const marker=new THREE.Mesh(new THREE.RingGeometry(90,150,40),new THREE.MeshBasicMaterial({color:0xd8202f,side:THREE.DoubleSide,depthTest:false,transparent:true})); marker.layers.set(1); marker.renderOrder=10; rootG.add(marker);
+    function spot(){ const bb=new THREE.Box3(); if(panelRef){ panelRef.updateMatrixWorld(true); bb.setFromObject(panelRef); } if(bb.isEmpty()) bb.set(new THREE.Vector3(-480,0,0),new THREE.Vector3(480,1800,30));
+      const sz=bb.getSize(new THREE.Vector3()), az=-35*ADEG, el=14*ADEG;
+      return { target:new THREE.Vector3(bb.min.x+130,bb.min.y+sz.y*.55,bb.max.z), normal:new THREE.Vector3(0,0,1), dir:new THREE.Vector3(Math.sin(az)*Math.cos(el),Math.sin(el),Math.cos(az)*Math.cos(el)), dist:300 }; }
+    function sheetMat(){ const m=S.m==='alu'?new THREE.MeshPhysicalMaterial({color:S.c,roughness:.32,metalness:.28,clearcoat:.15,clearcoatRoughness:.3,envMapIntensity:.8}):steelMat(S.c);
+      if(S.f!=='solid'){ m.map=archHoleTexture(S.f); m.alphaMap=archHoleTexture(S.f); m.alphaTest=.5; m.alphaToCoverage=true; m.side=THREE.DoubleSide; } return m; }
+    function make(){
+      if(inner){ rootG.remove(inner); inner.traverse(o=>{ if(o.geometry) o.geometry.dispose(); }); }
+      inner=new THREE.Group(); const base=ARCH[S.p].pts(), pts=[];
+      for(let m=0;m<MODS;m++) base.forEach(([x,h],i)=>{ if(m>0&&i===0) return; pts.push([x+m*AMOD-MODS*AMOD/2,h]); });
+      const out=pts.map(([x,h])=>[x,h+T]), inn=pts.map(([x,h])=>[x,h]);
+      const g=new THREE.Group(); g.add(sh(new THREE.Mesh(extrude(out.concat(inn.slice().reverse()),LEN),sheetMat())));
+      g.rotation.x=Math.PI/2;                                  // standing, ribs run up and down, face toward +Z
+      const holder=new THREE.Group(); holder.add(g); if(S.d==='h') holder.rotation.z=Math.PI/2;   // horizontal: ribs run left to right
+      const bb=new THREE.Box3().setFromObject(holder); holder.position.set(-(bb.min.x+bb.max.x)/2,-bb.min.y,0);
+      inner.add(holder); rootG.add(inner); panelRef=holder; holder.updateMatrixWorld(true);
+      const sp=spot(); marker.position.copy(sp.target).addScaledVector(sp.normal,6);
+      ctx.update(); wake();
+    }
+    const swatches=COLORS.map(c=>({v:c[1],label:c[0]})); swatches.unshift({v:'#727375',label:'Silver'});   // same silver as the 3D tour panels
+    const ctl={
+      p:{type:'chips',label:'Profile',value:S.p,options:Object.keys(ARCH).map(k=>({v:k,label:ARCH[k].n})),onChange:v=>setProfile(v)},
+      f:{type:'chips',label:'Perforation',value:S.f,options:Object.keys(APERF).map(k=>({v:k,label:APERF[k].n})),onChange:v=>{ S.f=v; make(); }},
+      m:{type:'chips',label:'Material',value:S.m,options:[{v:'steel',label:'Steel'},{v:'alu',label:'Aluminum'}],onChange:v=>{ S.m=v; make(); }},
+      c:{type:'swatches',label:'Color',value:S.c,options:swatches,onChange:v=>{ S.c=v; make(); }},
+      d:{type:'chips',label:'Direction',value:S.d,options:[{v:'v',label:'Vertical'},{v:'h',label:'Horizontal'}],onChange:v=>{ S.d=v; make(); ctx.view('detail'); }}};
+    function setProfile(v){ if(!ARCH[v]) return; S.p=v; S.d=ARCH[v].dir; ctl.p.value=v; ctl.d.value=S.d; renderControls(list); make(); ctx.view('detail'); }
+    const list=[ctl.p,ctl.f,ctl.m,ctl.c,ctl.d];
+    return { root:rootG, build:make, controls:list, setProfile, defaultView:'detail', detail:spot, inset:{az:20,el:8},
+      title:()=>'Architectural Panels', blurb:()=>ARCH[S.p].d,
+      stats:()=>[['Panel','Architectural, '+ARCH[S.p].n],['Build','Single-skin metal sheet, not insulated'],['Material',S.m==='alu'?'Aluminum':'Steel'],['Perforation',S.f==='solid'?'Solid':APERF[S.f].n+' perforation'],['Direction',S.d==='v'?'Vertical':'Horizontal'],['Color',(swatches.find(c=>c.v===S.c)||{label:''}).label]],
+      note:()=>'Single-skin architectural metal panels for interior and exterior walls, ceilings and facades. The big picture is a close-up of about one 240 mm module; the small picture shows the whole sample panel, and the red ring marks where the close-up is looking. Sheet thickness, sizes and hole patterns are drawn as placeholders: sizes, gauges and finishes are confirmed with your quote. Call (405) 778-2808.' };
   }
 
   // ---------------- registry + switching ----------------
-  const reg={doors:buildDoors,trim:buildTrim,designer:buildDesigner,fireguard:buildFireguard,walls:buildSection('walls'),ceiling:buildSection('ceiling'),roof:buildRoof};
+  const reg={doors:buildDoors,trim:buildTrim,designer:ctx=>buildDesigner(ctx,['flat','emb']),fireguard:buildFireguard,walls:buildSection('walls'),ceiling:buildSection('ceiling'),perf:buildSection('perf'),interior:buildSection('interior'),arch:buildArch,roof:ctx=>buildDesigner(ctx,['cop','grec'])};
   const meta={
     doors:{t:'Doors',b:'Pick a door and a size, swing it open, and look at the hardware up close.'},
     trim:{t:'Trim & Hardware',b:'Pick an item and turn it around to see the profile up close.'},
     designer:{t:'Wall & Roof Panels',b:'Pick a profile, a thickness and a color. The insulation value and weight update with your choice.'},
     fireguard:{t:'Fire-Rated Panels',b:'Mineral wool panels for walls and roofs. Pick one, pull the layers apart, and join two panels edge to edge.'},
-    walls:{t:'Walls',b:'Pick a wall panel, a color and a perforation or thickness, pull the layers apart, and join two panels edge to edge.'},
-    ceiling:{t:'Ceiling',b:'Pick a ceiling panel and look up at it from below. Change the color, perforation or thickness, pull the layers apart and join two panels.'},
-    roof:{t:'Roof',b:'Roof panels.'}
+    walls:{t:'Exterior Walls',b:'Pick a core, PIR or mineral wool, then a profile and a color. Pull the layers apart and join two panels edge to edge.'},
+    interior:{t:'Interior Walls',b:'Pick a color and a thickness, pull the layers apart, and join two panels edge to edge.'},
+    ceiling:{t:'Ceiling',b:'Look up at a ceiling panel from below. Change the color or thickness, pull the layers apart and join two panels.'},
+    arch:{t:'Architectural Panels',b:'Four profiles, solid or perforated, in steel or aluminum and ten colors.'},
+    perf:{t:'Interior Perforated Walls & Ceilings',b:'Perforated on one face or on both. Start close to see the holes, then pick wall or ceiling and a color, pull the layers apart and join two panels.'},
+    roof:{t:'Roof',b:'Pick a roof profile, a thickness and a color. The insulation value and weight update with your choice.'}
   };
   const offered=(host.dataset.products||'doors,trim,designer').split(',').map(s=>s.trim()).filter(k=>reg[k]);
   const multi=offered.length>1;
   function show(id){
     if(!reg[id]||offered.indexOf(id)<0) return;
     if(root){ scene.remove(root); root.traverse(o=>{ if(o.geometry) o.geometry.dispose(); }); }
-    const ctx={update:()=>{ if(!current) return; renderStats(current.stats());
+    const ctx={update:()=>{ if(!current) return; frameInset(); renderStats(current.stats());
         if(ui.note) ui.note.textContent=current.note?current.note():'';
         if(ui.title) ui.title.textContent=(!multi&&current.title)?current.title():meta[currentId].t;
         if(ui.blurb) ui.blurb.textContent=(!multi&&current.blurb)?current.blurb():meta[currentId].b; },
       view:v=>frame(v)};
-    currentId=id; current=reg[id](ctx); root=current.root; scene.add(root);
-    controls.maxPolarAngle=current.defaultView==='under'?Math.PI*.8:Math.PI*.495; const ub=$('[data-view="under"]'); if(ub) ub.hidden=current.defaultView!=='under';
+    zRemain=0; currentId=id; current=reg[id](ctx); root=current.root; scene.add(root); inset=current.inset||null; insetEl.hidden=!inset;
+    const below=current.below?current.below():current.defaultView==='under';
+    controls.maxPolarAngle=below?Math.PI*.8:Math.PI*.495; const ub=$('[data-view="under"]'); if(ub) ub.hidden=!below; const db=$('[data-view="detail"]'); if(db) db.hidden=!current.detail;
     renderControls(current.controls); if(current.build) current.build(); ctx.update(); frame(current.defaultView||'34');
     $$('.pick [data-id]').forEach(c=>{ const on=c.dataset.id===id; c.classList.toggle('on',on); c.setAttribute('aria-pressed',String(on)); });
     if(multi) history.replaceState(null,'','#'+id);
@@ -447,23 +591,27 @@
   $$('[data-view]').forEach(b=>b.addEventListener('click',()=>frame(b.dataset.view)));
   const rot=$('#rotb'); const setRot=on=>{ controls.autoRotate=on; if(rot){ rot.textContent=on?'Stop turning':'Turn it'; rot.classList.toggle('on',on); rot.setAttribute('aria-pressed',String(on)); } wake(); };
   if(rot){ setRot(false); rot.onclick=()=>setRot(!controls.autoRotate); }
-  function resize(){ if(!host.clientWidth||!host.clientHeight) return; wake(1200); renderer.setSize(host.clientWidth,host.clientHeight,false); camera.aspect=host.clientWidth/host.clientHeight; camera.updateProjectionMatrix(); }
+  function resize(){ if(!host.clientWidth||!host.clientHeight) return; wake(1200); renderer.setSize(host.clientWidth,host.clientHeight,false); camera.aspect=host.clientWidth/host.clientHeight; camera.updateProjectionMatrix(); frameInset(); }
   if('ResizeObserver' in window) new ResizeObserver(()=>{ resize(); }).observe(host); else addEventListener('resize',resize);
   resize();
   // links can name a product and one item in it: showroom.html#doors/office, #trim/al-t, #fireguard/roof-acoustic
   const hashParts=()=>(location.hash||'').slice(1).split('/');
-  function applySub(id,sub){ if(!sub||!current) return; if(id==='doors'&&current.setType) current.setType(sub,0); else if(id==='trim'&&current.setItem) current.setItem(sub); else if(id==='fireguard'&&current.setPanel) current.setPanel(sub); else if((id==='walls'||id==='ceiling')&&current.setItem) current.setItem(sub); }
+  function applySub(id,sub){ if(!sub||!current) return; if(id==='doors'&&current.setType) current.setType(sub,0); else if(id==='trim'&&current.setItem) current.setItem(sub); else if(id==='fireguard'&&current.setPanel) current.setPanel(sub); else if(id==='walls'&&current.setCore){ if(sub==='pir'||sub==='mw') current.setCore(sub); else current.setWProf(sub); } else if((id==='ceiling'||id==='interior')&&current.setItem) current.setItem(sub); else if(id==='perf'){ if(sub==='wall'||sub==='ceiling') current.setUse(sub); else current.setFaces(sub); } else if(id==='arch'&&current.setProfile) current.setProfile(sub); }
   const [start,startSub]=hashParts(); show(offered.indexOf(start)>=0?start:(offered.indexOf(host.dataset.start)>=0?host.dataset.start:offered[0])); if(offered.indexOf(start)>=0) applySub(currentId,startSub);
   addEventListener('hashchange',()=>{ const [h,sub]=hashParts(); if(multi&&offered.indexOf(h)>=0){ if(h!==currentId) show(h); applySub(h,sub); } });
 
   // what the pages can call: USP3D.door('sliding'), USP3D.trim('al-t'), USP3D.show('doors')
-  window.USP3D={ show, types:DOOR_TYPES, trimItems:TRIM,
-    door:(type,size)=>{ if(currentId!=='doors') show('doors'); current.setType&&current.setType(type,size||0); },
+  window.USP3D={ show, types:DOOR_TYPES, trimItems:TRIM,    door:(type,size)=>{ if(currentId!=='doors') show('doors'); current.setType&&current.setType(type,size||0); },
     trim:id=>{ if(currentId!=='trim') show('trim'); current.setItem&&current.setItem(id); },
     fireguard:id=>{ if(currentId!=='fireguard') show('fireguard'); current.setPanel&&current.setPanel(id); },
     walls:id=>{ if(currentId!=='walls') show('walls'); current.setItem&&current.setItem(id); },
-    ceiling:id=>{ if(currentId!=='ceiling') show('ceiling'); current.setItem&&current.setItem(id); } };
+    ceiling:id=>{ if(currentId!=='ceiling') show('ceiling'); current.setItem&&current.setItem(id); },
+    arch:profile=>{ if(currentId!=='arch') show('arch'); if(profile) current.setProfile(profile); },
+    perf:(faces,use)=>{ if(currentId!=='perf') show('perf'); if(use) current.setUse(use); if(faces) current.setFaces(faces); } };
   document.dispatchEvent(new Event('usp3d-ready'));
 
-  (function loop(now){ requestAnimationFrame(loop); if(document.hidden) return; if(controls.update()) wake(300,true); if(now>wakeUntil && now-lastBeat<600) return; lastBeat=now; setRes(now-lastMove<220?moveRatio:baseRatio); renderer.render(scene,camera); })();
+  (function loop(now){ requestAnimationFrame(loop); if(document.hidden) return; if(controls.update()) wake(300,true); if(now>wakeUntil && now-lastBeat<600) return; lastBeat=now; setRes(now-lastMove<220?moveRatio:baseRatio);
+    const W=host.clientWidth, H=host.clientHeight; renderer.setScissorTest(false); renderer.setViewport(0,0,W,H); renderer.render(scene,camera);
+    if(inset){ const R=insetRect(); renderer.setScissorTest(true); renderer.setScissor(R.x,R.y,R.w,R.h); renderer.setViewport(R.x,R.y,R.w,R.h); renderer.setClearColor(0xcfd6dc,1);
+      renderer.render(scene,insetCam); renderer.setClearColor(0x000000,0); renderer.setScissorTest(false); renderer.setViewport(0,0,W,H); } })();
 })();
