@@ -412,7 +412,7 @@
     'mw-wall':{wall:'Exterior wall, mineral wool',t:'Exterior Wall Panel, Mineral Wool',color:'#6FA3D6',
      blurb:'An exterior wall panel with a mineral wool core, a painted steel outer face with two stepped ribs, a steel liner and a lapped joint.',
      rows:()=>[['Core','Mineral wool'],['Thickness','2 in (50.8 mm)'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm steel'],['Outer face','Two stepped ribs'],['Joint','Lapped']]},
-    'mw-interior':{wall:'Interior wall, mineral wool',ceil:'Interior ceiling, mineral wool',t:'Interior Wall and Ceiling Panel, Mineral Wool',color:'#727375',
+    'mw-interior':{wall:'Interior wall, mineral wool',ceil:'Interior ceiling, mineral wool',t:'Interior Wall and Ceiling Panel, Mineral Wool',color:'#E7EBDA',
      blurb:'An interior wall and ceiling panel with a mineral wool core and micro-perforated steel, on one face or on both faces. The holes open the steel face to the mineral wool core.',
      rows:S=>[['Core','Mineral wool'],['Thickness',({'101.6':'4 in (100 mm)','152.4':'6 in (150 mm)','203.2':'8 in (200 mm)'})[S.thick]],['Cover width','1,000 mm (3.28 ft)'],['Steel','0.5 mm'],['Perforated',S.perf==='both'?'Both faces':'One face'],['Joint','Tongue-and-groove with gasket']]},
     'pir-imp':{wall:'PIR Insulated Metal Panel (IMP)',ceil:'PIR Insulated Metal Panel (IMP)',t:'PIR Insulated Metal Panel (IMP)',color:'#E7EBDA',
@@ -426,7 +426,7 @@
   const XCORE={pir:'PIR foam',mw:'Mineral wool'};
   const XPROF={flat:{n:'Box',d:'A smooth, clean face for the most minimal, monolithic appearance.'},trap:{n:'Trapezoidal',d:PROFILES.trap.d},micro:{n:'Microrib',d:PROFILES.micro.d},rib:{n:'Ribbed',d:PROFILES.rib.d}};
   const THK_PIR={'50.8':'2 in (50.8 mm)','101.6':'4 in (100 mm)','152.4':'6 in (150 mm)','203.2':'8 in (200 mm)'};
-  NP.xwall={wall:'Exterior wall',t:'Exterior Wall',color:'#6FA3D6',xw:true,blurb:'An insulated exterior wall panel.',
+  NP.xwall={wall:'Exterior wall',t:'Exterior Wall',color:'#E7EBDA',xw:true,blurb:'An insulated exterior wall panel.',
     rows:S=>{ const r=[['Core',XCORE[S.core]],['Profile',XPROF[S.wprof].n]];
       // the other four profiles share the PIR IMP / interior panel build: same satin steel, tongue-and-groove joint with gasket; PIR comes in 2, 4, 6 or 8 in, mineral wool in 4, 6 or 8 in
       return r.concat(S.core==='pir'?[['Thickness',THK_PIR[S.thick]],['Insulation value',S.thick==='101.6'?'R-30 (RSI 5.3)':'Call for this thickness'],['Cover width','1,000 mm (3.28 ft)'],['Faces','0.5 mm satin steel'],['Joint','Locking tongue-and-groove with gasket']]
@@ -478,7 +478,7 @@
       ctx.update(); wake();
     }
     const swatches=COLORS.map(c=>({v:c[1],label:c[0]})); if(!swatches.some(s=>s.v===NP['mw-wall'].color)) swatches.push({v:NP['mw-wall'].color,label:'Blue'});
-    if(isPerf) swatches.unshift({v:NP['mw-interior'].color,label:'Silver'});   // draws as the silver of the panels in the 3D tour (about #BCBDC0 on screen; the viewer lights colors brighter than their hex)
+    if(isPerf) swatches.unshift({v:'#727375',label:'Silver'});   // draws as the silver of the panels in the 3D tour (about #BCBDC0 on screen; the viewer lights colors brighter than their hex)
     const ctl={
       item:{type:'chips',label:'Panel',value:S.id,options:ids.map(id=>({v:id,label:label(id)})),onChange:v=>setItem(v)},
       color:{type:'swatches',label:'Color',value:S.color,options:swatches,onChange:v=>{ S.color=v; make(); }},
@@ -526,7 +526,7 @@
     const R=f.r/f.p*S; [[0,0],[S,0],[0,S],[S,S],[S/2,S/2]].forEach(([x,y])=>{ g.beginPath(); g.arc(x,y,R,0,7); g.fill(); });
     const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.repeat.set(1/f.p,1/f.p); t.anisotropy=8; return aperfTx[k]=t; }   // staggered holes, one tile = one pitch square
   function buildArch(ctx){
-    const S={p:'wave',f:'solid',m:'steel',c:'#727375',d:'v'}, rootG=new THREE.Group(); let inner=null, panelRef=null;
+    const S={p:'wave',f:'solid',m:'steel',c:'#6FA3D6',d:'v'}, rootG=new THREE.Group(); let inner=null, panelRef=null;
     const T=1.5, MODS=4, LEN=1800;   // placeholder sheet thickness (mm), 4 modules wide (960 mm), 1.8 m long
     function sheetMat(){ const m=S.m==='alu'?new THREE.MeshPhysicalMaterial({color:S.c,roughness:.32,metalness:.28,clearcoat:.15,clearcoatRoughness:.3,envMapIntensity:.8}):steelMat(S.c);
       if(S.f!=='solid'){ m.map=archHoleTexture(S.f); m.alphaMap=archHoleTexture(S.f); m.alphaTest=.5; m.alphaToCoverage=true; m.side=THREE.DoubleSide; } return m; }
