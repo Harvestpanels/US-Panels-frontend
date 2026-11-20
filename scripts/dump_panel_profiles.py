@@ -12,19 +12,25 @@ hps = ns['hps']
 out = sys.argv_out if hasattr(sys, 'argv_out') else r'C:\Users\globu\dev\US-Panels-frontend\concept\js\panels-data.js'
 R = lambda pts, dz=0.0: [[round(y, 2), round(z - dz, 2)] for y, z in pts]
 
-T = ns['T']; HALF = ns['HALF']; SKIN = ns['SKIN']
-dz = T / 2
-wall = {
-    'T': T,
-    'skin': R(ns['sheet'](ns['wall_skin_path']()), dz),
-    'liner': R(ns['sheet']([(-HALF + 6, SKIN / 2), (HALF - 2, SKIN / 2)]), dz),
-    'wool': R([(-HALF + 52, SKIN), (HALF - 52, SKIN), (HALF - 52, T - 1.2), (-HALF + 52, T - 1.2)], dz),
-    'foam': [R([(-HALF + 7, SKIN), (-HALF + 52, SKIN), (-HALF + 52, T - 1.2), (-HALF + 7, T - 1.2)], dz),
-             R([(HALF - 52, SKIN), (HALF - 3, SKIN), (HALF - 3, T - 10.6), (HALF - 28, T - 10.6), (HALF - 38, T - 1.2), (HALF - 52, T - 1.2)], dz)],
-}
-for y0 in ns['RIBS']:
-    r = ns['rib_pts'](y0)
-    wall['foam'].append(R([(r[0][0], T - 1.2), (r[1][0], r[1][1] - 1.1), (r[2][0], r[2][1] - 1.1), (r[3][0], T - 1.2)], dz))
+HALF = ns['HALF']; SKIN = ns['SKIN']
+# stepped rib wall panel at 2, 4, 6 and 8 in: the Blender build reads the global T, so set it per thickness
+def wall_at(T):
+    ns['T'] = T
+    dz = T / 2
+    w = {
+        'T': T,
+        'skin': R(ns['sheet'](ns['wall_skin_path']()), dz),
+        'liner': R(ns['sheet']([(-HALF + 6, SKIN / 2), (HALF - 2, SKIN / 2)]), dz),
+        'wool': R([(-HALF + 52, SKIN), (HALF - 52, SKIN), (HALF - 52, T - 1.2), (-HALF + 52, T - 1.2)], dz),
+        'foam': [R([(-HALF + 7, SKIN), (-HALF + 52, SKIN), (-HALF + 52, T - 1.2), (-HALF + 7, T - 1.2)], dz),
+                 R([(HALF - 52, SKIN), (HALF - 3, SKIN), (HALF - 3, T - 10.6), (HALF - 28, T - 10.6), (HALF - 38, T - 1.2), (HALF - 52, T - 1.2)], dz)],
+    }
+    for y0 in ns['RIBS']:
+        r = ns['rib_pts'](y0)
+        w['foam'].append(R([(r[0][0], T - 1.2), (r[1][0], r[1][1] - 1.1), (r[2][0], r[2][1] - 1.1), (r[3][0], T - 1.2)], dz))
+    return w
+wall = {}     # the lapped stepped-rib wall is retired: Stepped Rib is now the 'step' profile on the common tongue-and-groove build
+ns['T'] = 50.8
 
 hs = {}
 for th in (50.8, 101.6, 152.4, 203.2):
@@ -46,9 +52,12 @@ for th in (50.8, 101.6, 152.4, 203.2):
 
 # profiled exterior wall panels (trapezoidal, microrib, ribbed): same build as uspanels_mw.build_prof, cross sections only
 prof = {}
-for key in ('trap', 'micro', 'rib'):
+TH4 = (50.8, 101.6, 152.4, 203.2)
+TH6 = (50.8, 76.2, 101.6, 127.0, 152.4, 203.2)     # the thickness table of the Interior Walls and Roof sections
+PROF_TH = {'trap': TH4, 'micro': TH4, 'rib': TH4, 'box': TH6, 'cop': TH6, 'grec': TH6, 'fgroof': TH4}
+for key, ths in PROF_TH.items():
     prof[key] = {}
-    for th in (50.8, 101.6, 152.4, 203.2):
+    for th in ths:
         k = th / 100.0
         hps.THICK = th; hps.GROOVE_OPEN = 3.30 * 25.4 * k; hps.TONGUE_H = 3.26 * 25.4 * k
         orig = hps.top_outer_profile
@@ -66,7 +75,7 @@ for key in ('trap', 'micro', 'rib'):
         ts = -hps.COVER / 2
         core += [(ts, -hps.TONGUE_H / 2), (ts - hps.TONGUE_LEN, -hps.TONGUE_H / 2), (ts - hps.TONGUE_LEN, hps.TONGUE_H / 2), (ts, hps.TONGUE_H / 2)]
         g = hps.GROOVE_OPEN / 2 - 0.1
-        prof[key][str(th)] = {'T': th, 'top': R(top), 'bot': R(bot), 'core': R(core), 'gasket': R([(gb, -g), (gb + hps.GASKET_T, -g), (gb + hps.GASKET_T, g), (gb, g)])}
+        prof[key]['%g' % th] = {'T': th, 'top': R(top), 'bot': R(bot), 'core': R(core), 'gasket': R([(gb, -g), (gb + hps.GASKET_T, -g), (gb + hps.GASKET_T, g), (gb, g)])}
 
 js = '/* Cross sections of the new panels, dumped from the Blender models (scripts/uspanels_mw.py, hps_panel.py). x = across the width, y = thickness, mm. */\nwindow.USPanelsData=' + json.dumps({'wall': wall, 'hs': hs, 'prof': prof}, separators=(',', ':')) + ';\n'
 open(out, 'w').write(js)
