@@ -27,7 +27,7 @@ const links = (list, file) => list.map(([h, t]) => `<a href="${h}"${cur(h, file)
 const nav = file => `<!--nav-->
 <header class="nav" id="nav">
   <div class="wrap">
-    <a class="brand" href="index.html"><img src="img/logo.webp" alt="US Panels" width="96" height="36"></a>
+    <a class="brand" href="index.html"><img src="img/logo-nav.png" alt="US Panels" width="139" height="42"></a>
     <nav class="menu" aria-label="Main">${links(LINKS, file)}</nav>
     <a class="tel" href="tel:4057782808">(405) 778-2808</a>
     <a class="btn red hide-m" href="quote.html">Get a quote</a>
